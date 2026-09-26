@@ -34,17 +34,18 @@ with no design-thinking counterpart of their own.
 
 The concrete, artifact-by-artifact runbook lives in
 [`.claude/skills/design-glanza/workflows/execute-product-builder.md`](../.claude/skills/design-glanza/workflows/execute-product-builder.md)
-— 35 total table rows (24 map to the originally-specified numbered actions;
-11 were added since, marked `-`, including Design Setup's 5 and Preview &
-Run's 2). Execution order follows the engine's actual dependency chain, not
-raw numeric order — e.g. flows are built before the information architecture
-that consumes them.
+— 37 total table rows (24 map to the originally-specified numbered actions;
+13 were added since, marked `-`, including Design Setup's 6 — now including
+a Design Research step — Preview & Run's 2, and a mandatory Visual
+Benchmark & Audit Cycle action). Execution order follows the engine's
+actual dependency chain, not raw numeric order — e.g. flows are built
+before the information architecture that consumes them.
 
 ## Quality gates
 
 - **Section A** — 12 phase-transition gates (one between every pair of
   adjacent phases above).
-- **Section B** — 14 measurable dimensions, **B1–B14**, each with a stated
+- **Section B** — 15 measurable dimensions, **B1–B15**, each with a stated
   pass criterion and a named owner (a script, an agent, or — for Implement
   and Preview & Run — "the executing session," since neither phase involves
   new design reasoning to assign a specialist to).
@@ -53,14 +54,14 @@ Full detail: [`.claude/skills/design-glanza/config/quality-gates.md`](../.claude
 
 ## Scored evaluation
 
-Beyond pass/fail, `evals/evaluation-rubric.md` scores 20 dimensions 1–5,
+Beyond pass/fail, `evals/evaluation-rubric.md` scores 21 dimensions 1–5,
 grouped into three weighted tiers so visual polish is mathematically capped
-under 5% of the 225-point total — a flawless design system with weak
+under 5% of the 235-point total — a flawless design system with weak
 requirement understanding or broken traceability cannot score well overall.
 
 ## The constitution
 
-19 Operating Rules (`config/operating-rules.md`) apply to every phase, every
-domain, every agent — from Rule 1 (Requirement First) through Rule 19
-(Preview & Run). Every other file in the skill cites these by number rather
-than restating them.
+20 Operating Rules (`config/operating-rules.md`) apply to every phase, every
+domain, every agent — from Rule 1 (Requirement First) through Rule 20
+(Design Research & Visual Quality Assurance). Every other file in the skill
+cites these by number rather than restating them.

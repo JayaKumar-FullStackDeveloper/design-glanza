@@ -2,7 +2,7 @@
 
 ## Responsibility
 Binary/checklist criteria that must be satisfied before work proceeds — both
-between phases (Section A) and across the 14 measurable quality dimensions
+between phases (Section A) and across the 15 measurable quality dimensions
 (Section B) that those phase gates actually check. This file answers "can we move
 forward?" — it does not assign a graded score (see `evals/evaluation-rubric.md`)
 and it does not define output structure (see `output-contract.md`).
@@ -17,7 +17,7 @@ and it does not define output structure (see `output-contract.md`).
 | Ideate → Architect | A direction is chosen with documented rationale; Business Logic Completeness gate (B2) passes |
 | Architect → Design Setup | Domain classification confirmed; dependency graph has no unresolved circular dependency |
 | Design Setup → Prototype | Design Direction Completeness gate (B13) passes — `product-builder/ui/design-direction.md` complete per template, its reference classification (Reference-Driven/Guideline-Driven/Custom/Default) stated with rationale, and user confirmation obtained or explicitly waived |
-| Prototype → Implement | User-Flow (B3), Information Architecture (B4), Screen Architecture (B5), Design System (B6), State Coverage (B7), Accessibility (B8, structural), Responsive Behavior (B9) gates all pass |
+| Prototype → Implement | User-Flow (B3), Information Architecture (B4), Screen Architecture (B5), Design System (B6), State Coverage (B7), Accessibility (B8, structural), Responsive Behavior (B9), Visual Benchmark & Audit Cycle (B15) gates all pass |
 | Implement → Preview & Run | Implementation Readiness gate (B12) still holds; `output/*` is non-empty for any screen marked implemented this pass |
 | Preview & Run → Test | Preview & Run Verification gate (B14) passes |
 | Test → Audit | `methodology/test.md` validation against Define's success criteria passes with no Blocker findings |
@@ -40,7 +40,7 @@ same frequency signal `methodology/empathize.md` dimension 7 and
 `design-judgment.md`'s task-frequency factor already use elsewhere, applied
 here to triaging accumulated debt rather than an individual design decision.
 
-## Section B — The 14 measurable quality gates
+## Section B — The 15 measurable quality gates
 
 Each gate below states: what it measures, the pass criterion, and what checks it.
 
@@ -175,6 +175,21 @@ Each gate below states: what it measures, the pass criterion, and what checks it
   user explicitly requested one — its absence never fails this gate.
 - **Checked by:** the executing session, per `workflows/preview-run.md` —
   no dedicated reasoning agent, the same posture B12/Implement already has.
+
+### B15 — Visual Benchmark & Audit Cycle Completeness
+- **Measures:** whether the generated UI was actually checked against
+  `ui-engine/ui-audit-framework.md`'s 11 categories and
+  `ui-engine/visual-benchmark.md`'s three-way (Reference/Design Direction/
+  Generated UI) comparison, per `templates/visual-gap-analysis.md`.
+- **Pass criterion:** at least one full audit-and-refinement cycle is
+  recorded for every screen produced this pass — a first-pass audit, a gap
+  classification (or an explicit "no gaps found"), and a re-check after any
+  refinement (or an explicit re-confirmation when pass 1 was clean). A
+  screen with no recorded visual-gap-analysis instance fails this gate
+  regardless of how the screen actually looks.
+- **Checked by:** `agents/ui-designer.md` and
+  `agents/design-system-expert.md`, per `ui-engine/visual-benchmark.md`'s
+  mandatory-cycle procedure — no new dedicated agent.
 
 ## Explicitly not here
 - *How* to produce the artifact being gated → owned by the relevant

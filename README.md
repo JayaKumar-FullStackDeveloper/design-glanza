@@ -26,12 +26,13 @@ a domain into its own core logic.
 
 ## Status
 
-**Fully implemented**, version **1.0.8**. Every folder in the architecture has real,
+**Fully implemented**, version **1.0.9**. Every folder in the architecture has real,
 load-bearing content; one full product (`products/projectflow`) has been generated
-through Prototype as a worked example; the skill has been extended six times with
-external design knowledge, a Domain Standards Library, a Design Setup phase, and a
-Preview & Run phase — see `config/master-config.md`'s changelog inside the skill for
-the complete version history.
+through Prototype as a worked example; the skill has been extended repeatedly with
+external design knowledge, a Domain Standards Library, a Design Setup phase, a
+Preview & Run phase, and a mandatory design-research/visual-benchmark-and-audit
+system — see `config/master-config.md`'s changelog inside the skill for the
+complete version history.
 
 ## The 12-phase lifecycle
 
@@ -52,7 +53,7 @@ Design-Glanza/
 │   ├── CLAUDE.md                         # project-level instructions for Claude Code
 │   └── skills/design-glanza/             # the master orchestrator skill (project-local)
 │       ├── SKILL.md                      # entry point, 20 numbered topics
-│       ├── config/                       # 19 rules, 14 quality gates, output contract
+│       ├── config/                       # 20 rules, 15 quality gates, output contract
 │       ├── methodology/                  # the 5-phase design-thinking loop + design-judgment
 │       ├── product-intelligence/         # BRD/requirement analysis + domain classification/standards
 │       ├── ux-engine/ · ui-engine/       # UX and UI technique
@@ -103,10 +104,15 @@ Seven production-readiness phases wrap around them:
 - Design-Glanza must not invent business rules absent from the source material —
   assumptions are marked explicitly, never silently assumed.
 - Design-Glanza must not jump straight to UI generation. Understanding and analysis
-  come first, and — since v1.0.7 — a deliberate Design Setup pass establishes the
-  visual/interaction direction before any screen is drawn.
+  come first, and — since v1.0.7 — a deliberate Design Setup pass, now opening with
+  its own design-research step (v1.0.9), establishes the visual/interaction
+  direction before any screen is drawn.
 - Implementation is not complete because the code was written — since v1.0.8, the
   built output must actually launch and be previewed locally before Test evaluates it.
+- A generated screen is a draft, not a final answer — since v1.0.9, every screen
+  goes through a mandatory audit against an 11-category UI Audit Framework and a
+  three-way Reference/Direction/Generated-UI benchmark, with at least one
+  refinement cycle recorded even when nothing was wrong.
 - The core reasoning engine must remain domain-agnostic; new domains are added by
   authoring a new domain pack or generating new Product Builder skills under
   `products/`, never by modifying Design-Glanza's core logic.

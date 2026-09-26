@@ -99,6 +99,7 @@ only when you're actually at that step.
 | Matching/loading an external domain-standard document | `product-intelligence/domain-standards.md`, `product-types/domain-standards/domain-registry.json` |
 | Deriving requirements, rules, roles, dependencies, edge cases | `product-intelligence/{requirement-engine,business-logic,user-roles,dependency-analysis,edge-case-engine}.md` |
 | Empathize / Define / Ideate reasoning | `methodology/{empathize,define,ideate}.md` |
+| Researching current design patterns/conventions before any reference or screen exists | `design-reference-engine/design-research.md` |
 | Establishing/confirming the visual and interaction direction before any screen exists | `design-reference-engine/*`, `design-samples/`, `workflows/design-setup.md` |
 | Structuring flows, IA, navigation, states | `ux-engine/*` |
 | Launching and verifying the built output locally, after Implement | `workflows/preview-run.md`, `templates/preview-report.md` |
@@ -106,6 +107,8 @@ only when you're actually at that step.
 | Visual system, layout, components | `ui-engine/*` |
 | Reasoning through an important UX/UI pattern decision with no obvious owner | `methodology/design-judgment.md` |
 | Self-critiquing a finished screen/page's visual composition | `ui-engine/craft-critique.md` |
+| Auditing/benchmarking a generated screen against its reference and design direction | `ui-engine/{ui-audit-framework,visual-benchmark}.md`, `templates/visual-gap-analysis.md` |
+| Translating general UI-quality principles into an actionable check | `ui-engine/ui-design-principles.md` |
 | Generating or updating a Product Builder | `scripts/create-product-builder.py`, `workflows/create-product.md` |
 | Running the product-builder's own action sequence | `workflows/execute-product-builder.md` |
 | Building, testing, auditing | `workflows/{build-product,audit-product}.md`, `methodology/test.md`, `scripts/validate-*.py` |
@@ -174,16 +177,22 @@ before any screen exists (Rule 5: system before screen). Owner:
 ## How Design-Glanza establishes design direction
 
 ### 8. Design Setup / Visual Direction
-Between Architect and Prototype (added v1.0.7): detect and analyze any
-user-supplied design references, run a structured design-expectation
-questionnaire, classify the result as Reference-Driven / Guideline-Driven /
-Custom Design / Default Design-Glanza, and produce one approved
-`product-builder/ui/design-direction.md` — confirmed with the user where
-one is available, never assumed from generic defaults when real direction
-exists, and never fabricated from nothing when it doesn't (Rule 18). Screens
-and tokens are never built before this exists. Owner:
-`agents/design-setup-specialist.md`. Detail: `design-reference-engine/*`,
-`design-samples/`, `workflows/design-setup.md`.
+Between Architect and Prototype (added v1.0.7): first, research current
+design patterns relevant to this product (Step 0, added v1.0.9 — modern
+SaaS/admin conventions, this product's own domain conventions, density,
+navigation/dataviz/form/table/interaction/accessibility/responsive
+patterns, current visual trends checked against `visual-trends.md`'s
+adoption gate); then detect and analyze any user-supplied design
+references, run a structured design-expectation questionnaire, classify
+the result as Reference-Driven / Guideline-Driven / Custom Design /
+Default Design-Glanza — never one generic style regardless of domain
+(Rule 20) — and produce one approved `product-builder/ui/design-
+direction.md` — confirmed with the user where one is available, never
+assumed from generic defaults when real direction exists, and never
+fabricated from nothing when it doesn't (Rule 18). Screens and tokens are
+never built before this exists. Owner: `agents/design-setup-specialist.md`.
+Detail: `design-reference-engine/*`, `design-samples/`,
+`workflows/design-setup.md`.
 
 ## How Design-Glanza designs the product
 
@@ -201,7 +210,14 @@ color, component inventory, visual hierarchy, responsive rules — system
 established before screens multiply (Rule 5 again, now at the UI layer),
 consuming Design Setup's approved direction rather than re-deciding it.
 Owners: `agents/design-system-expert.md` (governs the system),
-`agents/ui-designer.md` (applies it). Detail: `ui-engine/*`.
+`agents/ui-designer.md` (applies it). Detail: `ui-engine/*`. **Every
+generated screen then goes through a mandatory visual-benchmark-and-audit
+cycle** (added v1.0.9, Rule 20): an 11-category A–K audit
+(`ui-engine/ui-audit-framework.md`), a three-way Reference/Design-
+Direction/Generated-UI comparison (`ui-engine/visual-benchmark.md`), and
+at least one refinement pass — recorded in
+`templates/visual-gap-analysis.md` even when a screen is clean on first
+pass. The first generated UI is never treated as final. Gate: **B15**.
 
 ## How Design-Glanza builds the product
 
@@ -256,11 +272,12 @@ Quality gates, next.
 ## Governing principles
 
 ### 17. Quality gates
-`config/quality-gates.md` defines 12 phase-transition gates and 14 measurable
-dimensions (B1-B14: requirement completeness, business logic, user-flow
+`config/quality-gates.md` defines 12 phase-transition gates and 15 measurable
+dimensions (B1-B15: requirement completeness, business logic, user-flow
 completeness, IA, screen architecture, design system, state coverage,
 accessibility, responsive behavior, traceability, QA, implementation
-readiness, design direction completeness, preview & run verification).
+readiness, design direction completeness, preview & run verification,
+visual benchmark & audit cycle completeness).
 Completion requires clearing the relevant gates — not a working demo.
 `evals/evaluation-rubric.md` extends this into a scored rubric, weighted so
 visual polish alone can never carry a passing score.
@@ -303,6 +320,12 @@ and Rule 16, `config/operating-rules.md`.)
 - Do not declare Implement complete, or proceed to Test, before the built
   output has actually been launched locally and previewed (13) — a build
   that "should work" is not the same as one that was run (Rule 19).
+- Do not treat the first generated UI as final — at least one visual
+  audit-and-refinement cycle is mandatory for every screen, even a clean
+  one (10, Rule 20).
+- Do not select the same default design register/sample for every product
+  regardless of its matched domain — Admin Panel ≠ E-commerce ≠ Healthcare
+  ≠ ERP ≠ Fintech ≠ CRM (8, Rule 20).
 - Do not let a specialist agent self-invoke outside the phase
   `workflows/*.md` assigns it, or redesign work another agent owns — route
   the problem to the owning agent instead (`config/master-config.md`'s Role

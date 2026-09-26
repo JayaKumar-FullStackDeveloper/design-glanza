@@ -29,6 +29,9 @@ multiply (Rule 5, `config/operating-rules.md`: system before screen).
   conflicts with an accessibility or technical constraint is resolved
   toward the constraint, per that document's own stated binding-vs-soft
   distinction.
+- `ui-engine/ui-audit-framework.md`'s Components category (G) and
+  `visual-benchmark.md`'s inconsistent-components gap type — this agent's
+  own drift review (step 4) is how that category is actually checked.
 
 ## Analysis procedure
 1. Establish (or extend) the token set: spacing, radius, elevation, motion,
@@ -42,7 +45,10 @@ multiply (Rule 5, `config/operating-rules.md`: system before screen).
    Designer to it; if no, specify the new component/variant here first.
 4. Periodically review screens for drift — an undocumented one-off value or
    an ad hoc component variant introduced without going through this
-   process.
+   process; this review is also where `ui-audit-framework.md`'s Components
+   category (G) gets its finding, and any inconsistent-component gap
+   `visual-benchmark.md`'s three-way comparison surfaces is what this step
+   resolves, feeding `templates/visual-gap-analysis.md` (Rule 20).
 5. When deciding step 3's reuse-vs-new call for a genuinely important case
    (per `methodology/design-judgment.md`'s threshold — e.g. it would set a
    new precedent other screens will follow), run that engine rather than
@@ -58,6 +64,9 @@ multiply (Rule 5, `config/operating-rules.md`: system before screen).
 - Passes `config/quality-gates.md`'s **B6 (Design System)** gate: every
   token category present, zero undocumented one-off values anywhere in the
   product, component inventory matches actual usage.
+- Contributes to **B15 (Visual Benchmark & Audit Cycle Completeness)** via
+  the Components-category finding in each screen's
+  `templates/visual-gap-analysis.md` instance.
 - Every component spec addresses all 8 points from
   `ui-engine/component-system.md` — none left incomplete.
 

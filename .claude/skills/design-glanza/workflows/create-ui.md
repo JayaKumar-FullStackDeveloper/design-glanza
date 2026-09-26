@@ -20,11 +20,16 @@ direction from scratch at this point.
 4. **`agents/accessibility-expert.md`** — the perceptual half (contrast,
    color-blind safety) now that color exists to check; the structural half
    already ran in `create-ux.md`.
+5. **`agents/ui-designer.md`** and **`agents/design-system-expert.md`**
+   again — the mandatory visual-benchmark-and-audit cycle (Rule 20), never
+   skipped even for a clean first draft.
 
 ## Step order
-Matches `workflows/execute-product-builder.md`'s actions 24-27 (Order
-column — shifted from the original 19-22 when Design Setup's 5 actions
-were inserted earlier in the table):
+Matches `workflows/execute-product-builder.md`'s actions 25-29 (Order
+column — shifted from 24-27 when v1.0.9's new Design Research action was
+inserted earlier in the table, then extended by one to include v1.0.9's
+new mandatory Visual Benchmark & Audit Cycle action; originally 19-22
+before Design Setup's actions were inserted):
 
 1. Establish/extend the token set and component inventory
    (`ui-engine/design-system.md`, `component-system.md`) →
@@ -39,13 +44,21 @@ were inserted earlier in the table):
 5. Produce final per-screen visuals (`templates/screen-specification.md`'s
    visual fields).
 6. Re-check for drift and run the perceptual accessibility pass.
+7. **Run the mandatory visual-benchmark-and-audit cycle** (Rule 20): audit
+   every produced screen against `ui-engine/ui-audit-framework.md`'s 11
+   A–K categories, run `ui-engine/visual-benchmark.md`'s three-way
+   Reference/Design-Direction/Generated-UI comparison, classify any gap
+   found, apply the refinement, and re-check — recorded in
+   `templates/visual-gap-analysis.md` for every screen, even one with no
+   gaps found. The first generated pass is never treated as final; skip
+   this step for no screen.
 
 ## Gate
 Must pass `config/quality-gates.md`'s **B6 (Design System)** gate, the
 perceptual half of **B8 (Accessibility)** (4.5:1 / 3:1 contrast, no
-color-only encoding), and **B9 (Responsive Behavior)** — together
-operationalizing the Prototype → Implement phase gate — before hand-off to
-`build-product.md`.
+color-only encoding), **B9 (Responsive Behavior)**, and **B15 (Visual
+Benchmark & Audit Cycle Completeness)** — together operationalizing the
+Prototype → Implement phase gate — before hand-off to `build-product.md`.
 
 ## Explicitly not here
 - Any UI reasoning technique itself → the relevant `ui-engine/*.md` file.

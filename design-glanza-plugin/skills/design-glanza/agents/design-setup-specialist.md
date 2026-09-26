@@ -27,11 +27,19 @@ and `agents/ui-designer.md` then execute against.
 - Product Architect's confirmed domain classification and any matched
   `product-types/domain-standards/` entry — used to select the right
   default sample when no user-supplied direction exists.
-- `design-reference-engine/{reference-analysis,design-questionnaire,
-  reference-selection,design-direction}.md`, `design-samples/`,
-  `templates/design-direction.md`.
+- `design-reference-engine/{design-research,reference-analysis,
+  design-questionnaire,reference-selection,design-direction}.md`,
+  `design-samples/`, `templates/design-direction.md`.
 
 ## Analysis procedure
+0. **Research the design space** (Step 0): before touching any reference,
+   apply `design-research.md`'s technique — current SaaS/admin patterns,
+   this product's own domain conventions (per Product Architect's
+   confirmed classification and any matched `domain-standards/` entry),
+   information density, navigation/dataviz/form-table/interaction/
+   accessibility/responsive patterns, and current visual trends checked
+   against `ui-engine/visual-trends.md`'s adoption gate. Produces no
+   separate artifact — folds into step 5's document.
 1. **Detect references** (Step 1): scan the BRD input set for any of the 13
    reference forms `design-reference-engine/reference-analysis.md` names
    (reference images, UI/existing-product screenshots, Figma, website
@@ -41,12 +49,14 @@ and `agents/ui-designer.md` then execute against.
 2. **Analyze references, if any** (Step 1 continued): apply
    `reference-analysis.md`'s technique to extract visual patterns,
    interaction patterns, design-system characteristics, reusable
-   components, layout patterns, typography, color usage, spacing,
-   radius/elevation, navigation patterns, and responsive behavior. Treat
-   every extracted fact as **design direction**, never as a business
-   requirement — a requirement implied by a screenshot is `brd-analysis.md`'s
-   concern (Intake), already handled or explicitly flagged as a gap there;
-   this step never re-derives or overrides that.
+   components, layout structure/grid, typography, color, visual hierarchy,
+   border treatment, radius, shadows/elevation, iconography, navigation,
+   tabs, tables, filters, forms, cards, status indicators, spacing/density,
+   and responsive behavior. Treat every extracted fact as **design
+   direction**, never as a business requirement — a requirement implied by
+   a screenshot is `brd-analysis.md`'s concern (Intake), already handled or
+   explicitly flagged as a gap there; this step never re-derives or
+   overrides that.
 3. **Run the design questionnaire** (Step 2): apply
    `design-questionnaire.md`'s structured question set (visual style,
    layout, typography, color, components, interaction patterns, responsive
@@ -60,7 +70,9 @@ and `agents/ui-designer.md` then execute against.
    the Default case, select the best-fitting entry from `design-samples/`
    using Product Architect's domain classification — never load an
    unrelated sample, and never reach for Default when the user has already
-   given real direction via steps 2–3.
+   given real direction via steps 2–3. Never collapse this into one house
+   style regardless of domain (Admin Panel ≠ E-commerce ≠ Healthcare ≠
+   ERP ≠ Fintech ≠ CRM).
 5. **Write the Design Direction document** (Step 4): fill every field
    `templates/design-direction.md` requires — objective, visual style,
    principles, reference analysis, inspiration, layout, typography, color,

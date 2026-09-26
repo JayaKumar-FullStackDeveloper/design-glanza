@@ -28,6 +28,19 @@ not add a new `config/quality-gates.md` B-dimension); a failure here is
 routed the same way any Rule 12 self-critique finding is, through the normal
 Iterate loop.
 
+**Relationship to `ui-audit-framework.md` and `visual-benchmark.md`:** these
+checks run *inside* the same Rule 12 self-critique step that feeds
+`ui-audit-framework.md`'s C (Visual Hierarchy) and D (Layout) categories —
+checks 1–3 map into C, check 4 into D, the anti-cliché catalog (check 8)
+into F (Color) and G (Components) where relevant. One composition-level
+critique, cited from the audit categories it corroborates, never a second,
+competing scale run alongside them. `visual-benchmark.md`'s three-way
+comparison and its mandatory refinement cycle (Rule 20, gate **B15**) is a
+separate, broader pass this file's findings fold into, not a duplicate of
+it — this file's checks apply with or without a reference to benchmark
+against; the three-way comparison only applies once a Reference or Design
+Direction exists to compare to.
+
 ## The checks
 
 ### 1. Hierarchy squint test (numeric)

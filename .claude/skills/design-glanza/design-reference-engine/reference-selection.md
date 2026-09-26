@@ -83,6 +83,17 @@ domain with no matched pack, no platform signal) still has `common/` alone
 to start from — Default mode is never left with literally nothing to
 select.
 
+**Never collapse this into one house style applied regardless of domain.**
+Admin Panel ≠ E-commerce ≠ Healthcare ≠ ERP ≠ Fintech ≠ CRM — each has a
+different correct default density, register, and component emphasis (a
+dense, low-color, high-density register for ERP/Admin; a calmer, more
+restrained register for Healthcare per that pack's own accessibility point;
+a more visually confident, conversion-oriented register for E-commerce's
+customer-facing surfaces). Selecting the same sample/register for every
+Default-mode product regardless of its matched domain is exactly the
+generic-template failure mode Rule 20 exists to prevent — the domain match
+in step 2 above is not a formality, it's the decision.
+
 A sample folder currently containing only a placeholder (see
 `design-samples/README.md` for current population status) is used as a
 *named starting register* (cite `ui-engine/visual-trends.md`'s matching

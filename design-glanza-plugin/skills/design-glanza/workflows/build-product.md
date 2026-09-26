@@ -18,7 +18,10 @@ cover. A gap discovered mid-build is escalated per the rule below, never
 silently resolved by the builder's own judgment.
 
 ## Step order
-Matches `workflows/execute-product-builder.md`'s actions 23-24:
+Matches `workflows/execute-product-builder.md`'s actions 30-31 (Order
+column — shifted from 28-29 when v1.0.9's new Design Research and Visual
+Benchmark & Audit Cycle actions were inserted earlier in the table;
+originally 23-24 before Design Setup's actions were inserted):
 
 1. **Build the implementation plan** (`agents/product-architect.md`'s
    build-order output, `product-builder/requirements/dependency-analysis.md`)
@@ -40,17 +43,25 @@ Matches `workflows/execute-product-builder.md`'s actions 23-24:
    as units complete — "where applicable" (per
    `workflows/execute-product-builder.md`): a planning-only engagement
    legitimately stops here with `output/` empty, but every gate through
-   Prototype must still have passed.
+   Prototype must still have passed. Where `output/` is **not** empty
+   (something was actually built), hand off to `workflows/preview-run.md`
+   next — Implement finishing does not itself mean the product is ready
+   for Test (Rule 19).
 
 ## Gate
-Must pass `config/quality-gates.md`'s **Implement → Test** gate before
-`methodology/test.md` validation begins.
+Must pass `config/quality-gates.md`'s **Implement → Preview & Run** gate
+(Implementation Readiness, B12, still holding) before
+`workflows/preview-run.md` begins. Reaching `methodology/test.md`
+validation additionally requires **Preview & Run → Test** (B14) to pass —
+this workflow does not itself satisfy that gate, `preview-run.md` does.
 
 ## Explicitly not here
 - What order things depend on → `product-intelligence/dependency-analysis.md`
   (this workflow consumes that graph, doesn't compute it).
 - The spec being implemented → `templates/screen-specification.md` /
   `templates/component-spec.md`.
+- Verifying the built output actually launches and runs →
+  `workflows/preview-run.md`.
 - Post-build correctness audit → `audit-product.md`.
 - The build-order/implementation-readiness sign-off itself →
   `agents/product-architect.md`.

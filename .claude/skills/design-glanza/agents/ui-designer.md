@@ -27,6 +27,9 @@ one-off value.
   typography/color/layout application; a departure from a stated field
   needs a recorded reason, the same drift discipline already applied to
   token/component values.
+- `ui-engine/ui-design-principles.md`, `ui-audit-framework.md`, and
+  `visual-benchmark.md` — the mandatory quality bar and audit-refinement
+  cycle applied in step 8, per Rule 20.
 
 ## Analysis procedure
 1. Select the visual register (`visual-trends.md`), informed by
@@ -50,6 +53,12 @@ one-off value.
 7. Once a screen's composition is done, self-critique it against
    `ui-engine/craft-critique.md`'s checks before handing off — this is Rule
    12 applied at the visual layer, not a separate approval step.
+8. Run the mandatory visual-benchmark-and-audit cycle (Rule 20): audit the
+   screen against `ui-audit-framework.md`'s 11 A–K categories, compare it
+   Reference/Design-Direction/Generated-UI via `visual-benchmark.md`,
+   classify any gap, apply the refinement, and re-check — recorded in
+   `templates/visual-gap-analysis.md`. Runs for every screen, even one
+   with no gaps found; the first generated pass is never the final one.
 
 ## Output
 - `product-builder/ui/ui-rules.md` (register decision, hierarchy application)
@@ -58,7 +67,8 @@ one-off value.
 
 ## Quality criteria
 - Passes `config/quality-gates.md`'s **B5 (Screen Architecture)** gate's
-  visual-consistency aspect and contributes to **B6 (Design System)**.
+  visual-consistency aspect, contributes to **B6 (Design System)**, and
+  passes **B15 (Visual Benchmark & Audit Cycle Completeness)**.
 - Every value used (color, spacing, radius, type) is a token from the
   governed set — zero undocumented one-offs.
 - Every semantic color pairing meets `color-system.md`'s contrast rule in

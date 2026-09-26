@@ -7,7 +7,97 @@ everywhere, it belongs here.
 
 ## Skill identity & version
 - **Name:** design-glanza
-- **Version:** 1.0.7 — added a new mandatory **Design Setup / Visual
+- **Version:** 1.0.9 — upgraded UI generation and UI audit quality, without
+  adding a new lifecycle phase or a new Product Builder. Design Setup
+  (v1.0.7) gained a new **Step 0, Design Research** — before reference
+  detection, research current SaaS/admin patterns, this product's own
+  domain conventions (citing `product-types/*.md`/`domain-standards`),
+  information density, navigation/dataviz/form-table/interaction/
+  accessibility/responsive patterns, and current visual trends (citing
+  `ui-engine/visual-trends.md`'s existing anti-trend-slave gate) —
+  new file `design-reference-engine/design-research.md`, folding its
+  output into `design-direction.md` rather than a separate artifact.
+  `reference-analysis.md`'s extraction table expanded from 11 to ~20 rows
+  (visual hierarchy, border treatment, iconography, tabs, tables, filters,
+  forms, cards, and status indicators now extracted explicitly, not
+  folded into vaguer rows); `reference-selection.md` gained an explicit
+  "never collapse to one house style" rule with the domain examples the
+  request specified (Admin Panel ≠ E-commerce ≠ Healthcare ≠ ERP ≠
+  Fintech ≠ CRM). Two new UI-engine files:
+  `ui-engine/ui-design-principles.md` (22 numbered UI-quality principles,
+  each citing the existing file that already enforces it — only 4 are
+  genuinely new material: predictability, recognition-over-recall,
+  contextual guidance, appropriate imagery) and
+  `ui-engine/ui-audit-framework.md` (an 11-category A–K audit — Product
+  Fit, Reference Match, Visual Hierarchy, Layout, Typography, Color,
+  Components, Interaction, Accessibility, Responsive Design, Domain
+  Conventions — reusing `craft-critique.md`'s Observation→Problem→Fix
+  reporting shape rather than inventing a competing one; only categories
+  A and B are genuinely new, C–K cite existing engine files). A new
+  `ui-engine/visual-benchmark.md` defines the mandatory three-way
+  Reference/Design-Direction/Generated-UI comparison, 9 named gap types,
+  and requires **at least one audit-and-refinement cycle even for a
+  clean first draft** — a first UI pass is never treated as final. A new
+  template, `templates/visual-gap-analysis.md`, records that cycle. New
+  **Rule 20 — Design Research & Visual Quality Assurance** (20 rules now)
+  and new **B15 — Visual Benchmark & Audit Cycle Completeness** gate (15
+  measurable dimensions now), added to `config/quality-gates.md` Section
+  A's Prototype→Implement row. No new phase (Design Research is Design
+  Setup's new Step 0, not a 13th lifecycle phase, since the requested
+  pipeline already places it immediately before Design Setup's existing
+  reference-analysis step); no new agent (the existing Prototype-UI
+  agents, `ui-designer.md` and `design-system-expert.md`, own the
+  mandatory audit-refinement cycle, mirroring B13/B14's no-new-agent
+  precedent). Deliberately not touched: `products/projectflow/` (Rule 15)
+  and, until the explicit sync step, `design-glanza-plugin/` and the
+  `~/.claude/` installed copies.
+- **Previously, 1.0.8** — added a new mandatory **Preview & Run** phase
+  between Implement and Test (the lifecycle is now 12 phases; nothing
+  existing was removed or reordered, one phase was inserted). Implementation
+  is not complete because the code was written — after Implement, the built
+  output must actually be launched locally and previewed before Test
+  evaluates it: detect the framework/dev setup, start the local dev server,
+  verify the build succeeds, detect the real local URL/port, check for
+  runtime errors, and fix any build/runtime issues before continuing — never
+  carried into Test as a known issue. An optional public/external preview
+  (e.g. ngrok) happens only on explicit user request, is never
+  auto-installed/configured, and is never required for normal operation. New
+  **Rule 19 — Preview & Run** (19 rules now) and new **B14 — Preview & Run
+  Verification** gate (14 measurable dimensions now), inserted into
+  `config/quality-gates.md` Section A as two transitions (Implement→Preview
+  & Run, Preview & Run→Test) replacing the old single Implement→Test row.
+  New workflow `workflows/preview-run.md` (no dedicated reasoning agent —
+  same "verification by execution, not new design reasoning" posture
+  `workflows/build-product.md` already states for Implement) and a new
+  template `templates/preview-report.md` (project path, framework, start
+  command, local URL, port, build status, runtime status, implemented
+  screen(s), preview status, plus an optional public-preview section).
+  `workflows/build-product.md` updated to hand off to it;
+  `workflows/create-product.md`'s phase list and
+  `workflows/execute-product-builder.md`'s action table (24→29→31 real
+  actions, 35 total table rows) both updated; `SKILL.md` renumbered topics
+  13–19 to 14–20 to insert a new topic 13, and updated the lifecycle
+  diagram, routing table, verb lists, and "Do not" list.
+  `evals/evaluation-rubric.md` gained a 20th dimension (Preview & run
+  verification, Tier B, mapping to B14; total scorable points 215→225) and
+  `evals/test-cases.md` updated to match. **While re-touching
+  `execute-product-builder.md`'s action table for this insertion, found and
+  fixed a real cascading-staleness bug from the 1.0.7 pass**: four sibling
+  workflow files (`create-ux.md`, `create-ui.md`, `build-product.md`,
+  `audit-product.md`) each cite a fixed Order-column range from that table
+  ("Matches ... actions N-M") — the 1.0.7 Design Setup insertion shifted
+  every one of those ranges by +5 rows, but the citations were never
+  updated at the time. All four corrected now, with the shift documented
+  inline rather than silently fixed, so the history is traceable. No agent
+  was added for this phase, mirroring Implement's own precedent; no
+  `allowed-tools`/security-posture change was made to `SKILL.md`'s
+  frontmatter — Preview & Run, like Implement, is carried out by whatever
+  capability is actually invoking the workflow, not by the design-glanza
+  skill persona's own narrowly-scoped tool access. Deliberately not
+  touched: `design-glanza-plugin/` and the three installed copies under
+  `~/.claude/` (consistent with every prior integration round — those are
+  synced as a separate, explicit step, not automatically).
+- **Previously, 1.0.7** — added a new mandatory **Design Setup / Visual
   Direction** phase between Architect and Prototype (the lifecycle is now
   11 phases, not 10 — nothing existing was removed or reordered, one phase
   was inserted). Before any screen or token is designed, the product's
@@ -561,9 +651,44 @@ everywhere, it belongs here.
     open for this change. See the Version summary above for full detail.
     Deliberately not touched: `design-glanza-plugin/`, `products/
     projectflow/`.
+  - 1.0.8 — a new mandatory **Preview & Run** phase inserted between
+    Implement and Test (12 phases now, nothing removed/reordered):
+    detect framework/dev setup, start the local dev server, verify the
+    build, detect the real local URL/port, check for runtime errors, fix
+    build/runtime issues before continuing — new Rule 19 (19 rules), new
+    B14 gate (14 dimensions), a new workflow (`preview-run.md`, no
+    dedicated agent, same posture as Implement), and a new template
+    (`preview-report.md`). `build-product.md` updated to hand off to it;
+    `create-product.md` and `execute-product-builder.md` (24→29→31 real
+    actions) updated; `SKILL.md` renumbered topics 13–19→14–20.
+    `evaluation-rubric.md` gained a 20th dimension (215→225 points);
+    `test-cases.md` updated to match. Also fixed, found while re-touching
+    the action table: `create-ux.md`/`create-ui.md`/`build-product.md`/
+    `audit-product.md` each cited a stale Order-column range the 1.0.7
+    Design Setup insertion had shifted by +5 without updating — all four
+    corrected. No agent added (mirrors Implement); no `allowed-tools`
+    change (Preview & Run is executed by the calling capability, same as
+    Implement, not the skill persona's own scoped tools). See the Version
+    summary above for full detail. Deliberately not touched:
+    `design-glanza-plugin/`, the `~/.claude/` installed copies, `products/
+    projectflow/`.
+  - 1.0.9 — upgraded UI generation/audit quality (no new phase, no new
+    Product Builder): a Design Research step (Design Setup's new Step 0,
+    `design-reference-engine/design-research.md`); an expanded ~20-row
+    reference-extraction table and an explicit anti-generic-template rule
+    in `reference-selection.md`; two new `ui-engine/` files
+    (`ui-design-principles.md`'s 22 principles,
+    `ui-audit-framework.md`'s 11-category A–K audit); a new
+    `ui-engine/visual-benchmark.md` mandating at least one
+    audit-and-refinement cycle per screen, even a clean one; a new
+    template (`templates/visual-gap-analysis.md`); new Rule 20 (20 rules)
+    and new B15 gate (15 dimensions). See the Version summary above for
+    full detail. Deliberately not touched: `products/projectflow/`,
+    `design-glanza-plugin/`, the `~/.claude/` installed copies (until the
+    explicit sync step).
 
 ## Phase registry
-The canonical 11 orchestration phases, in order. Detail lives in
+The canonical 12 orchestration phases, in order. Detail lives in
 `methodology/design-thinking.md` (relationship map) and `workflows/create-product.md`
 (operational sequence) — this is the authoritative list other files point to.
 
@@ -577,20 +702,24 @@ The canonical 11 orchestration phases, in order. Detail lives in
 | 6 | Design Setup | |
 | 7 | Prototype | ✓ |
 | 8 | Implement | |
-| 9 | Test | ✓ |
-| 10 | Audit | |
-| 11 | Iterate | |
+| 9 | Preview & Run | |
+| 10 | Test | ✓ |
+| 11 | Audit | |
+| 12 | Iterate | |
 
 **Design Setup** (added v1.0.7) sits between Architect and Prototype —
 never before Architect (the domain/module shape must exist first) and never
 after Prototype has already started (the visual direction must be
 established, and where a real user is present, confirmed, before the visual
-system and screens are built against it). It is not one of the 5 core
-design-thinking phases (it has no Empathize/Define/Ideate/Prototype/Test
-counterpart of its own) — same category as Architect/Implement/Audit/Iterate.
+system and screens are built against it). **Preview & Run** (added v1.0.8)
+sits between Implement and Test — implementation is not complete until the
+built output actually launches locally and can be previewed, checked before
+Test evaluates it. Neither is one of the 5 core design-thinking phases
+(neither has an Empathize/Define/Ideate/Prototype/Test counterpart of its
+own) — same category as Architect/Implement/Audit/Iterate.
 
 ## Rule registry
-The 18 Operating Rules (full definitions in `config/operating-rules.md`) — listed
+The 20 Operating Rules (full definitions in `config/operating-rules.md`) — listed
 here only as an index so any file can cite "Rule N" without restating it:
 
 | # | Rule |
@@ -613,9 +742,11 @@ here only as an index so any file can cite "Rule N" without restating it:
 | 16 | Extensibility |
 | 17 | Domain Standards |
 | 18 | Design Setup / Visual Direction |
+| 19 | Preview & Run |
+| 20 | Design Research & Visual Quality Assurance |
 
 ## Quality-gate dimension registry
-The 13 measurable quality dimensions (full pass criteria in
+The 15 measurable quality dimensions (full pass criteria in
 `config/quality-gates.md` Section B) — listed here as an index:
 
 | ID | Dimension |
@@ -633,6 +764,8 @@ The 13 measurable quality dimensions (full pass criteria in
 | B11 | QA |
 | B12 | Implementation Readiness |
 | B13 | Design Direction Completeness |
+| B14 | Preview & Run Verification |
+| B15 | Visual Benchmark & Audit Cycle Completeness |
 
 ## Role registry
 The reasoning personas (full detail in each `agents/*.md` file), mapped to the

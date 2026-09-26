@@ -10,7 +10,7 @@ directly ("rubric score meets or exceeds its stated threshold on every
 dimension") — this file is what makes that citation concrete.
 
 ## Do not optimize only for visual output
-This is an enforced weighting rule, not a sentiment. The 20 dimensions are
+This is an enforced weighting rule, not a sentiment. The 21 dimensions are
 grouped into three tiers by weight, and **visual/presentation dimensions
 are capped at under 5% of the total possible score** — even a perfect
 score on every visual dimension cannot compensate for weak product
@@ -18,22 +18,24 @@ reasoning:
 
 | Tier | Weight | Dimensions | Max possible contribution |
 |---|---|---|---|
-| **A — Product Reasoning** | ×3 | Requirement understanding, Business logic, User-role coverage, Edge cases, Traceability, Self-critique, Iteration quality (7) | 105 pts (~47%) |
-| **B — Workflow Completeness** | ×2 | Information architecture, Navigation, User flows, Screen architecture, UX quality, State coverage, Accessibility, Responsive behavior, Implementation readiness, Design direction quality, Preview & run verification (11) | 110 pts (~49%) |
+| **A — Product Reasoning** | ×3 | Requirement understanding, Business logic, User-role coverage, Edge cases, Traceability, Self-critique, Iteration quality (7) | 105 pts (~45%) |
+| **B — Workflow Completeness** | ×2 | Information architecture, Navigation, User flows, Screen architecture, UX quality, State coverage, Accessibility, Responsive behavior, Implementation readiness, Design direction quality, Preview & run verification, Visual benchmark & audit cycle (12) | 120 pts (~51%) |
 | **C — Visual/Presentation** | ×1 | UI system, Component reuse (2) | 10 pts (~4%) |
 
-Total possible: 225 points. A product with a flawless design system and
+Total possible: 235 points. A product with a flawless design system and
 component library but weak requirement understanding or broken traceability
 cannot score well overall — Tier A alone outweighs all of Tier C by more
-than 10:1. **Design direction quality and Preview & run verification both
-sit in Tier B, not Tier C** — they score whether a direction was actually
-established (B13) and whether the build actually runs (B14), never how
-tasteful or polished the result looks, which would belong in Tier C and is
-exactly the kind of visual-preference scoring this rubric caps.
+than 10:1. **Design direction quality, Preview & run verification, and
+Visual benchmark & audit cycle all sit in Tier B, not Tier C** — they score
+whether a direction was actually established (B13), whether the build
+actually runs (B14), and whether the mandatory audit-and-refinement cycle
+actually ran (B15), never how tasteful or polished the result looks, which
+would belong in Tier C and is exactly the kind of visual-preference scoring
+this rubric caps.
 
-## The 20 dimensions
+## The 21 dimensions
 Each dimension is scored 1-5. Nine of these (marked **new**) extend beyond
-`config/quality-gates.md`'s 14 named gates because a genuinely complete
+`config/quality-gates.md`'s 15 named gates because a genuinely complete
 evaluation needs them; the rest map directly to a named gate, cited rather
 than restated. (A prior pass through this file corrected a pre-existing
 miscount in its own text — see `config/master-config.md`'s changelog for
@@ -61,10 +63,11 @@ that history; not repeated here again.)
 | 18 | Iteration quality | A | **new** (Rule 13) | Fixes applied without revalidation, or regress other gates | Fixes revalidate the specific issue, no regression check | Fix + revalidate + explicit regression check, per the loop-termination rule |
 | 19 | Design direction quality | B | B13 | No `design-direction.md`, or references treated as business requirements | Document exists but reference classification unstated, or approval silently skipped | Complete per template, classification stated with evidence, approval confirmed or explicitly waived with reason |
 | 20 | Preview & run verification | B | B14 | Never launched locally, or a known build/runtime failure carried into Test | Launched, but preview report incomplete or a minor issue undocumented | Build succeeds, runtime clean, local URL/port detected, preview report complete, any issue found was fixed before Test |
+| 21 | Visual benchmark & audit cycle | B | B15 | No audit run against any generated screen, or a first-pass finding never re-checked | Audit run, but the three-way comparison skipped or a gap left unclassified | Every A-K category checked, three-way comparison run, every gap classified and refined, re-check recorded — even for a clean first pass |
 
 ## Aggregation
 Score = Σ(dimension score × tier weight). Report both the total (out of
-225) and each tier's subtotal separately — a single blended number hides
+235) and each tier's subtotal separately — a single blended number hides
 exactly the failure mode this rubric exists to prevent (a high visual score
 masking weak reasoning). `config/quality-gates.md`'s B11 threshold is
 checked **per dimension**, not on the aggregate alone: every dimension must

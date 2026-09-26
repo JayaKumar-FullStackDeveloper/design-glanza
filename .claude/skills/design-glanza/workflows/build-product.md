@@ -18,9 +18,10 @@ cover. A gap discovered mid-build is escalated per the rule below, never
 silently resolved by the builder's own judgment.
 
 ## Step order
-Matches `workflows/execute-product-builder.md`'s actions 28-29 (Order
-column — shifted from the original 23-24 when Design Setup's 5 actions
-were inserted earlier in the table):
+Matches `workflows/execute-product-builder.md`'s actions 30-31 (Order
+column — shifted from 28-29 when v1.0.9's new Design Research and Visual
+Benchmark & Audit Cycle actions were inserted earlier in the table;
+originally 23-24 before Design Setup's actions were inserted):
 
 1. **Build the implementation plan** (`agents/product-architect.md`'s
    build-order output, `product-builder/requirements/dependency-analysis.md`)

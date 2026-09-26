@@ -30,12 +30,22 @@ reconcile (see Reconciling multiple references, below).
 | Interaction patterns | What responds to hover/press, how transitions read, whether disclosure is progressive or flat |
 | Design-system characteristics | Whether a token-like system is visible (consistent radius/spacing/type steps) vs. ad hoc per-screen values |
 | Reusable components | Recurring UI pieces (cards, nav bars, modals) worth naming as components rather than one-off layouts |
-| Layout patterns | Grid structure, composition shape (list+detail, dashboard grid, single-column, etc. — the same vocabulary `ui-engine/layout-system.md` names) |
+| Layout structure / grid | Grid structure, composition shape (list+detail, dashboard grid, single-column, etc. — the same vocabulary `ui-engine/layout-system.md` names) |
 | Typography | Type-scale steps actually in use, pairing (one family vs. two), weight usage |
-| Color usage | Palette breadth, saturation level, how semantic meaning (success/danger/warning) is expressed if at all |
-| Spacing | Apparent base unit and multiple pattern (tight/comfortable/spacious) |
-| Radius / elevation | Corner-radius register, shadow depth and frequency |
-| Navigation patterns | Sidebar vs. top nav vs. tabs, breadcrumb presence, how deep navigation is exposed |
+| Color | Palette breadth, saturation level, how semantic meaning (success/danger/warning) is expressed if at all |
+| Visual hierarchy | How the reference itself signals primary vs. secondary vs. tertiary — worth extracting even when it isn't perfect, since a flawed hierarchy is itself a signal about what to depart from |
+| Spacing / density | Apparent base unit and multiple pattern (tight/comfortable/spacious), and which density register that implies |
+| Border treatment | Whether borders are used at all for separation vs. whitespace/shadow alone, weight, and where (cards, inputs, dividers) |
+| Radius | Corner-radius register — sharp, subtly rounded, or pill-shaped, and whether it's applied consistently by component type |
+| Shadows / elevation | Shadow depth and frequency — flat, subtly layered, or heavily skeuomorphic — and whether it maps to a stacking/importance signal or is applied decoratively |
+| Iconography | Stroke vs. fill convention, size consistency, whether icons carry meaning or are decorative |
+| Navigation | Sidebar vs. top nav vs. tabs, breadcrumb presence, how deep navigation is exposed |
+| Tabs | Whether tabs are used for peer content switching, their visual treatment (underline, pill, boxed) |
+| Tables | Row density, header treatment, whether numeric columns use tabular figures, sort/filter affordance placement |
+| Filters | Inline vs. panel/drawer filters, how many are exposed by default vs. behind an "more filters" disclosure |
+| Forms | Field grouping, label placement (top vs. inline), validation-message placement |
+| Cards | Anatomy (image/header/body/footer combination), density, and when the reference reaches for a card vs. a plain list row |
+| Status indicators | Badge vs. dot vs. text-only, color usage, whether a non-color channel accompanies the color (accessibility signal) |
 | Responsive behavior | Only inferable from multiple reference states (e.g. a mobile screenshot alongside a desktop one) — otherwise flagged as unknown, not guessed |
 
 ## The boundary rule — design direction, never business requirements
@@ -89,9 +99,14 @@ be.
 ## Explicitly not here
 - Extracting business logic/requirements from the same input →
   `product-intelligence/brd-analysis.md`.
+- What's conventional for this domain in general, independent of any one
+  supplied reference → `design-research.md` (runs *before* this file, as
+  Design Setup's Step 0).
 - The structured question set used when references are absent or
   incomplete → `design-questionnaire.md`.
 - Deciding Reference-Driven vs. Guideline-Driven vs. Custom vs. Default →
   `reference-selection.md`.
 - The document shape this feeds → `design-direction.md`,
   `templates/design-direction.md`.
+- Comparing the eventual generated screen back against this extraction →
+  `ui-engine/visual-benchmark.md`.

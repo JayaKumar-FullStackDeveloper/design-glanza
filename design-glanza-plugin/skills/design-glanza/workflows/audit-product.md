@@ -13,7 +13,11 @@ working (`workflows/execute-product-builder.md`'s completion criteria).
 ran during Prototype and are re-consulted here, not re-run from scratch.
 
 ## Step order
-Matches `workflows/execute-product-builder.md`'s actions 25-26:
+Matches `workflows/execute-product-builder.md`'s actions 34-35 (Order
+column — shifted from 32-33 by v1.0.9's new Design Research and Visual
+Benchmark & Audit Cycle actions, both inserted earlier in the table;
+originally 25-26 before Design Setup's and Preview & Run's actions were
+inserted):
 
 1. **Test** — run `methodology/test.md`'s all nine evaluation dimensions
    (task completion, usability, discoverability, error prevention,

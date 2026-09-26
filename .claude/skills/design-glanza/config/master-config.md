@@ -7,7 +7,51 @@ everywhere, it belongs here.
 
 ## Skill identity & version
 - **Name:** design-glanza
-- **Version:** 1.0.8 — added a new mandatory **Preview & Run** phase
+- **Version:** 1.0.9 — upgraded UI generation and UI audit quality, without
+  adding a new lifecycle phase or a new Product Builder. Design Setup
+  (v1.0.7) gained a new **Step 0, Design Research** — before reference
+  detection, research current SaaS/admin patterns, this product's own
+  domain conventions (citing `product-types/*.md`/`domain-standards`),
+  information density, navigation/dataviz/form-table/interaction/
+  accessibility/responsive patterns, and current visual trends (citing
+  `ui-engine/visual-trends.md`'s existing anti-trend-slave gate) —
+  new file `design-reference-engine/design-research.md`, folding its
+  output into `design-direction.md` rather than a separate artifact.
+  `reference-analysis.md`'s extraction table expanded from 11 to ~20 rows
+  (visual hierarchy, border treatment, iconography, tabs, tables, filters,
+  forms, cards, and status indicators now extracted explicitly, not
+  folded into vaguer rows); `reference-selection.md` gained an explicit
+  "never collapse to one house style" rule with the domain examples the
+  request specified (Admin Panel ≠ E-commerce ≠ Healthcare ≠ ERP ≠
+  Fintech ≠ CRM). Two new UI-engine files:
+  `ui-engine/ui-design-principles.md` (22 numbered UI-quality principles,
+  each citing the existing file that already enforces it — only 4 are
+  genuinely new material: predictability, recognition-over-recall,
+  contextual guidance, appropriate imagery) and
+  `ui-engine/ui-audit-framework.md` (an 11-category A–K audit — Product
+  Fit, Reference Match, Visual Hierarchy, Layout, Typography, Color,
+  Components, Interaction, Accessibility, Responsive Design, Domain
+  Conventions — reusing `craft-critique.md`'s Observation→Problem→Fix
+  reporting shape rather than inventing a competing one; only categories
+  A and B are genuinely new, C–K cite existing engine files). A new
+  `ui-engine/visual-benchmark.md` defines the mandatory three-way
+  Reference/Design-Direction/Generated-UI comparison, 9 named gap types,
+  and requires **at least one audit-and-refinement cycle even for a
+  clean first draft** — a first UI pass is never treated as final. A new
+  template, `templates/visual-gap-analysis.md`, records that cycle. New
+  **Rule 20 — Design Research & Visual Quality Assurance** (20 rules now)
+  and new **B15 — Visual Benchmark & Audit Cycle Completeness** gate (15
+  measurable dimensions now), added to `config/quality-gates.md` Section
+  A's Prototype→Implement row. No new phase (Design Research is Design
+  Setup's new Step 0, not a 13th lifecycle phase, since the requested
+  pipeline already places it immediately before Design Setup's existing
+  reference-analysis step); no new agent (the existing Prototype-UI
+  agents, `ui-designer.md` and `design-system-expert.md`, own the
+  mandatory audit-refinement cycle, mirroring B13/B14's no-new-agent
+  precedent). Deliberately not touched: `products/projectflow/` (Rule 15)
+  and, until the explicit sync step, `design-glanza-plugin/` and the
+  `~/.claude/` installed copies.
+- **Previously, 1.0.8** — added a new mandatory **Preview & Run** phase
   between Implement and Test (the lifecycle is now 12 phases; nothing
   existing was removed or reordered, one phase was inserted). Implementation
   is not complete because the code was written — after Implement, the built
@@ -628,6 +672,20 @@ everywhere, it belongs here.
     summary above for full detail. Deliberately not touched:
     `design-glanza-plugin/`, the `~/.claude/` installed copies, `products/
     projectflow/`.
+  - 1.0.9 — upgraded UI generation/audit quality (no new phase, no new
+    Product Builder): a Design Research step (Design Setup's new Step 0,
+    `design-reference-engine/design-research.md`); an expanded ~20-row
+    reference-extraction table and an explicit anti-generic-template rule
+    in `reference-selection.md`; two new `ui-engine/` files
+    (`ui-design-principles.md`'s 22 principles,
+    `ui-audit-framework.md`'s 11-category A–K audit); a new
+    `ui-engine/visual-benchmark.md` mandating at least one
+    audit-and-refinement cycle per screen, even a clean one; a new
+    template (`templates/visual-gap-analysis.md`); new Rule 20 (20 rules)
+    and new B15 gate (15 dimensions). See the Version summary above for
+    full detail. Deliberately not touched: `products/projectflow/`,
+    `design-glanza-plugin/`, the `~/.claude/` installed copies (until the
+    explicit sync step).
 
 ## Phase registry
 The canonical 12 orchestration phases, in order. Detail lives in
@@ -661,7 +719,7 @@ Test evaluates it. Neither is one of the 5 core design-thinking phases
 own) — same category as Architect/Implement/Audit/Iterate.
 
 ## Rule registry
-The 19 Operating Rules (full definitions in `config/operating-rules.md`) — listed
+The 20 Operating Rules (full definitions in `config/operating-rules.md`) — listed
 here only as an index so any file can cite "Rule N" without restating it:
 
 | # | Rule |
@@ -685,9 +743,10 @@ here only as an index so any file can cite "Rule N" without restating it:
 | 17 | Domain Standards |
 | 18 | Design Setup / Visual Direction |
 | 19 | Preview & Run |
+| 20 | Design Research & Visual Quality Assurance |
 
 ## Quality-gate dimension registry
-The 14 measurable quality dimensions (full pass criteria in
+The 15 measurable quality dimensions (full pass criteria in
 `config/quality-gates.md` Section B) — listed here as an index:
 
 | ID | Dimension |
@@ -706,6 +765,7 @@ The 14 measurable quality dimensions (full pass criteria in
 | B12 | Implementation Readiness |
 | B13 | Design Direction Completeness |
 | B14 | Preview & Run Verification |
+| B15 | Visual Benchmark & Audit Cycle Completeness |
 
 ## Role registry
 The reasoning personas (full detail in each `agents/*.md` file), mapped to the

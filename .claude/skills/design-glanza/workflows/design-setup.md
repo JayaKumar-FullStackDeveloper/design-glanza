@@ -22,6 +22,15 @@ Matches `agents/design-setup-specialist.md`'s analysis procedure and
 `workflows/execute-product-builder.md`'s Design Setup actions, in this
 order:
 
+0. **Design Research** — before touching any reference, research current
+   product-design patterns relevant to this product: modern SaaS/admin
+   conventions, this product's own domain conventions (per the confirmed
+   `product-types/*.md`/`domain-standards` match), information density,
+   navigation/dataviz/form-table/interaction/accessibility/responsive
+   patterns, and current visual trends — checked against
+   `ui-engine/visual-trends.md`'s adoption gate, never adopted just because
+   they're current (`design-reference-engine/design-research.md`). Folds
+   directly into the direction below; produces no separate artifact.
 1. **Detect references** — scan `products/<slug>/BRD/*` for any of the 13
    recognized reference forms (`design-reference-engine/
    reference-analysis.md`).
@@ -38,7 +47,8 @@ order:
    Guideline-Driven / Custom Design / Default Design-Glanza
    (`design-reference-engine/reference-selection.md`), selecting a
    `design-samples/` entry only for Default mode, matched against Product
-   Architect's confirmed domain.
+   Architect's confirmed domain — never one generic style regardless of
+   domain (Admin Panel ≠ E-commerce ≠ Healthcare ≠ ERP ≠ Fintech ≠ CRM).
 5. **Write `product-builder/ui/design-direction.md`** — every field
    `templates/design-direction.md` requires, filled per
    `design-reference-engine/design-direction.md`'s synthesis discipline.
@@ -69,6 +79,10 @@ those existing points, not a reordering of them.
 ## Explicitly not here
 - The extraction/questionnaire/classification/authoring techniques
   themselves → `design-reference-engine/*`.
+- The design-research technique itself → `design-reference-engine/
+  design-research.md`.
+- Comparing the eventual generated screen back against this direction →
+  `ui-engine/visual-benchmark.md`, `ui-engine/ui-audit-framework.md`.
 - The default sample library's own content → `design-samples/`.
 - The document's exact field list → `templates/design-direction.md`.
 - What happens once the direction is approved → `create-ux.md`,

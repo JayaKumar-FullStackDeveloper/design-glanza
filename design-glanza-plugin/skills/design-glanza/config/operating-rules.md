@@ -1,7 +1,7 @@
 # Operating Rules
 
 ## Responsibility
-The constitution: 18 behavioral rules that apply to every phase, every domain, and
+The constitution: 20 behavioral rules that apply to every phase, every domain, and
 every agent, regardless of product-type. `SKILL.md` and every other file link here
 instead of restating these. Each rule below states what it requires, why, and which
 file actually executes it — this file is the rule, not the mechanism.
@@ -222,9 +222,57 @@ real user is present to ask, confirmed.
   point forward — the approved direction, not fresh preference, governs the
   visual system.
 
+### RULE 19 — Preview & Run
+Implementation is not complete because the code was written — it is
+complete only once the application actually launches locally and the
+implemented screen(s) can be previewed. After Implement, before Test:
+detect the framework/dev setup, start the local dev server, verify the
+build succeeds, detect the real local URL/port, check for runtime errors,
+and fix build/runtime issues before continuing. A public/external preview
+(e.g. via ngrok) is never set up unless the user explicitly asks for one,
+and ngrok is never required for normal operation.
+- **Enforced by:** `config/quality-gates.md`'s new Implement → Preview & Run
+  and Preview & Run → Test phase-transition gates, and the **B14 (Preview &
+  Run Verification)** measurable gate.
+- **Executed via:** the new **Preview & Run** phase between Implement and
+  Test in the lifecycle (`config/master-config.md`'s Phase registry), per
+  `workflows/preview-run.md` — carried out by whatever capability is
+  actually executing the build (the same "no dedicated reasoning
+  specialist" posture `workflows/build-product.md` already states for
+  Implement, since this is verification-by-execution, not new design
+  reasoning). Its output, `product-builder/workflows/preview-report.md`
+  (`templates/preview-report.md`), is the required artifact — a local URL
+  reported only in conversation, with no file written, does not satisfy
+  this rule.
+
+### RULE 20 — Design Research & Visual Quality Assurance
+Design-Glanza reasons like a senior product designer, not a UI template
+generator. Before any screen is drawn, research current product-design,
+navigation, data-visualization, form/table, interaction, accessibility, and
+responsive patterns for this specific domain/user/density combination —
+never adopted blindly, always checked against whether it actually fits
+(Rule 11's anti-fashion discipline applies equally to a researched pattern).
+Where a reference exists, extract its full visual language, not a shallow
+subset. Where none exists, select a domain-matched default — never one
+generic style applied to every product regardless of domain. After a
+screen is generated, it is a draft, not a final answer: run the full UI
+Audit Framework and a three-way Reference/Direction/Generated-UI
+comparison, and complete **at least one** audit-and-refinement cycle before
+declaring the UI complete — even a clean first draft records that the
+check ran, rather than skipping it.
+- **Enforced by:** the new **B15 (Visual Benchmark & Audit Cycle
+  Completeness)** measurable gate, checked as part of the existing
+  Prototype → Implement transition.
+- **Executed via:** `design-reference-engine/design-research.md` (Design
+  Setup's new Step 0), `ui-engine/ui-audit-framework.md` (the 11-category
+  A–K audit), `ui-engine/visual-benchmark.md` (the three-way comparison and
+  mandatory refinement cycle), and `ui-engine/ui-design-principles.md` (the
+  22 named senior-design principles those checks draw on) —
+  `templates/visual-gap-analysis.md` is the required artifact.
+
 ## Explicitly not here
 - Registries/constants (rule numbers are referenced here, but the phase/role/domain
   registries themselves) → `master-config.md`.
-- Phase-transition checklists and the 12 measurable quality-gate dimensions →
+- Phase-transition checklists and the 15 measurable quality-gate dimensions →
   `quality-gates.md`.
 - Assumption tag syntax, severity vocabulary, report shapes → `output-contract.md`.

@@ -26,7 +26,10 @@ the other's decision (see each agent's "must not do" section):
    `create-ui.md`, once color exists to check).
 
 ## Step order
-Matches `workflows/execute-product-builder.md`'s actions 12-18:
+Matches `workflows/execute-product-builder.md`'s actions 18-24 (Order
+column — shifted from 17-23 when v1.0.9's new Design Research action was
+inserted earlier in the table; originally 12-18 before Design Setup's
+actions were inserted):
 
 1. Build user flows (`ux-engine/user-flow-engine.md`, `FLOW-NNN`, recovery
    paths) → `product-builder/ux/user-flows.md`.

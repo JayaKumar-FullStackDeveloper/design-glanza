@@ -23,9 +23,13 @@ Sub-procedures for individual phase clusters are delegated to the other
      (`methodology/prototype.md` fidelity ladder), consuming Design Setup's
      approved `ui/design-direction.md`
   6. Implement → `build-product.md`
-  7. Test → `methodology/test.md`
-  8. Audit → `audit-product.md`
-  9. Iterate → loops back to the appropriate earlier phase per findings
+  7. Preview & Run → `preview-run.md` — the built output must actually
+     launch and run locally before Test evaluates it (Rule 19); skipped
+     only when Implement itself was skipped (a planning-only pass with no
+     `output/` content)
+  8. Test → `methodology/test.md`
+  9. Audit → `audit-product.md`
+  10. Iterate → loops back to the appropriate earlier phase per findings
 - The gate check-in point between every phase (calls `config/quality-gates.md`) and
   the report shape at each stop (calls `config/output-contract.md`).
 - The non-auto-advance behavior itself (per `config/operating-rules.md`): where the
@@ -66,6 +70,7 @@ needs this master workflow open to know what to do next.
 - The Intake extraction technique itself → `product-intelligence/brd-analysis.md`.
 - Per-phase reasoning technique → `methodology/*.md`.
 - The Design Setup procedure itself → `design-setup.md`.
+- The Preview & Run procedure itself → `preview-run.md`.
 - The generator's own scaffolding/validation logic → `scripts/create-product-builder.py`.
 - The concrete, artifact-by-artifact execution sequence →
   `execute-product-builder.md`.

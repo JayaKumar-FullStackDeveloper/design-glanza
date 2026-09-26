@@ -29,12 +29,14 @@ INTAKE -> EMPATHIZE -> DEFINE -> IDEATE -> ARCHITECT -> DESIGN SETUP -> PROTOTYP
 ```
 
 ## The pipeline actions, mapped to phase, technique, and artifact
-35 total rows in the table below — 24 correspond to the originally-requested
-numbered list (`#` column), 11 were added since (Design Setup's 5, Preview &
-Run's 2, plus 4 the engine's own dependency chain always required — Build
-empathy model, Select a solution approach, Confirm domain(s), Build visual
-hierarchy/UI rules — each marked `-` in the `#` column rather than
-renumbering or displacing the original 24).
+37 total rows in the table below — 24 correspond to the originally-requested
+numbered list (`#` column), 13 were added since (Design Setup's 6 —
+including v1.0.9's new Design Research action, Preview & Run's 2, plus 4 the
+engine's own dependency chain always required — Build empathy model, Select
+a solution approach, Confirm domain(s), Build visual hierarchy/UI rules —
+plus v1.0.9's new mandatory Visual Benchmark & Audit Cycle action — each
+marked `-` in the `#` column rather than renumbering or displacing the
+original 24).
 
 Two actions the source material implies but doesn't separately number —
 building the Empathy Model (Empathize) and selecting a solution approach
@@ -61,36 +63,40 @@ actual sequence.
 | 9 | 3 | Build the product definition | DEFINE | `methodology/define.md` (8 outputs) | `product/product-definition.md` |
 | 10 | - | Select a solution approach | IDEATE | `methodology/ideate.md` (8-point evidence-based selection) | `product/product-definition.md` (Chosen Approach section) |
 | 11 | - | Confirm domain(s), sequence dependencies | ARCHITECT | `product-intelligence/domain-classifier.md` + `domain-standards.md`, `dependency-analysis.md` (refined) | `domain/domain-application-notes.md`; `requirements/dependency-analysis.md` (updated) |
-| 12 | - | Detect and analyze design references, if any | DESIGN SETUP | `design-reference-engine/reference-analysis.md` | `ui/design-direction.md` (Reference analysis section) |
-| 13 | - | Run the design questionnaire | DESIGN SETUP | `design-reference-engine/design-questionnaire.md` | `ui/design-direction.md` (Visual style/Layout/Typography/Color/Components/Interaction/Responsive/Accessibility/Brand sections) |
-| 14 | - | Classify the design-reference decision, select a default sample if needed | DESIGN SETUP | `design-reference-engine/reference-selection.md`, `design-samples/` | `ui/design-direction.md` (Reference classification, Design inspiration sections) |
-| 15 | - | Write the complete Design Direction document | DESIGN SETUP | `design-reference-engine/design-direction.md` + `templates/design-direction.md` | `ui/design-direction.md` (complete) |
-| 16 | - | Present the Design Direction Summary and gate on approval | DESIGN SETUP | `workflows/design-setup.md` Step 5 — B13 gate | `ui/design-direction.md` (Approval status recorded) |
-| 17 | 11 | Build user flows | PROTOTYPE (UX) | `ux-engine/user-flow-engine.md` (`FLOW-NNN`, recovery paths) | `ux/user-flows.md` |
-| 18 | 9 | Build information architecture | PROTOTYPE (UX) | `ux-engine/information-architecture.md` | `ux/sitemap.md` |
-| 19 | 10 | Build navigation architecture | PROTOTYPE (UX) | `ux-engine/navigation-system.md` (13 concerns; breadcrumbs never default) | `ux/navigation.md` |
-| 20 | 12 | Build screen architecture | PROTOTYPE (UX) | `templates/screen-architecture.md` region map + `ui-engine/layout-system.md` composition pattern | `ux/screen-architecture.md` |
-| 21 | 13 | Build interaction architecture | PROTOTYPE (UX) | `ux-engine/interaction-design.md` + `form-design.md` | `ux/ux-rules.md` |
-| 22 | 16 | Build state matrix | PROTOTYPE (UX) | `ux-engine/state-design.md` (13 mandatory states) | `ux/state-matrix.md` |
-| 23 | 18 | Build accessibility rules | PROTOTYPE (UX+UI) | `ux-engine/accessibility.md` (structural) + `ui-engine/color-system.md` (perceptual) | `ux/accessibility.md` |
-| 24 | 14 | Build design system | PROTOTYPE (UI) | `ui-engine/design-system.md` + `typography.md`/`color-system.md`/`layout-system.md`, per the approved `ui/design-direction.md` | `ui/design-system.md` |
-| 25 | 15 | Build component architecture | PROTOTYPE (UI) | `ui-engine/component-system.md` (8-point framework, iconography) | `ui/components.md` |
-| 26 | - | Build visual hierarchy / UI rules | PROTOTYPE (UI) | `ui-engine/visual-hierarchy.md`, `visual-trends.md` (register selection, consistent with `ui/design-direction.md`) | `ui/ui-rules.md` |
-| 27 | 17 | Build responsive rules | PROTOTYPE (UI) | `ui-engine/responsive-system.md` | `ui/responsive-rules.md` |
-| 28 | 19 | Build implementation plan | ARCHITECT->IMPLEMENT bridge | build order from step 11's dependency graph, gated by `config/quality-gates.md` B12 | `workflows/implementation-notes.md` |
-| 29 | 20 | Implement the product, where applicable | IMPLEMENT | `workflows/build-product.md` | `output/*`; `workflows/implementation-notes.md` updated with status |
-| 30 | - | Detect framework, verify build, start local dev server, detect URL/port | PREVIEW & RUN | `workflows/preview-run.md` steps 1-4 | `workflows/preview-report.md` (project path, framework, start command, build status, local URL, port) |
-| 31 | - | Verify runtime, fix build/runtime issues, finalize the Preview & Run report | PREVIEW & RUN | `workflows/preview-run.md` steps 5-8 — B14 gate | `workflows/preview-report.md` (complete) |
-| 32 | 21 | Validate the implementation | TEST | `methodology/test.md` — all 9 dimensions, not just task completion | `qa/qa-report.md` (Test section) |
-| 33 | 22 | Audit the product | AUDIT | `workflows/audit-product.md`, `scripts/validate-*.py`, `config/quality-gates.md` Section B | `qa/qa-report.md`, `qa/traceability.md` |
-| 34 | 23 | Fix identified issues | ITERATE | routed per `methodology/design-thinking.md`'s feedback-routing table to whichever phase/file actually owns the defect | whichever artifact above owns the fix |
-| 35 | 24 | Revalidate | ITERATE -> back to TEST/AUDIT | re-run only the specific failed gate(s), not the whole pipeline from scratch | `qa/qa-report.md` updated |
+| 12 | - | Research current design patterns relevant to this product | DESIGN SETUP | `design-reference-engine/design-research.md` | `ui/design-direction.md` (folds into the direction; no separate artifact) |
+| 13 | - | Detect and analyze design references, if any | DESIGN SETUP | `design-reference-engine/reference-analysis.md` | `ui/design-direction.md` (Reference analysis section) |
+| 14 | - | Run the design questionnaire | DESIGN SETUP | `design-reference-engine/design-questionnaire.md` | `ui/design-direction.md` (Visual style/Layout/Typography/Color/Components/Interaction/Responsive/Accessibility/Brand sections) |
+| 15 | - | Classify the design-reference decision, select a default sample if needed | DESIGN SETUP | `design-reference-engine/reference-selection.md`, `design-samples/` | `ui/design-direction.md` (Reference classification, Design inspiration sections) |
+| 16 | - | Write the complete Design Direction document | DESIGN SETUP | `design-reference-engine/design-direction.md` + `templates/design-direction.md` | `ui/design-direction.md` (complete) |
+| 17 | - | Present the Design Direction Summary and gate on approval | DESIGN SETUP | `workflows/design-setup.md` Step 5 — B13 gate | `ui/design-direction.md` (Approval status recorded) |
+| 18 | 11 | Build user flows | PROTOTYPE (UX) | `ux-engine/user-flow-engine.md` (`FLOW-NNN`, recovery paths) | `ux/user-flows.md` |
+| 19 | 9 | Build information architecture | PROTOTYPE (UX) | `ux-engine/information-architecture.md` | `ux/sitemap.md` |
+| 20 | 10 | Build navigation architecture | PROTOTYPE (UX) | `ux-engine/navigation-system.md` (13 concerns; breadcrumbs never default) | `ux/navigation.md` |
+| 21 | 12 | Build screen architecture | PROTOTYPE (UX) | `templates/screen-architecture.md` region map + `ui-engine/layout-system.md` composition pattern | `ux/screen-architecture.md` |
+| 22 | 13 | Build interaction architecture | PROTOTYPE (UX) | `ux-engine/interaction-design.md` + `form-design.md` | `ux/ux-rules.md` |
+| 23 | 16 | Build state matrix | PROTOTYPE (UX) | `ux-engine/state-design.md` (13 mandatory states) | `ux/state-matrix.md` |
+| 24 | 18 | Build accessibility rules | PROTOTYPE (UX+UI) | `ux-engine/accessibility.md` (structural) + `ui-engine/color-system.md` (perceptual) | `ux/accessibility.md` |
+| 25 | 14 | Build design system | PROTOTYPE (UI) | `ui-engine/design-system.md` + `typography.md`/`color-system.md`/`layout-system.md`, per the approved `ui/design-direction.md` | `ui/design-system.md` |
+| 26 | 15 | Build component architecture | PROTOTYPE (UI) | `ui-engine/component-system.md` (8-point framework, iconography) | `ui/components.md` |
+| 27 | - | Build visual hierarchy / UI rules | PROTOTYPE (UI) | `ui-engine/visual-hierarchy.md`, `visual-trends.md` (register selection, consistent with `ui/design-direction.md`) | `ui/ui-rules.md` |
+| 28 | 17 | Build responsive rules | PROTOTYPE (UI) | `ui-engine/responsive-system.md` | `ui/responsive-rules.md` |
+| 29 | - | Run the mandatory visual-benchmark-and-audit cycle | PROTOTYPE (UI) | `ui-engine/ui-audit-framework.md` (11 A-K categories) + `visual-benchmark.md` (three-way comparison, mandatory refinement) — B15 gate | `ui/visual-gap-analysis.md` (one `templates/visual-gap-analysis.md` instance per screen) |
+| 30 | 19 | Build implementation plan | ARCHITECT->IMPLEMENT bridge | build order from step 11's dependency graph, gated by `config/quality-gates.md` B12 | `workflows/implementation-notes.md` |
+| 31 | 20 | Implement the product, where applicable | IMPLEMENT | `workflows/build-product.md` | `output/*`; `workflows/implementation-notes.md` updated with status |
+| 32 | - | Detect framework, verify build, start local dev server, detect URL/port | PREVIEW & RUN | `workflows/preview-run.md` steps 1-4 | `workflows/preview-report.md` (project path, framework, start command, build status, local URL, port) |
+| 33 | - | Verify runtime, fix build/runtime issues, finalize the Preview & Run report | PREVIEW & RUN | `workflows/preview-run.md` steps 5-8 — B14 gate | `workflows/preview-report.md` (complete) |
+| 34 | 21 | Validate the implementation | TEST | `methodology/test.md` — all 9 dimensions, not just task completion | `qa/qa-report.md` (Test section) |
+| 35 | 22 | Audit the product | AUDIT | `workflows/audit-product.md`, `scripts/validate-*.py`, `config/quality-gates.md` Section B | `qa/qa-report.md`, `qa/traceability.md` |
+| 36 | 23 | Fix identified issues | ITERATE | routed per `methodology/design-thinking.md`'s feedback-routing table to whichever phase/file actually owns the defect | whichever artifact above owns the fix |
+| 37 | 24 | Revalidate | ITERATE -> back to TEST/AUDIT | re-run only the specific failed gate(s), not the whole pipeline from scratch | `qa/qa-report.md` updated |
 
-**Actions 12–16 (Design Setup) and 30–31 (Preview & Run) are new** — not
-part of the original 24-action numbering, hence `-` in the `#` column, the
-same convention already used for the other originally-unnumbered actions
-(Build the empathy model, Select a solution approach, Confirm domain(s),
-Build visual hierarchy/UI rules).
+**Actions 12–17 (Design Setup, now including v1.0.9's new Design Research
+action), 29 (v1.0.9's new mandatory Visual Benchmark & Audit Cycle), and
+32–33 (Preview & Run) are new** — not part of the original 24-action
+numbering, hence `-` in the `#` column, the same convention already used
+for the other originally-unnumbered actions (Build the empathy model,
+Select a solution approach, Confirm domain(s), Build visual hierarchy/UI
+rules).
 
 **"Where applicable" (action 24):** some engagements stop at a complete,
 gated specification with no code output (a planning-only pass) — in that
@@ -109,9 +115,14 @@ and `methodology/design-thinking.md`'s loop-termination rule:
   complete, it's one dimension out of nine.
 - `config/quality-gates.md`'s Audit -> Iterate gate passes: B10
   (Traceability) and B11 (QA) both green, with every earlier gate (B1-B9,
-  B12, B13, B14) still holding — a later fix that silently regresses an
+  B12, B13, B14, B15) still holding — a later fix that silently regresses an
   earlier gate reopens the scope, it doesn't get a pass by association with
   the fix.
+- **B15 (Visual Benchmark & Audit Cycle Completeness)** passed before
+  Implement began — a screen whose generated UI was never checked against
+  its reference/design direction, or whose first pass was simply accepted
+  with no recorded refinement cycle, is not complete regardless of how the
+  screen looks (Rule 20).
 - **B13 (Design Direction Completeness)** passed before Prototype's UI pass
   began — a product whose screens were built with no established, approved
   direction (or an explicitly-waived one) is not complete regardless of how
@@ -137,6 +148,8 @@ and `methodology/design-thinking.md`'s loop-termination rule:
 - Design-Glanza's own decision to scaffold a product and the master-level
   phase sequence → `create-product.md`.
 - The Design Setup procedure itself → `design-setup.md`.
+- The visual-benchmark-and-audit cycle's own technique → `ui-engine/
+  {ui-audit-framework,visual-benchmark}.md`, `templates/visual-gap-analysis.md`.
 - The Implement-phase build-sequencing procedure itself → `build-product.md`.
 - The Preview & Run procedure itself → `preview-run.md`.
 - The Audit-phase procedure itself → `audit-product.md`.

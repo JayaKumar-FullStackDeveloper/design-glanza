@@ -35,16 +35,16 @@ across all three forms. The **only** intentional differences are:
 ```json
 {
   "name": "design-glanza",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Master product design and Product Builder factory ...",
   "author": { "name": "Design-Glanza" }
 }
 ```
 
 Note the two independent version numbers: the **plugin package version**
-(`plugin.json`, currently `1.1.0` — bumped on each packaging sync) and the
+(`plugin.json`, currently `1.2.0` — bumped on each packaging sync) and the
 **internal skill capability version** (`config/master-config.md`, currently
-`1.0.8` — Design-Glanza's own changelog, tracking every rule/gate/phase
+`1.0.9` — Design-Glanza's own changelog, tracking every rule/gate/phase
 addition).
 
 ## Keeping the plugin in sync
@@ -52,7 +52,7 @@ addition).
 The plugin folder is a **manually-synced mirror**, not a symlink — every
 change to `.claude/skills/design-glanza/` needs an explicit sync pass to
 `design-glanza-plugin/skills/design-glanza/` (content copy, plus reapplying
-the two documented adaptations above). This has been done through v1.0.8;
+the two documented adaptations above). This has been done through v1.0.9;
 see `config/master-config.md`'s changelog for the exact history of what
 was synced and when.
 

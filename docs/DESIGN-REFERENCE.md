@@ -15,9 +15,10 @@ resolves this; `design-samples/` is what it falls back to as a last resort.
 
 | File | Responsibility |
 |---|---|
-| `reference-analysis.md` | Extracts **design direction** (visual patterns, layout, typography, color, spacing, radius/elevation, navigation, responsive behavior) from up to 13 recognized reference forms (screenshots, Figma, brand guidelines, existing UI, etc.) — explicitly never business requirements, which is `product-intelligence/brd-analysis.md`'s job on the same input. |
+| `design-research.md` | **Step 0, runs first (added v1.0.9).** Researches current product-design patterns relevant to this specific product before any reference is even looked at — modern SaaS/admin conventions, this product's own domain conventions, information density, navigation/dataviz/form/table/interaction/accessibility/responsive patterns, and current visual trends — checked against `ui-engine/visual-trends.md`'s adoption gate so a "current" pattern is never adopted just because it's fashionable. Folds into the direction below; produces no separate artifact. |
+| `reference-analysis.md` | Extracts **design direction** (visual patterns, layout structure/grid, typography, color, visual hierarchy, border treatment, radius, shadows/elevation, iconography, navigation, tabs, tables, filters, forms, cards, status indicators, spacing/density, responsive behavior) from up to 13 recognized reference forms (screenshots, Figma, brand guidelines, existing UI, etc.) — explicitly never business requirements, which is `product-intelligence/brd-analysis.md`'s job on the same input. |
 | `design-questionnaire.md` | The structured, 9-category question set (visual style, layout, typography, color, components, interaction, responsive, accessibility, brand/guidelines) — asked directly, or answered by inference where a reference already covers it. |
-| `reference-selection.md` | Classifies the result into one of four modes: **Reference-Driven**, **Guideline-Driven**, **Custom Design**, or **Default Design-Glanza** — the last only when no real direction exists from the other three. |
+| `reference-selection.md` | Classifies the result into one of four modes: **Reference-Driven**, **Guideline-Driven**, **Custom Design**, or **Default Design-Glanza** — the last only when no real direction exists from the other three, and never the same default register regardless of domain (Admin Panel ≠ E-commerce ≠ Healthcare ≠ ERP ≠ Fintech ≠ CRM). |
 | `design-direction.md` | The authoring/approval technique: synthesize everything above into `product-builder/ui/design-direction.md`, then gate on user approval before Prototype's UI pass begins. |
 
 ## `design-samples/` — the default fallback library
@@ -61,6 +62,17 @@ in any design process), not as licensed, redistributable assets in their
 own right. The MIT license in this repository's [`LICENSE`](../LICENSE)
 file covers Design-Glanza's own original methodology and code — it does not
 purport to grant rights to these third-party images.
+
+## Closing the loop — checking the generated screen against this direction
+
+Establishing a direction here is only half the discipline (added v1.0.9):
+once a screen is actually generated, `ui-engine/ui-audit-framework.md` (an
+11-category A–K audit) and `ui-engine/visual-benchmark.md` (a three-way
+Reference/Design-Direction/Generated-UI comparison) check it back against
+whatever was decided in this phase, and require at least one
+audit-and-refinement cycle — recorded in `templates/visual-gap-analysis.md`
+— before a screen is treated as final, even when nothing was wrong on the
+first pass. See `docs/WORKFLOW.md`'s quality-gates section for **B15**.
 
 ## Extending either library
 

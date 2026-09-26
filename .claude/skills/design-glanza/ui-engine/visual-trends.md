@@ -78,3 +78,8 @@ silently ripple into changing the structural rules of the other files.
 - A concrete, numeric self-critique checklist for a finished composition
   (hierarchy ratios, restraint, anti-cliché tells) → `ui-engine/craft-critique.md`,
   which cites this file's gate rather than restating it.
+- Researching what's actually current before a screen exists to critique →
+  `design-reference-engine/design-research.md` (Design Setup's Step 0),
+  which cites this file's three-point gate as the check any trend finding
+  it surfaces must still pass — this file never gets bypassed by an
+  earlier research step finding something "current."
