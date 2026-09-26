@@ -104,11 +104,11 @@
 <main>
 
 <header class="hero">
-  <span class="tag">Technical Specification · v1.0.6 baseline</span>
+  <span class="tag">Technical Specification · v1.0.9 baseline</span>
   <h1>DESIGN-GLANZA</h1>
   <p class="sub">Complete Skill, Plugin &amp; Product Builder Architecture Specification</p>
   <div class="meta">
-    <div><b>Analyzed:</b> project-local skill, portable plugin, Domain Standards Library, generated Product Builder (ProjectFlow)</div>
+    <div><b>Analyzed:</b> project-local skill, portable plugin (now synced), Domain Standards Library, Design Setup / design-research-and-reference engine, UI Audit Framework &amp; Visual Benchmark system, Preview &amp; Run workflow, generated Product Builder (ProjectFlow), the project's git history</div>
     <div><b>Method:</b> direct inspection of every file on disk — no assumed functionality</div>
     <div><b>Scope:</b> read-only analysis; nothing in the analyzed system was modified to produce this document</div>
   </div>
@@ -128,7 +128,7 @@
 <li><b>Reasoning before rendering.</b> Rule 1/4: no UI is generated before the problem, users, and business logic are understood. This is enforced structurally (phase-transition gates), not just as an instruction.</li>
 </ul>
 <h3>Vision, as actually built vs. as originally stated</h3>
-<p class="small">The root <code>README.md</code> still describes the project as "Architecture shell only" with phase logic "not implemented yet." That description is <b>stale</b> — as of the current on-disk state (version <b>1.0.6</b>), every folder has real, load-bearing content, one full product has been generated end-to-end through Prototype (<code>products/projectflow</code>), and the system has been iteratively extended six times with external design knowledge and a Domain Standards Library. This drift between the stated vision and the actual state is tracked in <a href="#s19">§19</a>.</p>
+<p class="small">As of the current on-disk state (version <b>1.0.9</b>), every folder has real, load-bearing content, one full product has been generated through Prototype (<code>products/projectflow</code>), and the system has been iteratively extended across nine minor versions since 1.0.1 — six passes of external design-knowledge integration, a Domain Standards Library, a mandatory Design Setup / visual-direction phase, a mandatory Preview &amp; Run phase, and (this version) a mandatory design-research-and-visual-audit system. Unlike the earlier baseline of this document, the root <code>README.md</code> is now current and the project is under git version control, published at <code>github.com/JayaKumar-FullStackDeveloper/design-glanza</code> — two of the previously-flagged drift risks are resolved (<a href="#s19">§19</a> tracks what still isn't).</p>
 </section>
 
 <section id="s2">
@@ -136,9 +136,9 @@
 <p>Design-Glanza is organized as <b>four layers</b>, each with a distinct authority and lifespan:</p>
 <table>
 <tr><th>Layer</th><th>Location</th><th>Lifespan</th><th>Contains</th></tr>
-<tr><td><b>1. Master Skill</b></td><td><code>.claude/skills/design-glanza/</code></td><td>Permanent, versioned (currently <b>1.0.6</b>)</td><td>The domain-agnostic reasoning engine: rules, gates, methodology, UX/UI technique, agents, workflows, templates, scripts, evals</td></tr>
+<tr><td><b>1. Master Skill</b></td><td><code>.claude/skills/design-glanza/</code></td><td>Permanent, versioned (currently <b>1.0.9</b>)</td><td>The domain-agnostic reasoning engine: rules, gates, methodology, UX/UI technique, design-reference technique, agents, workflows, templates, scripts, evals</td></tr>
 <tr><td><b>2. Domain Overlays</b></td><td><code>product-types/*.md</code> + <code>product-types/domain-standards/</code></td><td>Permanent, extended over time</td><td>12 authored domain packs (Domain Pack Contract) <i>and</i> a 122-entry externally-sourced UI/UX standards registry — two independent, composable domain-matching systems</td></tr>
-<tr><td><b>3. Portable Plugin</b></td><td><code>design-glanza-plugin/</code></td><td>Snapshot, manually synced</td><td>A Claude Code plugin-packaged mirror of the master skill, for distribution outside this one project</td></tr>
+<tr><td><b>3. Portable Plugin</b></td><td><code>design-glanza-plugin/</code></td><td>Snapshot, manually synced</td><td>A Claude Code plugin-packaged mirror of the master skill, for distribution outside this one project — brought to full 1.0.9 parity in this pass (<a href="#s19">§19</a>)</td></tr>
 <tr><td><b>4. Generated Product Builders</b></td><td><code>products/&lt;slug&gt;/</code></td><td>One per real product, grows over that product's life</td><td>Product-specific requirements, UX, UI, QA artifacts — references the master engine by relative path, never copies it</td></tr>
 </table>
 <h3>The central architectural invariant</h3>
@@ -146,37 +146,38 @@
 <h3>Governance mechanisms that keep the architecture from eroding</h3>
 <table>
 <tr><th>Mechanism</th><th>Enforces</th></tr>
-<tr><td>17 Operating Rules (<code>config/operating-rules.md</code>)</td><td>The constitution — every phase/agent/domain is bound by the same 17 rules, each stating what/why/which-file-executes-it</td></tr>
-<tr><td>12 Quality Gates B1–B12 + 10 phase-transition gates (<code>config/quality-gates.md</code>)</td><td>Binary pass/fail checkpoints between phases</td></tr>
-<tr><td>18-dimension weighted Evaluation Rubric (<code>evals/evaluation-rubric.md</code>)</td><td>Graded quality, weighted so visual polish alone cannot mathematically pass (capped &lt;5% of total score)</td></tr>
+<tr><td>20 Operating Rules (<code>config/operating-rules.md</code>)</td><td>The constitution — every phase/agent/domain is bound by the same 20 rules, each stating what/why/which-file-executes-it</td></tr>
+<tr><td>15 Quality Gates B1–B15 + 12 phase-transition gates (<code>config/quality-gates.md</code>)</td><td>Binary pass/fail checkpoints between phases — including B13 (Design Direction Completeness), B14 (Preview &amp; Run Verification), and B15 (Visual Benchmark &amp; Audit Cycle Completeness), all added since the v1.0.6 baseline</td></tr>
+<tr><td>21-dimension weighted Evaluation Rubric (<code>evals/evaluation-rubric.md</code>)</td><td>Graded quality, weighted so visual polish alone cannot mathematically pass (capped &lt;5% of the 235-point total)</td></tr>
 <tr><td>Deterministic validator scripts (<code>scripts/validate-*.py</code>)</td><td>Structural checks only — never fabricate a subjective/reasoning-based verdict</td></tr>
-<tr><td>Agent "must not do" boundaries (all 8 <code>agents/*.md</code>)</td><td>No specialist can redesign another's scope; problems are routed, not silently fixed in place</td></tr>
+<tr><td>Agent "must not do" boundaries (all 9 <code>agents/*.md</code>)</td><td>No specialist can redesign another's scope; problems are routed, not silently fixed in place</td></tr>
 </table>
 </section>
 
 <section id="s3">
 <h2><span class="num">03</span>Complete Folder / File Structure</h2>
-<p>Verified directly from disk (not assumed). Counts as of this analysis:</p>
+<p>Verified directly from disk (not assumed). Counts as of this analysis (v1.0.9):</p>
 <div class="grid2">
-<div class="card"><h4>Master skill</h4><p>89 markdown files across 12 folders, 7 Python scripts, 1 JSON registry, 122 domain-standard sub-folders (11 with a PDF, 111 with a placeholder <code>README.md</code>)</p></div>
-<div class="card"><h4>Plugin</h4><p>84 markdown files, 6 Python scripts (no domain-standards content at all — see <a href="#s19">§19</a>)</p></div>
+<div class="card"><h4>Master skill</h4><p><b>230</b> markdown files across <b>14</b> top-level folders, 7 Python scripts, 1 JSON registry, 122 domain-standard sub-folders (11 with a PDF, 111 with a placeholder <code>README.md</code>) — up from 89 files / 12 folders at the v1.0.6 baseline: two whole new engine folders (<code>design-reference-engine/</code>, <code>design-samples/</code>) plus a new agent, two new workflows, three new <code>ui-engine/</code> files, and three new templates.</p></div>
+<div class="card"><h4>Plugin</h4><p><b>230</b> markdown files, 7 Python scripts — <b>full parity with the master skill</b>, including the entire <code>domain-standards/</code> folder, as of a bulk resync performed this pass (previously missing 6 files and all of <code>domain-standards/</code> — see <a href="#s19">§19</a> for what's still a manual, unautomated step).</p></div>
 </div>
-<div class="filetree">Design-Glanza/                              (project root — NOT a git repository)
-├── README.md                              ⚠ stale: says "architecture shell only"
+<div class="filetree">Design-Glanza/                              (project root — git repository, published on GitHub)
+│                                             github.com/JayaKumar-FullStackDeveloper/design-glanza
+├── README.md                              current — reflects v1.0.9, no longer the stale "architecture shell" text
 ├── .claude/
 │   ├── CLAUDE.md                          project-level instructions for Claude Code
 │   └── skills/design-glanza/              ── THE MASTER SKILL ──
-│       ├── SKILL.md                       orchestrator: frontmatter + 18 numbered topics
-│       ├── config/
+│       ├── SKILL.md                       orchestrator: frontmatter + 20 numbered topics
+│       ├── config/                        (4 files)
 │       │   ├── master-config.md           registries: version, phases, rules, gates, roles, domains
-│       │   ├── operating-rules.md         17 numbered constitutional rules
-│       │   ├── quality-gates.md           10 phase-transition gates + 12 measurable B1–B12 gates
+│       │   ├── operating-rules.md         20 numbered constitutional rules
+│       │   ├── quality-gates.md           12 phase-transition gates + 15 measurable B1–B15 gates
 │       │   └── output-contract.md         assumption-tag format, severity vocabulary, report shapes
-│       ├── methodology/
+│       ├── methodology/                   (7 files)
 │       │   ├── design-thinking.md         the 5-phase loop engine + feedback-routing table
 │       │   ├── empathize.md   define.md   ideate.md   prototype.md   test.md
 │       │   └── design-judgment.md         9-step / 12-factor applied decision engine
-│       ├── product-intelligence/
+│       ├── product-intelligence/          (9 files)
 │       │   ├── brd-analysis.md            20-point extraction checklist, input-type postures
 │       │   ├── requirement-engine.md      REQ-NNN model + field schema
 │       │   ├── business-logic.md          BR-NNN rules/validation/triggers/status
@@ -193,12 +194,15 @@
 │       │   ├── ux-writing.md              microcopy engine (added v1.0.5)
 │       │   ├── localization.md            RTL/i18n (added v1.0.5)
 │       │   └── search-ux.md               search-pattern spec (added v1.0.5)
-│       ├── ui-engine/                     (9 files)
+│       ├── ui-engine/                     (12 files — 3 new this version)
 │       │   ├── design-system.md           radius/elevation/motion(closed 3-token)/icon tokens
 │       │   ├── layout-system.md   typography.md   color-system.md
 │       │   ├── component-system.md        8-point component framework
 │       │   ├── visual-hierarchy.md   responsive-system.md   visual-trends.md (3 registers)
-│       │   └── craft-critique.md          9-check numeric self-critique (added v1.0.4/.5)
+│       │   ├── craft-critique.md          9-check numeric self-critique (added v1.0.4/.5)
+│       │   ├── ui-design-principles.md    NEW v1.0.9 — 22 numbered UI-quality principles
+│       │   ├── ui-audit-framework.md      NEW v1.0.9 — 11-category A–K strict UI audit
+│       │   └── visual-benchmark.md        NEW v1.0.9 — 3-way Reference/Direction/Generated comparison, mandatory refinement cycle
 │       ├── product-types/                 (12 domain packs + the Domain Standards Library)
 │       │   ├── saas.md  admin-panel.md  erp.md  crm.md  ecommerce.md  healthcare.md
 │       │   ├── hrms.md  fintech.md  logistics.md  marketplace.md  landing-page.md
@@ -207,39 +211,60 @@
 │       │       ├── domain-registry.json       122 entries, 12 categories
 │       │       ├── README.md
 │       │       ├── 01-core-business/          11 COMPLETE PDFs
-│       │       └── 02-…/ 12-developer-saas/   111 PENDING (README placeholder only)
-│       ├── agents/                        (8 specialist personas)
-│       │   ├── brd-analyst.md  product-architect.md  ux-architect.md
-│       │   ├── interaction-designer.md  ui-designer.md  design-system-expert.md
-│       │   └── accessibility-expert.md  qa-expert.md
-│       ├── workflows/                     (8 operational procedures)
+│       │       └── 02-…/ 12-developer-saas/   111 PENDING (README placeholder only — unchanged since v1.0.6)
+│       ├── design-reference-engine/       NEW folder, added v1.0.7, extended v1.0.9 (5 files)
+│       │   ├── design-research.md         NEW v1.0.9 — Design Setup's Step 0, current-pattern research
+│       │   ├── reference-analysis.md      extraction table expanded 11→~20 rows this version
+│       │   ├── design-questionnaire.md    9-category structured question set
+│       │   ├── reference-selection.md     Reference-Driven/Guideline-Driven/Custom/Default classifier
+│       │   └── design-direction.md        authoring/approval synthesis technique
+│       ├── design-samples/                NEW folder, added v1.0.7 (12 domain/platform folders + common/)
+│       │   └── (7 of 13 folders now hold real curated assets: fintech, healthcare, hrms, crm,
+│       │        logistics, ecommerce, common — the rest are still placeholder-only; the
+│       │        folder's own README.md text hasn't been updated to say so, see §19)
+│       ├── agents/                        (9 specialist personas — 1 new since baseline)
+│       │   ├── brd-analyst.md  product-architect.md  design-setup-specialist.md (added v1.0.7)
+│       │   ├── ux-architect.md  interaction-designer.md  ui-designer.md
+│       │   └── design-system-expert.md  accessibility-expert.md  qa-expert.md
+│       ├── workflows/                     (10 operational procedures — 2 new since baseline)
 │       │   ├── analyze-brd.md  create-product.md  execute-product-builder.md
 │       │   ├── create-ux.md  create-ui.md  build-product.md
+│       │   ├── design-setup.md (added v1.0.7)  preview-run.md (added v1.0.8)
 │       │   └── audit-product.md  redesign-product.md
-│       ├── templates/                     (11 fill-in-the-blank artifact shapes)
-│       ├── scripts/                       (7 Python files, stdlib-only, no pip deps)
+│       ├── templates/                     (14 fill-in-the-blank artifact shapes — 3 new since baseline)
+│       │   └── + design-direction.md (v1.0.7), preview-report.md (v1.0.8), visual-gap-analysis.md (v1.0.9)
+│       ├── scripts/                       (7 Python files, stdlib-only, no pip deps — unchanged)
 │       │   ├── _common.py                 shared paths/regex/Finding type — imported, never run
 │       │   ├── create-product-builder.py  the Product Builder Factory (generate/validate)
 │       │   ├── validate-requirements.py  validate-screens.py  validate-states.py
 │       │   ├── validate-product.py        aggregates the three above
 │       │   └── generate-report.py         renders qa-report.md, honestly marks what it can't judge
-│       ├── use-cases/                     (8 worked scenarios, 9-stage schema each)
-│       └── evals/
-│           ├── test-cases.md              10 benchmark scenarios
-│           ├── evaluation-rubric.md       18 dimensions, 3 weighted tiers, 205 pts total
+│       ├── use-cases/                     (8 worked scenarios, 9-stage schema each — unchanged)
+│       └── evals/                         (3 files)
+│           ├── test-cases.md              10 benchmark scenarios, coverage mapped to 21 dimensions
+│           ├── evaluation-rubric.md       21 dimensions, 3 weighted tiers, 235 pts total
 │           └── benchmark-matrix.md        version-over-version scoring + Failure Log
 │
-├── design-glanza-plugin/                  ── PORTABLE PLUGIN (stale mirror, see §19) ──
-│   ├── .claude-plugin/plugin.json         name/description/version 1.0.0/author
+├── design-glanza-plugin/                  ── PORTABLE PLUGIN (synced to full v1.0.9 parity this pass) ──
+│   ├── .claude-plugin/plugin.json         name/description/version 1.2.0/author
 │   ├── README.md
-│   └── skills/design-glanza/              same 12-folder shape, missing 6 newer files + all of domain-standards/
+│   └── skills/design-glanza/              same 14-folder shape as the master skill, 230 md / 7 py —
+│                                           differs from master by exactly 2 documented adaptations:
+│                                           SKILL.md's dual invocation phrasing, scripts/_common.py's
+│                                           _resolve_project_root() (see §9)
 │
 └── products/                              ── GENERATED PRODUCT BUILDERS ──
     ├── README.md
-    └── projectflow/                       the one real generated product (see §18)
-        ├── product.json                   10-field manifest — master_skill_version: "1.0.2" (stale, see §19)
+    └── projectflow/                       the one real generated product (see §18) — untouched by
+                                            every version bump since it was generated (Rule 15)
+        ├── product.json                   10-field manifest — master_skill_version: "1.0.2" (now
+        │                                   7 versions stale against live 1.0.9, see §19)
         ├── BRD/                           brief.md
         ├── product-builder/               product/ requirements/ ux/ ui/ domain/ workflows/ qa/
+        │   │                              — no ui/design-direction.md, workflows/preview-report.md,
+        │   │                              or ui/visual-gap-analysis.md: this product predates v1.0.7's
+        │   │                              Design Setup mandate and v1.0.8/1.0.9's Preview & Run and
+        │   │                              visual-audit mandates entirely (see §18/§19)
         │   └── SKILL.md                   generated — references the master engine by relative path
         └── output/                        empty — Implement was never invoked (planning-only pass)
 </div>
@@ -249,15 +274,15 @@
 <h2><span class="num">04</span>Skill → Plugin → Product Type → Domain → Product Builder Hierarchy</h2>
 <div class="mermaid">
 graph TD
-  A["Design-Glanza Master Skill<br/>.claude/skills/design-glanza/<br/>(v1.0.6, project-local, disable-model-invocation: true)"]
-  B["design-glanza-plugin/<br/>portable Claude Code plugin<br/>(stale snapshot ~v1.0.3-era)"]
+  A["Design-Glanza Master Skill<br/>.claude/skills/design-glanza/<br/>(v1.0.9, project-local, disable-model-invocation: true)"]
+  B["design-glanza-plugin/<br/>portable Claude Code plugin<br/>(resynced to full v1.0.9 parity this pass)"]
   C1["12 Product-Type Packs<br/>product-types/*.md<br/>(Domain Pack Contract, 12 points)"]
   C2["Domain Standards Library<br/>product-types/domain-standards/<br/>(122-entry registry, 12 categories)"]
   D["agents/product-architect.md<br/>matches BOTH systems at Architect"]
   E["Generated Product Builder<br/>products/&lt;slug&gt;/product-builder/<br/>(one per real product)"]
   F["output/<br/>the actual built artifact, if Implement runs"]
 
-  A -->|"authored once, mirrored manually"| B
+  A -->|"copied once, re-synced manually — no automated check yet"| B
   A -->|"owns"| C1
   A -->|"owns"| C2
   C1 --> D
@@ -278,28 +303,31 @@ graph TD
 
 <section id="s5">
 <h2><span class="num">05</span>End-to-End Workflow</h2>
-<p>The <b>10-phase lifecycle</b> is the enforced production pipeline. It is not a simple waterfall — <code>methodology/design-thinking.md</code> runs a 5-phase <b>loop</b> (Empathize→Define→Ideate→Prototype→Test) underneath it at three nested granularities (product-level, feature-level, screen-level), and Test failures route backward per an explicit table, not forward-only.</p>
+<p>The <b>12-phase lifecycle</b> is the enforced production pipeline — grown from 10 phases at the v1.0.6 baseline by two deliberate insertions: <b>Design Setup</b> (between Architect and Prototype, v1.0.7) and <b>Preview &amp; Run</b> (between Implement and Test, v1.0.8). It is not a simple waterfall — <code>methodology/design-thinking.md</code> runs a 5-phase <b>loop</b> (Empathize→Define→Ideate→Prototype→Test) underneath it at three nested granularities (product-level, feature-level, screen-level), and Test failures route backward per an explicit table, not forward-only.</p>
 <div class="mermaid">
 graph LR
   I[Intake] --> E[Empathize]
   E --> D[Define]
   D --> ID[Ideate]
   ID --> AR[Architect]
-  AR --> P[Prototype]
+  AR --> DS["Design Setup<br/>(added v1.0.7)"]
+  DS --> P[Prototype]
   P --> IM[Implement]
-  IM --> T[Test]
+  IM --> PR["Preview &amp; Run<br/>(added v1.0.8)"]
+  PR --> T[Test]
   T --> AU[Audit]
   AU --> IT[Iterate]
   IT -.->|"routes to whichever phase actually owns the finding"| E
   IT -.-> D
   IT -.-> ID
+  IT -.-> DS
   IT -.-> P
   T -.->|"feedback-routing table"| D
   T -.-> ID
   T -.-> P
 </div>
-<h3>The 24 concrete actions (per <code>workflows/execute-product-builder.md</code>)</h3>
-<p class="small">This is the actual runbook every generated Product Builder follows. "Order" is the real execution sequence (dependency-driven); "#" is the originally-requested numbering, kept for traceability.</p>
+<h3>The 37 concrete actions (per <code>workflows/execute-product-builder.md</code>)</h3>
+<p class="small">This is the actual runbook every generated Product Builder follows — grown from 24 rows at the v1.0.6 baseline to 37: the original 24 numbered actions plus 13 added since (Design Setup's 6 including this version's new Design Research step, Preview &amp; Run's 2, this version's new mandatory Visual Benchmark &amp; Audit Cycle action, and 4 the engine's own dependency chain always required). "Order" is the real execution sequence (dependency-driven); "#" is the originally-requested numbering, kept for traceability.</p>
 <table>
 <tr><th>Order</th><th>Phase</th><th>Action</th><th>Master technique</th><th>Artifact written</th></tr>
 <tr><td>1–7</td><td>INTAKE</td><td>Read BRD → extract → REQ/BR/ROLE/DEP/EDGE</td><td><code>brd-analysis.md</code> (20-point checklist)</td><td><code>requirements/*.md</code></td></tr>
@@ -307,15 +335,19 @@ graph LR
 <tr><td>9</td><td>DEFINE</td><td>8 outputs incl. falsifiable success criteria</td><td><code>define.md</code></td><td><code>product/product-definition.md</code></td></tr>
 <tr><td>10</td><td>IDEATE</td><td>3+ divergent approaches, evidence-scored selection</td><td><code>ideate.md</code></td><td><code>product/product-definition.md</code></td></tr>
 <tr><td>11</td><td>ARCHITECT</td><td>Confirm domain(s) — <b>both</b> registries — sequence deps</td><td><code>domain-classifier.md</code> + <code>domain-standards.md</code></td><td><code>domain/domain-application-notes.md</code></td></tr>
-<tr><td>12–18</td><td>PROTOTYPE (UX)</td><td>Flows, IA, nav, screens, interaction, states, structural a11y</td><td><code>ux-engine/*</code></td><td><code>ux/*.md</code></td></tr>
-<tr><td>19–22</td><td>PROTOTYPE (UI)</td><td>Design system, components, visual hierarchy/register, responsive</td><td><code>ui-engine/*</code></td><td><code>ui/*.md</code></td></tr>
-<tr><td>23</td><td>ARCHITECT→IMPLEMENT</td><td>Build order + B12 gate</td><td>dependency graph</td><td><code>workflows/implementation-notes.md</code></td></tr>
-<tr><td>24</td><td>IMPLEMENT</td><td>Build, where applicable</td><td><code>build-product.md</code></td><td><code>output/*</code></td></tr>
-<tr><td>25</td><td>TEST</td><td>All 9 dimensions, never task-completion alone</td><td><code>test.md</code></td><td><code>qa/qa-report.md</code></td></tr>
-<tr><td>26</td><td>AUDIT</td><td>Validators + traceability + drift + conformance</td><td><code>audit-product.md</code></td><td><code>qa/qa-report.md</code>, <code>qa/traceability.md</code></td></tr>
-<tr><td>27–28</td><td>ITERATE</td><td>Route fix to owning file, revalidate only that gate</td><td>feedback-routing table</td><td>whichever file owns the fix</td></tr>
+<tr><td>12</td><td>DESIGN SETUP</td><td><b>NEW v1.0.9</b> — research current design patterns relevant to this product before any reference is touched</td><td><code>design-reference-engine/design-research.md</code></td><td><code>ui/design-direction.md</code> (folds in; no separate artifact)</td></tr>
+<tr><td>13–17</td><td>DESIGN SETUP</td><td>Detect/analyze references, questionnaire, classify Reference/Guideline/Custom/Default, write and gate-approve the direction</td><td><code>design-reference-engine/*</code>, <code>design-samples/</code> (added v1.0.7)</td><td><code>ui/design-direction.md</code></td></tr>
+<tr><td>18–24</td><td>PROTOTYPE (UX)</td><td>Flows, IA, nav, screens, interaction, states, structural a11y</td><td><code>ux-engine/*</code></td><td><code>ux/*.md</code></td></tr>
+<tr><td>25–28</td><td>PROTOTYPE (UI)</td><td>Design system, components, visual hierarchy/register, responsive</td><td><code>ui-engine/*</code></td><td><code>ui/*.md</code></td></tr>
+<tr><td>29</td><td>PROTOTYPE (UI)</td><td><b>NEW v1.0.9</b> — mandatory visual-benchmark-and-audit cycle: 11-category A–K audit + 3-way Reference/Direction/Generated comparison, at least one refinement pass required even for a clean draft</td><td><code>ui-audit-framework.md</code> + <code>visual-benchmark.md</code> — gate <b>B15</b></td><td><code>ui/visual-gap-analysis.md</code> (1 instance per screen)</td></tr>
+<tr><td>30</td><td>ARCHITECT→IMPLEMENT</td><td>Build order + B12 gate</td><td>dependency graph</td><td><code>workflows/implementation-notes.md</code></td></tr>
+<tr><td>31</td><td>IMPLEMENT</td><td>Build, where applicable</td><td><code>build-product.md</code></td><td><code>output/*</code></td></tr>
+<tr><td>32–33</td><td>PREVIEW &amp; RUN</td><td><b>Added v1.0.8</b> — detect framework, start dev server, verify build, detect URL/port, fix runtime issues before Test</td><td><code>preview-run.md</code> — gate <b>B14</b></td><td><code>workflows/preview-report.md</code></td></tr>
+<tr><td>34</td><td>TEST</td><td>All 9 dimensions, never task-completion alone</td><td><code>test.md</code></td><td><code>qa/qa-report.md</code></td></tr>
+<tr><td>35</td><td>AUDIT</td><td>Validators + traceability + drift + conformance</td><td><code>audit-product.md</code></td><td><code>qa/qa-report.md</code>, <code>qa/traceability.md</code></td></tr>
+<tr><td>36–37</td><td>ITERATE</td><td>Route fix to owning file, revalidate only that gate</td><td>feedback-routing table</td><td>whichever file owns the fix</td></tr>
 </table>
-<div class="callout warn"><b>"Where applicable" is not license to skip QA.</b> A planning-only engagement can legitimately leave <code>output/</code> empty — but every gate through Prototype (B1–B9) must still pass, and Test/Audit still evaluate whatever <i>was</i> produced.</div>
+<div class="callout warn"><b>"Where applicable" is not license to skip QA.</b> A planning-only engagement can legitimately leave <code>output/</code> empty — but every gate through Prototype (B1–B9, B13, B15) must still pass, and Test/Audit still evaluate whatever <i>was</i> produced.</div>
 </section>
 
 <section id="s6">
@@ -420,7 +452,7 @@ sequenceDiagram
   "status": "scaffolded",
   "created_at": "...", "updated_at": "..."
 }</code></pre>
-<div class="callout warn"><code>master_skill_version</code> is stamped <b>once</b>, at generation/update time — it is not re-checked automatically thereafter. ProjectFlow's manifest still reads <code>1.0.2</code> while the live master skill is at <code>1.0.6</code>. See <a href="#s19">§19</a>.</div>
+<div class="callout warn"><code>master_skill_version</code> is stamped <b>once</b>, at generation/update time — it is not re-checked automatically thereafter. ProjectFlow's manifest still reads <code>1.0.2</code> while the live master skill is at <code>1.0.9</code> — <b>7 versions</b> stale now, up from 5 at the previous baseline of this document, since ProjectFlow has never been touched by a <code>--update</code> run. See <a href="#s19">§19</a>.</div>
 <h3><code>create-product-builder.py</code>'s own stated boundary</h3>
 <p>Per its docstring: it performs <b>no reasoning</b>. It never invents a business objective, requirement, flow, or rule — it only templates whatever the caller's product definition already contains, marking anything else <code>pending</code> for a later phase/<code>--update</code> to fill in. <code>product_type</code> is discovered <b>dynamically</b> from whatever <code>.md</code> files actually exist in <code>product-types/</code> — a new pack becomes valid with zero script changes.</p>
 </section>
@@ -436,7 +468,8 @@ graph TD
   PI --> UI["ui-engine/*"]
   UX --> PT["product-types/*<br/>(12 packs + domain-standards/)"]
   UI --> PT
-  PT --> AG["agents/*<br/>(8 specialists, cite everything above)"]
+  PT --> DRE["design-reference-engine/* + design-samples/<br/>(Design Setup phase, added v1.0.7, extended v1.0.9)"]
+  DRE --> AG["agents/*<br/>(9 specialists, cite everything above)"]
   AG --> WF["workflows/*<br/>(sequence agents, cite gates)"]
   WF --> TPL["templates/*<br/>(fill-in shapes each artifact uses)"]
   WF --> SCR["scripts/*.py<br/>(deterministic structural checks)"]
@@ -448,10 +481,10 @@ graph TD
 <tr><td>Claude Code skill mechanism</td><td>Whole system</td><td><code>SKILL.md</code> frontmatter: <code>disable-model-invocation: true</code> — explicit invocation only, via <code>/design-glanza</code></td></tr>
 <tr><td>Python 3.x, stdlib only</td><td><code>scripts/*.py</code></td><td>No pip packages — <code>argparse</code>, <code>pathlib</code>, <code>dataclasses</code>, <code>re</code> only</td></tr>
 <tr><td>Claude Code plugin mechanism</td><td><code>design-glanza-plugin/.claude-plugin/plugin.json</code></td><td>Installed via <code>claude --plugin-dir</code> or a marketplace; a separate, manually-maintained packaging</td></tr>
-<tr><td>None (no git repo)</td><td>project root</td><td>Confirmed: this project is <b>not</b> a git repository — versioning lives entirely in <code>master-config.md</code>'s prose changelog</td></tr>
+<tr><td>Git + GitHub</td><td>project root</td><td>Confirmed: this project <b>is now</b> a git repository, published at <code>github.com/JayaKumar-FullStackDeveloper/design-glanza</code> (public, MIT-licensed) — resolved since the previous baseline of this document, which found no version control at all</td></tr>
 </table>
-<h3>Master ↔ Plugin dependency (the one that has drifted)</h3>
-<p>The plugin was created once, by copying the master skill and rewriting only its path-resolution logic (<code>_resolve_project_root()</code>) to work outside this specific project. There is <b>no automated sync</b> between them — every subsequent master-skill change (v1.0.4 through v1.0.6) was applied only to the project-local skill. See <a href="#s19">§19</a> for the exact file-level drift.</p>
+<h3>Master ↔ Plugin dependency (drifted, then resynced — still not automated)</h3>
+<p>The plugin was created once, by copying the master skill and rewriting only its path-resolution logic (<code>_resolve_project_root()</code>) to work outside this specific project. Every subsequent master-skill change from v1.0.4 through v1.0.7 was applied only to the project-local skill, leaving the plugin materially behind — this was corrected in the v1.0.9 pass with a full bulk resync (plus reapplying the same two documented adaptations: <code>SKILL.md</code>'s invocation phrasing, and <code>_resolve_project_root()</code>). The plugin is at full parity again <i>today</i>, but there is still <b>no automated sync or drift-detection mechanism</b> — the next uncoordinated master-skill edit will silently reopen the same gap unless a human remembers to resync. See <a href="#s19">§19</a>.</p>
 </section>
 
 <section id="s10">
@@ -462,12 +495,16 @@ graph LR
   EX --> IDS["Atomic ID-tagged facts<br/>REQ-NNN · BR-NNN · ROLE-NNN · DEP-NNN · EDGE-NNN"]
   IDS --> EDI["Empathize → Define → Ideate<br/>(product-definition.md)"]
   EDI --> ARCH["Architect<br/>domain match + dependency graph"]
-  ARCH --> UXA["UX artifacts<br/>flows · IA · nav · screens · states · a11y"]
+  ARCH --> DSU["Design Setup<br/>research + reference analysis → ui/design-direction.md"]
+  DSU --> UXA["UX artifacts<br/>flows · IA · nav · screens · states · a11y"]
   UXA --> UIA["UI artifacts<br/>tokens · components · visuals · responsive"]
-  UIA --> IMPL["output/*<br/>(built artifact, where applicable)"]
-  IMPL --> QA["qa/qa-report.md + qa/traceability.md"]
+  UIA --> AUD["Mandatory visual-benchmark-and-audit cycle<br/>ui/visual-gap-analysis.md — gate B15"]
+  AUD --> IMPL["output/*<br/>(built artifact, where applicable)"]
+  IMPL --> PRE["Preview &amp; Run<br/>build/runtime verified before Test — gate B14"]
+  PRE --> QA["qa/qa-report.md + qa/traceability.md"]
   QA -->|"Blocker/Major finding"| ITER["Iterate: routed to owning file"]
   ITER --> EDI
+  ITER --> DSU
   ITER --> UXA
   ITER --> UIA
 </div>
@@ -511,7 +548,9 @@ graph TB
     P1["Intake: recognize input posture, extract 20 points"]
     P2["Empathize/Define/Ideate: build understanding, converge, select"]
     P3["Architect: classify domain (2 registries), sequence deps"]
-    P4["Prototype: UX structure then UI visual (Rule 4/5 enforced)"]
+    P3B["Design Setup (v1.0.7): research + reference analysis →<br/>approved design direction, gated on user confirmation"]
+    P4["Prototype: UX structure then UI visual (Rule 4/5 enforced),<br/>then a mandatory visual-benchmark-and-audit cycle (v1.0.9, gate B15)"]
+    P4B["Preview &amp; Run (v1.0.8): build actually launches locally<br/>before Test evaluates it (gate B14)"]
     P5["Implement/Test/Audit: build, validate 9 dims, aggregate findings"]
   end
   subgraph OUTPUT["OUTPUT"]
@@ -519,7 +558,7 @@ graph TB
     O2["products/&lt;slug&gt;/output/*<br/>(built artifact, if Implement ran)"]
     O3["qa/qa-report.md + qa/traceability.md"]
   end
-  INPUT --> P1 --> P2 --> P3 --> P4 --> P5 --> OUTPUT
+  INPUT --> P1 --> P2 --> P3 --> P3B --> P4 --> P4B --> P5 --> OUTPUT
 </div>
 <p>Confidence is carried at every step: every extracted fact is tagged <b>Explicit</b>, <b>Inferred</b>, or <b>Assumed</b>, and that tag travels forward into every downstream artifact rather than being resolved-and-dropped.</p>
 </section>
@@ -537,11 +576,11 @@ graph TB
 <h3>Real, currently-missing automation opportunities</h3>
 <table>
 <tr><th>Opportunity</th><th>Why it's missing today</th><th>Effort</th></tr>
-<tr><td>Master↔Plugin sync check</td><td>No script diffs the two trees; drift is currently silent (see §19)</td><td>Low — a file-hash comparison script</td></tr>
-<tr><td><code>master_skill_version</code> staleness warning</td><td><code>product.json</code> stamps the version once at generation, never re-checked</td><td>Low — compare on any <code>--update</code> run</td></tr>
-<tr><td>Domain-standards completion dashboard</td><td>111/122 entries are <code>"pending"</code> with no tracked completion plan</td><td>Low — a script that reads <code>domain-registry.json</code> and reports counts by category</td></tr>
-<tr><td>Automated eval-suite runner</td><td><code>evals/test-cases.md</code>'s 10 benchmark scenarios exist as documentation only — nothing executes them against a live run</td><td>Medium</td></tr>
-<tr><td>CI hook running <code>validate-product.py</code> on every <code>products/*</code> change</td><td>No git repo yet, so no CI is wired up at all</td><td>Medium (blocked on git init first)</td></tr>
+<tr><td>Master↔Plugin sync check</td><td>Still no script diffs the two trees — the v1.0.9 pass resynced them by hand (bulk copy + manual diff-check), a repeatable manual procedure, not an automated one; the plugin will silently drift again on the next uncoordinated master change</td><td>Low — a file-hash comparison script</td></tr>
+<tr><td><code>master_skill_version</code> staleness warning</td><td><code>product.json</code> stamps the version once at generation, never re-checked — ProjectFlow's manifest is now 7 versions behind (§8, §19)</td><td>Low — compare on any <code>--update</code> run</td></tr>
+<tr><td>Domain-standards completion dashboard</td><td>Still 111/122 entries <code>"pending"</code>, unchanged since v1.0.6, with no tracked completion plan</td><td>Low — a script that reads <code>domain-registry.json</code> and reports counts by category</td></tr>
+<tr><td>Automated eval-suite runner</td><td><code>evals/test-cases.md</code>'s 10 benchmark scenarios (now coverage-mapped to 21 dimensions) still exist as documentation only — nothing executes them against a live run</td><td>Medium</td></tr>
+<tr><td>CI workflow (GitHub Actions) running <code>validate-product.py</code> + a plugin-sync check on every push</td><td>Git and a public GitHub remote now exist (resolved blocker) — but no <code>.github/workflows/*.yml</code> has been added yet; this is now a genuinely actionable near-term item, not blocked on anything</td><td>Medium</td></tr>
 </table>
 </section>
 
@@ -561,13 +600,15 @@ graph TB
 </ol>
 <h3>The graduation rule (turning a recurring "custom" case into a real pack)</h3>
 <p>When the same domain keeps routing through <code>custom-domain.md</code>'s no-match fallback across multiple products, that recurrence is itself the signal to author a proper new pack — never by editing the domain-agnostic core.</p>
+<h3>Adding a new default design sample (a 14th <code>design-samples/</code> folder, added v1.0.7)</h3>
+<p>Same zero-core-change discipline: add a folder under <code>design-samples/</code> plus a one-line mention in <code>reference-selection.md</code>'s selection list — no script change, since Default-mode selection is a direct slug match against the confirmed domain, not a scored classification.</p>
 </section>
 
 <section id="s15">
 <h2><span class="num">15</span>Quality Gates and Validation</h2>
-<h3>Section A — 10 phase-transition gates</h3>
-<p><code>config/quality-gates.md</code> gates every phase boundary (Intake→Empathize, ..., Audit→Iterate). A <b>Blocker</b> or un-waived <b>Major</b> finding blocks the transition; <b>Minor</b>/<b>Note</b> are logged, non-blocking, and — since v1.0.5 — <b>persist across Iterate cycles</b> rather than being silently dropped, triaged by severity × frequency-of-use weighed against fix effort.</p>
-<h3>Section B — 12 measurable dimensions (B1–B12)</h3>
+<h3>Section A — 12 phase-transition gates</h3>
+<p><code>config/quality-gates.md</code> gates every phase boundary (Intake→Empathize, ..., Architect→Design Setup, Design Setup→Prototype, ..., Implement→Preview &amp; Run, Preview &amp; Run→Test, ..., Audit→Iterate) — grown from 10 gates at the v1.0.6 baseline by the same two phase insertions as §5. A <b>Blocker</b> or un-waived <b>Major</b> finding blocks the transition; <b>Minor</b>/<b>Note</b> are logged, non-blocking, and — since v1.0.5 — <b>persist across Iterate cycles</b> rather than being silently dropped, triaged by severity × frequency-of-use weighed against fix effort.</p>
+<h3>Section B — 15 measurable dimensions (B1–B15)</h3>
 <table>
 <tr><th>ID</th><th>Measures</th><th>Checked by</th></tr>
 <tr><td>B1</td><td>Requirement completeness</td><td><code>validate-requirements.py</code></td></tr>
@@ -580,9 +621,12 @@ graph TB
 <tr><td>B10</td><td>Traceability chain integrity</td><td><code>traceability.md</code> + <code>validate-product.py</code></td></tr>
 <tr><td>B11</td><td>Aggregate QA: validators + rubric threshold + zero unresolved Blocker/Major</td><td><code>agents/qa-expert.md</code></td></tr>
 <tr><td>B12</td><td>Implementation readiness: complete specs, no circular deps</td><td><code>agents/product-architect.md</code> sign-off</td></tr>
+<tr><td>B13 <span class="badge">added v1.0.7</span></td><td>Design Direction Completeness: <code>ui/design-direction.md</code> complete, reference classification stated with rationale, user confirmation obtained or explicitly waived</td><td><code>agents/design-setup-specialist.md</code></td></tr>
+<tr><td>B14 <span class="badge">added v1.0.8</span></td><td>Preview &amp; Run Verification: build succeeds, dev server starts, no unhandled runtime error blocks the primary screen(s), preview report complete</td><td>the executing session (no dedicated agent, same posture as Implement)</td></tr>
+<tr><td>B15 <span class="badge">added v1.0.9</span></td><td>Visual Benchmark &amp; Audit Cycle Completeness: every screen audited against the 11-category A–K framework and 3-way benchmarked, with at least one recorded refinement cycle — even a clean first draft must record that the check ran</td><td><code>agents/ui-designer.md</code> + <code>agents/design-system-expert.md</code></td></tr>
 </table>
-<h3>The 18-dimension weighted Evaluation Rubric</h3>
-<p>Grouped into 3 tiers so visual polish <b>cannot mathematically win</b>: Tier A (Product Reasoning, ×3 weight, 7 dims), Tier B (Workflow Completeness, ×2, 9 dims), Tier C (Visual/Presentation, ×1, 2 dims — capped under 5% of the 205-point total). A flawless design system with weak requirement understanding or broken traceability cannot score well overall.</p>
+<h3>The 21-dimension weighted Evaluation Rubric</h3>
+<p>Grouped into 3 tiers so visual polish <b>cannot mathematically win</b>: Tier A (Product Reasoning, ×3 weight, 7 dims, 105 pts), Tier B (Workflow Completeness, ×2, now <b>12 dims</b> — Design direction quality, Preview &amp; run verification, and this version's new Visual benchmark &amp; audit cycle dimension all live here, not in Tier C, 120 pts), Tier C (Visual/Presentation, ×1, 2 dims, 10 pts — capped under 5% of the <b>235-point</b> total, up from 205 at the v1.0.6 baseline). A flawless design system with weak requirement understanding or broken traceability cannot score well overall.</p>
 </section>
 
 <section id="s16">
@@ -598,6 +642,9 @@ graph TB
 <tr><td>A validator script can't judge something (subjective)</td><td><code>generate-report.py</code> renders it as <b>"Not evaluated by this script"</b> with a pointer to the responsible agent — never a fabricated pass</td></tr>
 <tr><td>Implementation surfaces a spec gap</td><td>Escalate back to the owning file/agent per the routing table — never improvised on the spot</td></tr>
 <tr><td>A fix regresses an already-passing gate</td><td>The scope reopens; a fix never "passes by association" with an unrelated change</td></tr>
+<tr><td>No user available to confirm the Design Direction (unattended/batch run)</td><td>Record an explicit waiver-with-reason instead of a fabricated confirmation — B13 still requires the reason field, never silently skips it <span class="badge">added v1.0.7</span></td></tr>
+<tr><td>A screen's first visual audit pass finds nothing wrong</td><td>Still record a genuine pass-2 re-check, not a skipped step — B15 requires the cycle to be recorded even when nothing needed fixing <span class="badge">added v1.0.9</span></td></tr>
+<tr><td>Multiple conflicting visual references for one product</td><td>Name the conflict and ask which surface each pattern belongs to — never silently averaged (same reconciliation posture as conflicting BRD facts)</td></tr>
 </table>
 </section>
 
@@ -605,25 +652,26 @@ graph TB
 <h2><span class="num">17</span>Complete Architecture Diagram</h2>
 <div class="mermaid">
 graph TB
-  subgraph MASTER["MASTER SKILL — .claude/skills/design-glanza/ (v1.0.6)"]
+  subgraph MASTER["MASTER SKILL — .claude/skills/design-glanza/ (v1.0.9)"]
     direction TB
-    CFG["config/<br/>17 rules · 12 gates · output contract"]
+    CFG["config/<br/>20 rules · 15 gates (B1-B15) · output contract"]
     METH["methodology/<br/>5-phase loop · design-judgment"]
     PI["product-intelligence/<br/>extraction · IDs · 2 domain classifiers"]
     UXE["ux-engine/ (10 files)"]
-    UIE["ui-engine/ (9 files)"]
+    UIE["ui-engine/ (12 files — +ui-audit-framework,<br/>visual-benchmark, ui-design-principles v1.0.9)"]
     PT["product-types/<br/>12 packs + domain-standards/ (122 entries)"]
-    AGT["agents/ (8 specialists)"]
-    WF["workflows/ (8 procedures)"]
-    TPL["templates/ (11 shapes)"]
+    DRE["design-reference-engine/ (5 files) +<br/>design-samples/ (13 folders) — added v1.0.7"]
+    AGT["agents/ (9 specialists)"]
+    WF["workflows/ (10 procedures)"]
+    TPL["templates/ (14 shapes)"]
     SCR["scripts/ (7 .py, deterministic)"]
-    EV["evals/ (rubric · benchmarks)"]
+    EV["evals/ (21-dim rubric · benchmarks)"]
   end
 
-  PLUGIN["design-glanza-plugin/<br/>⚠ manually-synced snapshot, currently stale"]
-  MASTER -.->|"copied once, not kept in sync"| PLUGIN
+  PLUGIN["design-glanza-plugin/<br/>✓ resynced to full v1.0.9 parity this pass —<br/>still no automated drift check"]
+  MASTER -.->|"copied once, manually resynced (not automatic)"| PLUGIN
 
-  CFG --> METH --> PI --> UXE & UIE --> PT --> AGT --> WF --> TPL
+  CFG --> METH --> PI --> UXE & UIE --> PT --> DRE --> AGT --> WF --> TPL
   WF --> SCR
   AGT --> EV
 
@@ -639,12 +687,13 @@ graph TB
 <p>The one real product generated through this system so far — <code>products/projectflow/</code>. All figures below are read directly from its actual generated files, not illustrative.</p>
 <div class="grid2">
 <div class="card"><h4>Identity (<code>product.json</code>)</h4>
-<code>product_type: saas</code><br/><code>domain: Project Management</code><br/><code>platform: web</code><br/><code>status: scaffolded</code><br/><code>master_skill_version: 1.0.2</code> <span class="badge risk">stale — live is 1.0.6</span>
+<code>product_type: saas</code><br/><code>domain: Project Management</code><br/><code>platform: web</code><br/><code>status: scaffolded</code><br/><code>master_skill_version: 1.0.2</code> <span class="badge risk">stale — live is 1.0.9 (7 versions behind)</span>
 </div>
 <div class="card"><h4>Scope actually completed</h4>
-Intake → Empathize → Define → Ideate → Architect → Prototype (UX+UI). <b>Implement/Test/Audit deliberately not run</b> — an explicit, disclosed planning-only pass.
+Intake → Empathize → Define → Ideate → Architect → Prototype (UX+UI). <b>Implement/Test/Audit deliberately not run</b> — an explicit, disclosed planning-only pass. Generated <b>before</b> v1.0.7's Design Setup phase and v1.0.9's mandatory visual-audit cycle existed at all — see the note below.
 </div>
 </div>
+<div class="callout warn"><b>ProjectFlow predates three phase-level mandates it has never gone through.</b> It has no <code>product-builder/ui/design-direction.md</code> (v1.0.7's Design Setup output), no <code>product-builder/workflows/preview-report.md</code> (v1.0.8's Preview &amp; Run output), and no <code>product-builder/ui/visual-gap-analysis.md</code> (v1.0.9's mandatory audit-cycle output) — confirmed directly against the files actually on disk. This isn't a defect in ProjectFlow itself (Rule 15, Product Isolation, correctly leaves already-generated products untouched by later master-skill changes) but it does mean ProjectFlow can no longer serve as a complete worked example of the <i>current</i> full pipeline — only of Intake through Prototype as those phases existed at generation time. A fresh <code>--update</code> run, or a new example product, would be needed to demonstrate B13/B14/B15 end to end.</div>
 <h3>Concrete artifacts produced</h3>
 <ul>
 <li><b>Roles:</b> ROLE-001 Owner, ROLE-002 Project Manager, ROLE-003 Team Member, ROLE-004 Guest/Viewer, plus SYSTEM</li>
@@ -667,52 +716,65 @@ Intake → Empathize → Define → Ideate → Architect → Prototype (UX+UI). 
 <h3>Strengths</h3>
 <div class="card"><span class="badge strength">Strength</span> <b>Genuine separation of reasoning from mechanics.</b> Every script's docstring states, in writing, exactly what it does <i>not</i> judge — the single clearest example being <code>generate-report.py</code> rendering unjudgeable sections as <i>"Not evaluated by this script"</i> instead of fabricating a verdict.</div>
 <div class="card" style="margin-top:10px"><span class="badge strength">Strength</span> <b>Self-consistent ID/traceability model</b> (<code>REQ→USER→FLOW→SCREEN→COMPONENT→TEST</code>) is enforced by an actual script (<code>validate-product.py</code>), not just described in prose.</div>
-<div class="card" style="margin-top:10px"><span class="badge strength">Strength</span> <b>Weighted scoring that structurally prevents a "pretty but empty" pass</b> — Tier C (visual) is mathematically capped under 5% of 205 points.</div>
-<div class="card" style="margin-top:10px"><span class="badge strength">Strength</span> <b>Disciplined extensibility</b> — six major knowledge-integration passes (v1.0.4–1.0.6) each added real capability without ever inflating the phase count (10), and rule/gate additions were deliberately rare and justified (17 rules, 12 gates, unchanged since the project's early versions except one rule addition).</div>
+<div class="card" style="margin-top:10px"><span class="badge strength">Strength</span> <b>Weighted scoring that structurally prevents a "pretty but empty" pass</b> — Tier C (visual) is mathematically capped under 5% of the total, and stayed capped even as the total grew from 205→235 points and gained a whole new visual-audit dimension (B15) that was deliberately placed in Tier B, not Tier C.</div>
+<div class="card" style="margin-top:10px"><span class="badge strength">Strength</span> <b>Disciplined, justified extensibility.</b> Nine minor versions since 1.0.1 each added real capability without ever inflating the phase count casually — the two phases that <i>were</i> added (Design Setup v1.0.7, Preview &amp; Run v1.0.8) each came with a named rule, a named gate, and a stated reason, taking the lifecycle from 10→12 phases, rules from 17→20, and measurable gates from 12→15 deliberately, not by drift.</div>
+<div class="card" style="margin-top:10px"><span class="badge strength">Strength</span> <b>The project now practices what its own quality gates preach about honesty.</b> This version's new mandatory visual-audit cycle (B15) requires recording that a check ran even when it found nothing wrong — the same "don't silently skip, don't fabricate a pass" discipline the rest of the toolchain (§13, §16) already lived by is now explicitly extended to visual/UI quality, closing what was previously the one area most exposed to a "looks fine, ship it" shortcut.</div>
+
+<h3>Resolved since the previous baseline of this document</h3>
+<div class="card" style="border-color:#1e3a2f"><span class="badge strength">Resolved</span> <b>No git repository</b> → the project is now a git repository, published publicly at <code>github.com/JayaKumar-FullStackDeveloper/design-glanza</code> (MIT-licensed), with real commit history. Diffing, branching, reverting, and CI are all now possible — none has been exercised yet beyond plain commits (see remaining risks below).</div>
+<div class="card" style="border-color:#1e3a2f; margin-top:10px"><span class="badge strength">Resolved</span> <b>Root <code>README.md</code> was stale and misleading</b> → it now accurately states the current version and capability set, and is itself under version control so it can't silently re-drift unnoticed the same way.</div>
+<div class="card" style="border-color:#1e3a2f; margin-top:10px"><span class="badge strength">Resolved this pass</span> <b>Plugin had drifted materially from the master skill</b> → fully bulk-resynced to 230/230 markdown files and 7/7 scripts, including the entire <code>domain-standards/</code> folder it was previously missing entirely, plus the two documented path/invocation adaptations reapplied correctly and <code>plugin.json</code>'s version and description text brought current. <b>This is a point-in-time fix, not a structural one</b> — see the still-open risk below.</div>
 
 <h3>Gaps &amp; Risks — verified, not speculative</h3>
-<div class="card" style="border-color:#4a1f28"><span class="badge risk">Risk</span> <b>Plugin has drifted materially from the master skill.</b> Confirmed by direct file comparison: the plugin is missing <code>ux-writing.md</code>, <code>localization.md</code>, <code>search-ux.md</code> (ux-engine), <code>craft-critique.md</code> (ui-engine), <code>domain-standards.md</code> (product-intelligence), <code>landing-page.md</code> (product-types), and the <b>entire</b> <code>product-types/domain-standards/</code> folder + registry. <code>plugin.json</code>'s own description text still lists only the original 9 domains with no mention of domain standards or landing pages. There is no sync mechanism — every future master-skill change will widen this gap unless corrected manually.</div>
-<div class="card" style="border-color:#4a1f28; margin-top:10px"><span class="badge risk">Risk</span> <b>Generated product manifests silently go stale.</b> <code>products/projectflow/product.json</code> stamps <code>master_skill_version: "1.0.2"</code> — five versions behind the live skill (<code>1.0.6</code>) — with nothing that re-checks or flags this on subsequent reads.</div>
-<div class="card" style="border-color:#4a1f28; margin-top:10px"><span class="badge risk">Risk</span> <b>Domain Standards Library is 91% unpopulated.</b> 111 of 122 registry entries are <code>"pending"</code> with only a placeholder README — the mechanism is fully wired and correct, but its actual coverage today is limited to the 11 core-business domains.</div>
-<div class="card" style="border-color:#4a1f28; margin-top:10px"><span class="badge risk">Risk</span> <b>Root <code>README.md</code> is stale and actively misleading</b> — it still describes the project as an unimplemented "architecture shell," which was true at v0.1.0 and has not been true since v0.2.0.</div>
-<div class="card" style="border-color:#4a1f28; margin-top:10px"><span class="badge risk">Risk</span> <b>No git repository.</b> Confirmed directly — the project has no version control at all; every historical fact lives only in <code>master-config.md</code>'s prose changelog. There is no way to diff, branch, revert, or run CI against this project as it stands.</div>
-<div class="card" style="border-color:#4a1f28; margin-top:10px"><span class="badge risk">Risk</span> <b>Zero automated tests for the toolchain itself.</b> The changelog records that each validator script was manually verified once, by deliberately constructing bad test content and confirming detection, then <i>deleting the test artifacts</i> — there is no persisted regression-test suite for <code>scripts/*.py</code>.</div>
-<div class="card" style="border-color:#4a1f28; margin-top:10px"><span class="badge risk">Risk</span> <b>The eval suite is documentation, not an executable harness.</b> <code>evals/test-cases.md</code>'s 10 benchmark scenarios and <code>benchmark-matrix.md</code>'s tracking structure exist as markdown specs — nothing currently runs them against a live model automatically.</div>
-<div class="card" style="border-color:#4a1f28; margin-top:10px"><span class="badge risk">Risk</span> <b>Single real product, and it stops at Prototype.</b> The entire pipeline's Implement/Test/Audit/Iterate phases have never actually been exercised end-to-end on a real product — ProjectFlow is a genuine, honestly-reported proof of Intake→Prototype only.</div>
+<div class="card" style="border-color:#4a1f28"><span class="badge risk">Risk (structural, not just current-state)</span> <b>The plugin has no automated sync or drift-detection mechanism.</b> It was resynced by hand this pass; it drifted materially the same way across v1.0.4→v1.0.7 before that. Nothing has changed about <i>why</i> it drifted — there is still no script that diffs the two trees, so the exact same silent-drift risk reopens on the very next uncoordinated master-skill edit.</div>
+<div class="card" style="border-color:#4a1f28; margin-top:10px"><span class="badge risk">Risk</span> <b>Generated product manifests silently go stale — now worse than previously measured.</b> <code>products/projectflow/product.json</code> stamps <code>master_skill_version: "1.0.2"</code> — <b>7 versions</b> behind the live skill (<code>1.0.9</code>), up from 5 versions at the last baseline — with nothing that re-checks or flags this on subsequent reads.</div>
+<div class="card" style="border-color:#4a1f28; margin-top:10px"><span class="badge risk">Risk</span> <b>Domain Standards Library is still 91% unpopulated.</b> Unchanged since v1.0.6: 111 of 122 registry entries are <code>"pending"</code> with only a placeholder README — the mechanism is fully wired and correct, but its actual coverage today is still limited to the 11 core-business domains.</div>
+<div class="card" style="border-color:#4a1f28; margin-top:10px"><span class="badge risk">Risk</span> <b>The one real generated product now demonstrates only part of the current pipeline.</b> ProjectFlow stops at Prototype <i>and</i> predates Design Setup (v1.0.7), Preview &amp; Run (v1.0.8), and the mandatory visual-audit cycle (v1.0.9) entirely — it has no <code>ui/design-direction.md</code>, <code>workflows/preview-report.md</code>, or <code>ui/visual-gap-analysis.md</code> on disk at all (confirmed directly, see §18). The system has now added three mandatory phase-level gates (B13, B14, B15) that have never once been exercised end-to-end on a real product.</div>
+<div class="card" style="border-color:#4a1f28; margin-top:10px"><span class="badge risk">Risk</span> <b>Zero automated tests for the toolchain itself.</b> Unchanged since the last baseline — each validator script was manually verified once by deliberately constructing bad test content and confirming detection, then <i>deleting the test artifacts</i>; there is still no persisted regression-test suite for <code>scripts/*.py</code>.</div>
+<div class="card" style="border-color:#4a1f28; margin-top:10px"><span class="badge risk">Risk</span> <b>The eval suite is still documentation, not an executable harness.</b> <code>evals/test-cases.md</code>'s 10 benchmark scenarios (now coverage-mapped to 21 dimensions instead of 18) and <code>benchmark-matrix.md</code>'s tracking structure still exist as markdown specs only — nothing executes them against a live run.</div>
+<div class="card" style="border-color:#4a1f28; margin-top:10px"><span class="badge risk">Risk</span> <b>Git exists now, but nothing uses it yet beyond commits.</b> A brand-new gap this baseline can name that the previous one couldn't: there is still no <code>.github/workflows/*.yml</code> — no CI runs <code>validate-product.py</code>, no automated plugin-sync check, nothing gates a push. The blocker (no git repo) named at the last baseline is gone; the opportunity it was blocking hasn't been taken yet.</div>
+<div class="card" style="border-color:#4a1f28; margin-top:10px"><span class="badge risk">Risk (small, newly found this pass)</span> <b><code>design-samples/README.md</code>'s own "Current status" section is now stale.</b> It states <i>"Every folder currently holds a placeholder README.md only — no curated reference assets have been populated yet"</i> — but 7 of the library's 13 folders (<code>fintech</code>, <code>healthcare</code>, <code>hrms</code>, <code>crm</code>, <code>logistics</code>, <code>ecommerce</code>, <code>common</code>) now hold real curated reference files, confirmed by direct directory listing. Low-impact (the per-folder READMEs are individually accurate; only the top-level summary is behind), but the same category of drift as the once-stale root <code>README.md</code> — worth fixing directly since it's a one-file, low-risk correction.</div>
 <div class="card" style="border-color:#4a1f28; margin-top:10px"><span class="badge risk">Risk</span> <b>A few historical changelog entries carry deliberately-uncorrected stale references</b> (e.g., some 1.0.1-and-earlier changelog text still says "12 mandatory states" after the count became 13) — individually low-risk and explicitly disclosed at the time, but worth knowing before trusting a changelog entry's exact numbers over the live file.</div>
 
 <h3>Improvement opportunities (summary — detailed in §20)</h3>
 <ul>
-<li>Initialize git; this single change unlocks diffing, CI, and safe rollback for everything else below.</li>
-<li>A small sync/drift-detector script between master and plugin.</li>
-<li>A staleness check on <code>product.json</code>'s <code>master_skill_version</code>.</li>
+<li>A small sync/drift-detector script between master and plugin — the single highest-leverage item now that git exists to run it from.</li>
+<li>A GitHub Actions CI workflow now that a public remote exists — validate-product.py + a plugin-sync check on every push.</li>
+<li>A staleness check on <code>product.json</code>'s <code>master_skill_version</code> — ProjectFlow is proof this isn't hypothetical.</li>
 <li>An executable eval harness, even a minimal one, for <code>evals/test-cases.md</code>.</li>
 <li>Complete or actively track the remaining 111 domain standards.</li>
-<li>Refresh the root <code>README.md</code> to match actual, current capability.</li>
+<li>Run the pipeline through Design Setup→Implement→Preview &amp; Run→Iterate at least once on a real product, to pressure-test B13/B14/B15 outside of prose.</li>
+<li>Refresh <code>design-samples/README.md</code>'s "Current status" section to reflect the 7 now-populated folders.</li>
 </ul>
 </section>
 
 <section id="s20">
 <h2><span class="num">20</span>Recommended Future Architecture</h2>
 <p>These recommendations are scoped to <b>closing verified gaps</b> above, not a redesign — the core architecture (domain-agnostic engine → domain overlays → generated builders) is sound and should not change shape.</p>
+<h3>Already done since the previous baseline of this document</h3>
+<ol>
+<li><s><b>Initialize version control.</b></s> Done — git repository, public GitHub remote, real commit history.</li>
+<li><s><b>Refresh <code>README.md</code></b></s> Done — matches actual current capability, and versioned going forward so it can be diffed if it drifts again.</li>
+</ol>
 <h3>Near-term (low effort, high value)</h3>
 <ol>
-<li><b>Initialize version control.</b> Everything else on this list benefits from being diffable and revertible.</li>
-<li><b>Refresh <code>README.md</code></b> to reflect the actual current state (a one-file, low-risk fix for the single most misleading artifact in the repo).</li>
-<li><b>A <code>scripts/check-plugin-sync.py</code></b> that diffs file lists (and ideally content hashes) between <code>.claude/skills/design-glanza/</code> and <code>design-glanza-plugin/skills/design-glanza/</code>, reporting exactly what's missing — turning today's silent drift into a visible, actionable list.</li>
-<li><b>A <code>master_skill_version</code> staleness check</b> inside <code>create-product-builder.py --update</code>: compare the manifest's stamped version against the live <code>master-config.md</code> version and surface a warning (never auto-upgrade silently — that would violate Rule 15/product isolation).</li>
+<li><b>A <code>scripts/check-plugin-sync.py</code></b> that diffs file lists (and ideally content hashes) between <code>.claude/skills/design-glanza/</code> and <code>design-glanza-plugin/skills/design-glanza/</code>, reporting exactly what's missing — turning the manual resync this pass required into a repeatable, verifiable, one-command check instead of another future one-off effort.</li>
+<li><b>A GitHub Actions CI workflow</b> — now unblocked, since a public git remote exists — running <code>validate-product.py</code> against <code>products/*</code> and the new plugin-sync script above on every push.</li>
+<li><b>A <code>master_skill_version</code> staleness check</b> inside <code>create-product-builder.py --update</code>: compare the manifest's stamped version against the live <code>master-config.md</code> version and surface a warning (never auto-upgrade silently — that would violate Rule 15/product isolation). ProjectFlow's own manifest, now 7 versions stale, is a concrete, on-disk demonstration of why this matters.</li>
+<li><b>Refresh <code>design-samples/README.md</code>'s "Current status" section</b> — a one-file, low-risk fix (same category as the already-fixed root README) now that 7 of 13 folders hold real curated content the summary doesn't mention.</li>
 </ol>
 <h3>Medium-term</h3>
 <ol start="5">
 <li><b>A minimal executable eval runner</b> that walks <code>evals/test-cases.md</code>'s 10 scenarios against a live invocation and records results into <code>benchmark-matrix.md</code>'s existing schema — turning the Failure Log from a manual, occasional exercise into a repeatable one.</li>
 <li><b>A domain-standards completion tracker</b> — a small script reading <code>domain-registry.json</code> and reporting <code>complete</code>/<code>pending</code> counts per category, to make the 111-pending backlog visible and prioritizable rather than only discoverable by reading the JSON directly.</li>
-<li><b>Run the pipeline through Implement→Iterate at least once</b> on a real or realistic product, specifically to pressure-test the phases that currently exist only as untested prose (build-sequencing, the audit aggregation, the Iterate routing loop in practice).</li>
+<li><b>Run the pipeline through Design Setup→Implement→Preview &amp; Run→Iterate at least once</b> on a real or realistic product — this is now a sharper, more specific version of the same recommendation as the last baseline: it's not just Implement/Test/Audit/Iterate that's untested end-to-end, it's specifically the three newest gates (B13, B14, B15), which exist only as prose against a real product today.</li>
 </ol>
 <h3>Explicitly not recommended</h3>
 <ul>
 <li><b>Do not</b> merge the two domain-matching registries (12 packs vs. 122 standards) into one — they answer genuinely different questions at different granularity, and the current composition (cite, don't replace) is the correct relationship.</li>
-<li><b>Do not</b> add a 13th quality gate for "domain standard applied correctly" — the existing agents' input citations and Rule 17's confidence-reporting requirement already cover this without inflating the gate count.</li>
+<li><b>Do not</b> add a 16th quality gate for "domain standard applied correctly" — the existing agents' input citations and Rule 17's confidence-reporting requirement already cover this without inflating the gate count.</li>
 <li><b>Do not</b> auto-regenerate a Product Builder's <code>product.json</code> version stamp on every master-skill change — that would silently rewrite a product's own historical record, violating the same "don't rewrite history" discipline the master changelog itself already follows.</li>
+<li><b>Do not</b> retroactively add <code>ui/design-direction.md</code>, <code>preview-report.md</code>, or <code>visual-gap-analysis.md</code> to ProjectFlow to "catch it up" — Rule 15 (Product Isolation) means an already-generated product is never rewritten to match a newer master-skill mandate; the correct path, if ProjectFlow is revisited, is an explicit <code>--update</code> run that the product owner requests.</li>
 </ul>
 </section>
 
