@@ -1,0 +1,112 @@
+# Color System
+
+## Responsibility
+Palette construction and semantic color mapping, including the *perceptual*
+accessibility rules (contrast ratio, color-blind safety) — the color
+counterpart to `ux-engine/accessibility.md`'s structural/behavioral rules.
+
+## Palette construction
+From one brand/primary hue, generate a **9–10 step ramp** (lightest to
+darkest) at consistent lightness intervals, rather than picking individual
+shades ad hoc. Generate the same ramp structure for:
+- **Primary** — the brand color, used for primary actions and key emphasis.
+- **Neutral/gray** — a separate 9–10 step ramp used for backgrounds, borders,
+  and text; enterprise UI leans on neutrals far more than on brand color, so
+  this ramp needs the same rigor as primary, not an afterthought gray-100.
+- **Semantic colors** (below) — each gets its own short ramp, not just one hex.
+
+## Semantic mapping
+Fixed meaning across the whole product — never repurposed per screen:
+
+| Semantic | Foreground | Background | Border | Meaning |
+|---|---|---|---|---|
+| `success` | dark green | pale green | mid green | Completed, valid, positive |
+| `danger` | dark red | pale red | mid red | Destructive, error, blocking |
+| `warning` | dark amber | pale amber | mid amber | Caution, needs attention, not blocking |
+| `info` | dark blue | pale blue | mid blue | Neutral notice |
+| `neutral` | from gray ramp | from gray ramp | from gray ramp | Default/inactive |
+
+Each semantic is a **triplet** (foreground/background/border), not a single
+color — this is what lets a status badge, an inline alert, and a form error
+all use the same `danger` meaning consistently instead of three
+independently-invented reds.
+
+## Contrast compliance rule
+Concrete, checked ratios (WCAG AA baseline, matching the conformance target
+`ux-engine/accessibility.md` states):
+- **4.5:1** minimum for normal body text against its background.
+- **3:1** minimum for large text (≥18px, or ≥14px bold) and for UI component
+  boundaries/icons that convey meaning.
+
+Every semantic triplet's foreground-on-background pairing is checked against
+these ratios **in both light and dark theme** — a pairing that passes in light
+theme but fails after dark-theme remapping is a defect, not an acceptable
+theme limitation.
+
+**Pairing contract, not a one-time pass.** This rule certifies the specific
+pairings it's actually run against — the semantic triplets defined above. It
+does not automatically certify a *new* pairing a later screen improvises
+(e.g. reusing `primary` as a badge fill under `text-primary`, a combination
+never checked because it's outside the defined triplets). Treat the set of
+checked pairings as an explicit, named contract (`agents/design-system-
+expert.md`'s inventory): a new component proposing a color combination
+outside it is a fresh check against this rule, not an assumed pass by
+association with an already-cleared color. This is the same discipline Rule
+13 (Iteration) already applies to a failed gate — re-check, don't assume —
+applied here to a class of check (color pairing) that's easy to treat as
+"settled once" instead.
+
+## Color-blind safety rule
+Never encode meaning by hue alone. Every semantic use (success/danger/warning
+especially) pairs color with a second channel — an icon, a label, a pattern,
+or position. **Red/green specifically** — the most common color-vision
+deficiency confusion — must never be the *only* signal distinguishing two
+states (e.g. a valid vs. invalid field indicated only by a green vs. red
+border, with no icon or text change, is a defect).
+
+## Dark/light theming
+Semantic tokens (`success`, `danger`, `neutral`, etc.) and structural aliases
+(`surface`, `border`, `text-primary`, `text-muted` — per `design-system.md`'s
+theming rule) remap between themes while keeping their *meaning* stable:
+`danger` stays recognizably red-ish in both themes, adjusted in lightness so
+it still clears the contrast rule above against the theme's background;
+`surface` is near-white in light theme and near-black (not pure black, which
+crushes elevation shadows) in dark theme.
+
+## Data-visualization ramps
+Distinct from the semantic UI ramps above (which encode fixed *meaning* —
+success is always green-ish) — chart/data color needs its own ramps, chosen
+by what the data itself is:
+- **Sequential** — one hue, increasing in saturation/darkness, for data with
+  a low-to-high order (a heatmap, a magnitude scale).
+- **Diverging** — two hues meeting at a neutral midpoint, for data with a
+  meaningful zero/center (variance from a target, positive-vs-negative
+  change) — never a sequential ramp for this shape, which hides where the
+  midpoint actually falls.
+- **Categorical** — hues chosen for maximum mutual distinguishability (not
+  from a single-hue ramp), for unordered categories (segments, regions) —
+  capped at roughly 8 distinct series before an additional visual channel
+  (pattern, direct labeling) is needed, since beyond that count hue alone
+  stops reliably distinguishing series.
+
+All three still pass the color-blind safety rule above (categorical
+especially — red/green adjacent categories in an unordered legend are exactly
+the confusion that rule exists to prevent) and the contrast rule where a
+series color also carries a text/label. Chart-type selection itself
+(matching a data shape to bar/line/scatter/etc.) is
+`ui-engine/component-system.md`'s concern — this section owns only the color
+ramps such a chart draws from.
+
+## Loop position
+Consumes `visual-trends.md`'s register selection (which informs how saturated/
+restrained the primary palette is) at the feature-level loop. Re-entered when
+a Test accessibility finding (dimension 6) traces to a perceptual cause —
+contrast or color-only encoding — per `methodology/design-thinking.md`'s
+routing table; structural accessibility causes route to
+`ux-engine/accessibility.md` instead.
+
+## Explicitly not here
+- Structural/keyboard/ARIA accessibility → `ux-engine/accessibility.md`.
+- How color combines with type/whitespace for hierarchy → `visual-hierarchy.md`.
+- How color tokens fold into the assembled system's theming layer →
+  `design-system.md`.

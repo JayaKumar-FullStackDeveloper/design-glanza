@@ -1,0 +1,7 @@
+# Python bytecode cache — regenerates automatically, never source content
+**/__pycache__/
+*.pyc
+
+# OS cruft
+.DS_Store
+Thumbs.db

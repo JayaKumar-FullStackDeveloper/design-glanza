@@ -1,0 +1,1100 @@
+[
+  {
+    "id": "DG-001",
+    "domain": "Admin Panel",
+    "category": "01-core-business",
+    "slug": "admin-panel",
+    "path": "01-core-business/001-admin-panel",
+    "standard": "complete",
+    "standard_file": "standard.pdf"
+  },
+  {
+    "id": "DG-002",
+    "domain": "ERP",
+    "category": "01-core-business",
+    "slug": "erp",
+    "path": "01-core-business/002-erp",
+    "standard": "complete",
+    "standard_file": "standard.pdf"
+  },
+  {
+    "id": "DG-003",
+    "domain": "CRM",
+    "category": "01-core-business",
+    "slug": "crm",
+    "path": "01-core-business/003-crm",
+    "standard": "complete",
+    "standard_file": "standard.pdf"
+  },
+  {
+    "id": "DG-004",
+    "domain": "HRMS",
+    "category": "01-core-business",
+    "slug": "hrms",
+    "path": "01-core-business/004-hrms",
+    "standard": "complete",
+    "standard_file": "standard.pdf"
+  },
+  {
+    "id": "DG-005",
+    "domain": "HCM",
+    "category": "01-core-business",
+    "slug": "hcm",
+    "path": "01-core-business/005-hcm",
+    "standard": "complete",
+    "standard_file": "standard.pdf"
+  },
+  {
+    "id": "DG-006",
+    "domain": "Finance & Accounting",
+    "category": "01-core-business",
+    "slug": "finance-accounting",
+    "path": "01-core-business/006-finance-accounting",
+    "standard": "complete",
+    "standard_file": "standard.pdf"
+  },
+  {
+    "id": "DG-007",
+    "domain": "Payroll",
+    "category": "01-core-business",
+    "slug": "payroll",
+    "path": "01-core-business/007-payroll",
+    "standard": "complete",
+    "standard_file": "standard.pdf"
+  },
+  {
+    "id": "DG-008",
+    "domain": "Procurement",
+    "category": "01-core-business",
+    "slug": "procurement",
+    "path": "01-core-business/008-procurement",
+    "standard": "complete",
+    "standard_file": "standard.pdf"
+  },
+  {
+    "id": "DG-009",
+    "domain": "Inventory Management",
+    "category": "01-core-business",
+    "slug": "inventory-management",
+    "path": "01-core-business/009-inventory-management",
+    "standard": "complete",
+    "standard_file": "standard.pdf"
+  },
+  {
+    "id": "DG-010",
+    "domain": "Supply Chain Management",
+    "category": "01-core-business",
+    "slug": "supply-chain-management",
+    "path": "01-core-business/010-supply-chain-management",
+    "standard": "complete",
+    "standard_file": "standard.pdf"
+  },
+  {
+    "id": "DG-011",
+    "domain": "Warehouse Management",
+    "category": "01-core-business",
+    "slug": "warehouse-management",
+    "path": "01-core-business/011-warehouse-management",
+    "standard": "complete",
+    "standard_file": "standard.pdf"
+  },
+  {
+    "id": "DG-012",
+    "domain": "Asset Management",
+    "category": "01-core-business",
+    "slug": "asset-management",
+    "path": "01-core-business/012-asset-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-013",
+    "domain": "Project Management",
+    "category": "01-core-business",
+    "slug": "project-management",
+    "path": "01-core-business/013-project-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-014",
+    "domain": "Workflow Management",
+    "category": "01-core-business",
+    "slug": "workflow-management",
+    "path": "01-core-business/014-workflow-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-015",
+    "domain": "Document Management",
+    "category": "01-core-business",
+    "slug": "document-management",
+    "path": "01-core-business/015-document-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-016",
+    "domain": "E-commerce",
+    "category": "02-commerce-marketplace",
+    "slug": "e-commerce",
+    "path": "02-commerce-marketplace/016-e-commerce",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-017",
+    "domain": "Marketplace",
+    "category": "02-commerce-marketplace",
+    "slug": "marketplace",
+    "path": "02-commerce-marketplace/017-marketplace",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-018",
+    "domain": "Retail Management",
+    "category": "02-commerce-marketplace",
+    "slug": "retail-management",
+    "path": "02-commerce-marketplace/018-retail-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-019",
+    "domain": "POS",
+    "category": "02-commerce-marketplace",
+    "slug": "pos",
+    "path": "02-commerce-marketplace/019-pos",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-020",
+    "domain": "Food Delivery",
+    "category": "02-commerce-marketplace",
+    "slug": "food-delivery",
+    "path": "02-commerce-marketplace/020-food-delivery",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-021",
+    "domain": "Grocery Delivery",
+    "category": "02-commerce-marketplace",
+    "slug": "grocery-delivery",
+    "path": "02-commerce-marketplace/021-grocery-delivery",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-022",
+    "domain": "Restaurant Management",
+    "category": "02-commerce-marketplace",
+    "slug": "restaurant-management",
+    "path": "02-commerce-marketplace/022-restaurant-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-023",
+    "domain": "Subscription Management",
+    "category": "02-commerce-marketplace",
+    "slug": "subscription-management",
+    "path": "02-commerce-marketplace/023-subscription-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-024",
+    "domain": "Order Management",
+    "category": "02-commerce-marketplace",
+    "slug": "order-management",
+    "path": "02-commerce-marketplace/024-order-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-025",
+    "domain": "Delivery & Logistics",
+    "category": "02-commerce-marketplace",
+    "slug": "delivery-logistics",
+    "path": "02-commerce-marketplace/025-delivery-logistics",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-026",
+    "domain": "Booking & Reservation",
+    "category": "02-commerce-marketplace",
+    "slug": "booking-reservation",
+    "path": "02-commerce-marketplace/026-booking-reservation",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-027",
+    "domain": "Travel & Hospitality",
+    "category": "02-commerce-marketplace",
+    "slug": "travel-hospitality",
+    "path": "02-commerce-marketplace/027-travel-hospitality",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-028",
+    "domain": "Healthcare",
+    "category": "03-healthcare",
+    "slug": "healthcare",
+    "path": "03-healthcare/028-healthcare",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-029",
+    "domain": "Hospital Management",
+    "category": "03-healthcare",
+    "slug": "hospital-management",
+    "path": "03-healthcare/029-hospital-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-030",
+    "domain": "Clinic Management",
+    "category": "03-healthcare",
+    "slug": "clinic-management",
+    "path": "03-healthcare/030-clinic-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-031",
+    "domain": "Dental PMS",
+    "category": "03-healthcare",
+    "slug": "dental-pms",
+    "path": "03-healthcare/031-dental-pms",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-032",
+    "domain": "Pharmacy Management",
+    "category": "03-healthcare",
+    "slug": "pharmacy-management",
+    "path": "03-healthcare/032-pharmacy-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-033",
+    "domain": "Telemedicine",
+    "category": "03-healthcare",
+    "slug": "telemedicine",
+    "path": "03-healthcare/033-telemedicine",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-034",
+    "domain": "Patient Management",
+    "category": "03-healthcare",
+    "slug": "patient-management",
+    "path": "03-healthcare/034-patient-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-035",
+    "domain": "Laboratory Management",
+    "category": "03-healthcare",
+    "slug": "laboratory-management",
+    "path": "03-healthcare/035-laboratory-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-036",
+    "domain": "Medical Billing",
+    "category": "03-healthcare",
+    "slug": "medical-billing",
+    "path": "03-healthcare/036-medical-billing",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-037",
+    "domain": "Health & Wellness",
+    "category": "03-healthcare",
+    "slug": "health-wellness",
+    "path": "03-healthcare/037-health-wellness",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-038",
+    "domain": "EdTech",
+    "category": "04-education",
+    "slug": "edtech",
+    "path": "04-education/038-edtech",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-039",
+    "domain": "Learning Management System (LMS)",
+    "category": "04-education",
+    "slug": "learning-management-system-lms",
+    "path": "04-education/039-learning-management-system-lms",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-040",
+    "domain": "School Management",
+    "category": "04-education",
+    "slug": "school-management",
+    "path": "04-education/040-school-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-041",
+    "domain": "College Management",
+    "category": "04-education",
+    "slug": "college-management",
+    "path": "04-education/041-college-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-042",
+    "domain": "Student Information System (SIS)",
+    "category": "04-education",
+    "slug": "student-information-system-sis",
+    "path": "04-education/042-student-information-system-sis",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-043",
+    "domain": "Online Examination",
+    "category": "04-education",
+    "slug": "online-examination",
+    "path": "04-education/043-online-examination",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-044",
+    "domain": "Course Management",
+    "category": "04-education",
+    "slug": "course-management",
+    "path": "04-education/044-course-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-045",
+    "domain": "Training Management",
+    "category": "04-education",
+    "slug": "training-management",
+    "path": "04-education/045-training-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-046",
+    "domain": "FinTech",
+    "category": "05-financial-insurance",
+    "slug": "fintech",
+    "path": "05-financial-insurance/046-fintech",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-047",
+    "domain": "Banking",
+    "category": "05-financial-insurance",
+    "slug": "banking",
+    "path": "05-financial-insurance/047-banking",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-048",
+    "domain": "Digital Payments",
+    "category": "05-financial-insurance",
+    "slug": "digital-payments",
+    "path": "05-financial-insurance/048-digital-payments",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-049",
+    "domain": "Wallet",
+    "category": "05-financial-insurance",
+    "slug": "wallet",
+    "path": "05-financial-insurance/049-wallet",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-050",
+    "domain": "Expense Management",
+    "category": "05-financial-insurance",
+    "slug": "expense-management",
+    "path": "05-financial-insurance/050-expense-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-051",
+    "domain": "Investment Management",
+    "category": "05-financial-insurance",
+    "slug": "investment-management",
+    "path": "05-financial-insurance/051-investment-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-052",
+    "domain": "Wealth Management",
+    "category": "05-financial-insurance",
+    "slug": "wealth-management",
+    "path": "05-financial-insurance/052-wealth-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-053",
+    "domain": "Lending",
+    "category": "05-financial-insurance",
+    "slug": "lending",
+    "path": "05-financial-insurance/053-lending",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-054",
+    "domain": "Insurance",
+    "category": "05-financial-insurance",
+    "slug": "insurance",
+    "path": "05-financial-insurance/054-insurance",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-055",
+    "domain": "Claims Management",
+    "category": "05-financial-insurance",
+    "slug": "claims-management",
+    "path": "05-financial-insurance/055-claims-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-056",
+    "domain": "Accounting",
+    "category": "05-financial-insurance",
+    "slug": "accounting",
+    "path": "05-financial-insurance/056-accounting",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-057",
+    "domain": "Logistics",
+    "category": "06-logistics-mobility",
+    "slug": "logistics",
+    "path": "06-logistics-mobility/057-logistics",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-058",
+    "domain": "Fleet Management",
+    "category": "06-logistics-mobility",
+    "slug": "fleet-management",
+    "path": "06-logistics-mobility/058-fleet-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-059",
+    "domain": "Transportation Management",
+    "category": "06-logistics-mobility",
+    "slug": "transportation-management",
+    "path": "06-logistics-mobility/059-transportation-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-060",
+    "domain": "Ride-Hailing",
+    "category": "06-logistics-mobility",
+    "slug": "ride-hailing",
+    "path": "06-logistics-mobility/060-ride-hailing",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-061",
+    "domain": "Courier Management",
+    "category": "06-logistics-mobility",
+    "slug": "courier-management",
+    "path": "06-logistics-mobility/061-courier-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-062",
+    "domain": "Last-Mile Delivery",
+    "category": "06-logistics-mobility",
+    "slug": "last-mile-delivery",
+    "path": "06-logistics-mobility/062-last-mile-delivery",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-063",
+    "domain": "Driver Management",
+    "category": "06-logistics-mobility",
+    "slug": "driver-management",
+    "path": "06-logistics-mobility/063-driver-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-064",
+    "domain": "Route Management",
+    "category": "06-logistics-mobility",
+    "slug": "route-management",
+    "path": "06-logistics-mobility/064-route-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-065",
+    "domain": "Vehicle Management",
+    "category": "06-logistics-mobility",
+    "slug": "vehicle-management",
+    "path": "06-logistics-mobility/065-vehicle-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-066",
+    "domain": "Marketing Platform",
+    "category": "07-marketing-customer",
+    "slug": "marketing-platform",
+    "path": "07-marketing-customer/066-marketing-platform",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-067",
+    "domain": "Marketing Automation",
+    "category": "07-marketing-customer",
+    "slug": "marketing-automation",
+    "path": "07-marketing-customer/067-marketing-automation",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-068",
+    "domain": "Customer Engagement",
+    "category": "07-marketing-customer",
+    "slug": "customer-engagement",
+    "path": "07-marketing-customer/068-customer-engagement",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-069",
+    "domain": "Loyalty & Rewards",
+    "category": "07-marketing-customer",
+    "slug": "loyalty-rewards",
+    "path": "07-marketing-customer/069-loyalty-rewards",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-070",
+    "domain": "Referral & Affiliate",
+    "category": "07-marketing-customer",
+    "slug": "referral-affiliate",
+    "path": "07-marketing-customer/070-referral-affiliate",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-071",
+    "domain": "Social Media Management",
+    "category": "07-marketing-customer",
+    "slug": "social-media-management",
+    "path": "07-marketing-customer/071-social-media-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-072",
+    "domain": "Campaign Management",
+    "category": "07-marketing-customer",
+    "slug": "campaign-management",
+    "path": "07-marketing-customer/072-campaign-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-073",
+    "domain": "Customer Support",
+    "category": "07-marketing-customer",
+    "slug": "customer-support",
+    "path": "07-marketing-customer/073-customer-support",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-074",
+    "domain": "Helpdesk",
+    "category": "07-marketing-customer",
+    "slug": "helpdesk",
+    "path": "07-marketing-customer/074-helpdesk",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-075",
+    "domain": "Survey & Feedback",
+    "category": "07-marketing-customer",
+    "slug": "survey-feedback",
+    "path": "07-marketing-customer/075-survey-feedback",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-076",
+    "domain": "Reviews & Reputation Management",
+    "category": "07-marketing-customer",
+    "slug": "reviews-reputation-management",
+    "path": "07-marketing-customer/076-reviews-reputation-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-077",
+    "domain": "Business Intelligence",
+    "category": "08-enterprise-operations",
+    "slug": "business-intelligence",
+    "path": "08-enterprise-operations/077-business-intelligence",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-078",
+    "domain": "Analytics Dashboard",
+    "category": "08-enterprise-operations",
+    "slug": "analytics-dashboard",
+    "path": "08-enterprise-operations/078-analytics-dashboard",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-079",
+    "domain": "Reporting",
+    "category": "08-enterprise-operations",
+    "slug": "reporting",
+    "path": "08-enterprise-operations/079-reporting",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-080",
+    "domain": "Operations Management",
+    "category": "08-enterprise-operations",
+    "slug": "operations-management",
+    "path": "08-enterprise-operations/080-operations-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-081",
+    "domain": "Workforce Management",
+    "category": "08-enterprise-operations",
+    "slug": "workforce-management",
+    "path": "08-enterprise-operations/081-workforce-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-082",
+    "domain": "Field Service Management",
+    "category": "08-enterprise-operations",
+    "slug": "field-service-management",
+    "path": "08-enterprise-operations/082-field-service-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-083",
+    "domain": "Compliance Management",
+    "category": "08-enterprise-operations",
+    "slug": "compliance-management",
+    "path": "08-enterprise-operations/083-compliance-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-084",
+    "domain": "Risk Management",
+    "category": "08-enterprise-operations",
+    "slug": "risk-management",
+    "path": "08-enterprise-operations/084-risk-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-085",
+    "domain": "Quality Management",
+    "category": "08-enterprise-operations",
+    "slug": "quality-management",
+    "path": "08-enterprise-operations/085-quality-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-086",
+    "domain": "Ticketing System",
+    "category": "08-enterprise-operations",
+    "slug": "ticketing-system",
+    "path": "08-enterprise-operations/086-ticketing-system",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-087",
+    "domain": "Property Management",
+    "category": "09-real-estate-property",
+    "slug": "property-management",
+    "path": "09-real-estate-property/087-property-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-088",
+    "domain": "Real Estate",
+    "category": "09-real-estate-property",
+    "slug": "real-estate",
+    "path": "09-real-estate-property/088-real-estate",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-089",
+    "domain": "Facility Management",
+    "category": "09-real-estate-property",
+    "slug": "facility-management",
+    "path": "09-real-estate-property/089-facility-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-090",
+    "domain": "Construction Management",
+    "category": "09-real-estate-property",
+    "slug": "construction-management",
+    "path": "09-real-estate-property/090-construction-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-091",
+    "domain": "Community Management",
+    "category": "09-real-estate-property",
+    "slug": "community-management",
+    "path": "09-real-estate-property/091-community-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-092",
+    "domain": "Rental Management",
+    "category": "09-real-estate-property",
+    "slug": "rental-management",
+    "path": "09-real-estate-property/092-rental-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-093",
+    "domain": "Manufacturing",
+    "category": "10-industry-specific",
+    "slug": "manufacturing",
+    "path": "10-industry-specific/093-manufacturing",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-094",
+    "domain": "Agriculture / AgriTech",
+    "category": "10-industry-specific",
+    "slug": "agriculture-agritech",
+    "path": "10-industry-specific/094-agriculture-agritech",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-095",
+    "domain": "Automotive",
+    "category": "10-industry-specific",
+    "slug": "automotive",
+    "path": "10-industry-specific/095-automotive",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-096",
+    "domain": "LegalTech",
+    "category": "10-industry-specific",
+    "slug": "legaltech",
+    "path": "10-industry-specific/096-legaltech",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-097",
+    "domain": "GovTech",
+    "category": "10-industry-specific",
+    "slug": "govtech",
+    "path": "10-industry-specific/097-govtech",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-098",
+    "domain": "InsurTech",
+    "category": "10-industry-specific",
+    "slug": "insurtech",
+    "path": "10-industry-specific/098-insurtech",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-099",
+    "domain": "Hospitality",
+    "category": "10-industry-specific",
+    "slug": "hospitality",
+    "path": "10-industry-specific/099-hospitality",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-100",
+    "domain": "Media & Entertainment",
+    "category": "10-industry-specific",
+    "slug": "media-entertainment",
+    "path": "10-industry-specific/100-media-entertainment",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-101",
+    "domain": "Fitness",
+    "category": "10-industry-specific",
+    "slug": "fitness",
+    "path": "10-industry-specific/101-fitness",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-102",
+    "domain": "Beauty & Salon",
+    "category": "10-industry-specific",
+    "slug": "beauty-salon",
+    "path": "10-industry-specific/102-beauty-salon",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-103",
+    "domain": "Events Management",
+    "category": "10-industry-specific",
+    "slug": "events-management",
+    "path": "10-industry-specific/103-events-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-104",
+    "domain": "Energy Management",
+    "category": "10-industry-specific",
+    "slug": "energy-management",
+    "path": "10-industry-specific/104-energy-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-105",
+    "domain": "Social Network",
+    "category": "11-consumer-lifestyle",
+    "slug": "social-network",
+    "path": "11-consumer-lifestyle/105-social-network",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-106",
+    "domain": "Community Platform",
+    "category": "11-consumer-lifestyle",
+    "slug": "community-platform",
+    "path": "11-consumer-lifestyle/106-community-platform",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-107",
+    "domain": "Fitness & Wellness",
+    "category": "11-consumer-lifestyle",
+    "slug": "fitness-wellness",
+    "path": "11-consumer-lifestyle/107-fitness-wellness",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-108",
+    "domain": "Food & Nutrition",
+    "category": "11-consumer-lifestyle",
+    "slug": "food-nutrition",
+    "path": "11-consumer-lifestyle/108-food-nutrition",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-109",
+    "domain": "Personal Finance",
+    "category": "11-consumer-lifestyle",
+    "slug": "personal-finance",
+    "path": "11-consumer-lifestyle/109-personal-finance",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-110",
+    "domain": "Event & Experience",
+    "category": "11-consumer-lifestyle",
+    "slug": "event-experience",
+    "path": "11-consumer-lifestyle/110-event-experience",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-111",
+    "domain": "Dating / Social Discovery",
+    "category": "11-consumer-lifestyle",
+    "slug": "dating-social-discovery",
+    "path": "11-consumer-lifestyle/111-dating-social-discovery",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-112",
+    "domain": "Content Platform",
+    "category": "11-consumer-lifestyle",
+    "slug": "content-platform",
+    "path": "11-consumer-lifestyle/112-content-platform",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-113",
+    "domain": "SaaS Platform",
+    "category": "12-developer-saas",
+    "slug": "saas-platform",
+    "path": "12-developer-saas/113-saas-platform",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-114",
+    "domain": "Developer Platform",
+    "category": "12-developer-saas",
+    "slug": "developer-platform",
+    "path": "12-developer-saas/114-developer-platform",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-115",
+    "domain": "API Management",
+    "category": "12-developer-saas",
+    "slug": "api-management",
+    "path": "12-developer-saas/115-api-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-116",
+    "domain": "Cloud Management",
+    "category": "12-developer-saas",
+    "slug": "cloud-management",
+    "path": "12-developer-saas/116-cloud-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-117",
+    "domain": "DevOps",
+    "category": "12-developer-saas",
+    "slug": "devops",
+    "path": "12-developer-saas/117-devops",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-118",
+    "domain": "Project Tracking",
+    "category": "12-developer-saas",
+    "slug": "project-tracking",
+    "path": "12-developer-saas/118-project-tracking",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-119",
+    "domain": "Collaboration",
+    "category": "12-developer-saas",
+    "slug": "collaboration",
+    "path": "12-developer-saas/119-collaboration",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-120",
+    "domain": "Knowledge Management",
+    "category": "12-developer-saas",
+    "slug": "knowledge-management",
+    "path": "12-developer-saas/120-knowledge-management",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-121",
+    "domain": "AI Platform",
+    "category": "12-developer-saas",
+    "slug": "ai-platform",
+    "path": "12-developer-saas/121-ai-platform",
+    "standard": "pending",
+    "standard_file": null
+  },
+  {
+    "id": "DG-122",
+    "domain": "Automation Platform",
+    "category": "12-developer-saas",
+    "slug": "automation-platform",
+    "path": "12-developer-saas/122-automation-platform",
+    "standard": "pending",
+    "standard_file": null
+  }
+]
