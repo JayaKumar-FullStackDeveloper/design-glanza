@@ -29,6 +29,14 @@ depth justified by need, not habit:
   specifies what that search actually is) — very wide *and* very deep
   simultaneously is the combination most likely to fail discoverability
   (`methodology/test.md` dimension 3).
+- **Findability heuristic** (distinct from raw depth): any node a
+  frequently-used flow depends on should be reachable in roughly 3 or
+  fewer navigational actions (clicks/taps) from that flow's natural entry
+  point — a node that technically sits at depth 2 but requires several
+  intermediate disambiguation screens to actually reach still fails this,
+  and a node at depth 4 reachable via a direct link/shortcut
+  (`navigation-system.md` item 5) can still pass it. Depth measures the
+  hierarchy's shape; this measures the actual path a user walks.
 - Each node is provisionally assigned a `SCREEN-NNN` once `templates/
   screen-architecture.md` formalizes it — this file establishes the node and
   its position in the hierarchy; the screen-level detail is that file's job.

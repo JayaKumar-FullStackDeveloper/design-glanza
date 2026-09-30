@@ -45,6 +45,23 @@ application interior) — and even then, the second face is reserved for
   column is as wide as its content requires, not constrained to a reading
   measure.
 
+## Letter-spacing (tracking) scale
+A closed, three-value scale — not a per-component adjustment made by
+feel:
+
+| Token | Tracking | Usage |
+|---|---|---|
+| `tracking-tight` | roughly −1 to −2% | Large `display`/`h1` headings only — large type has visually looser default spacing that slightly negative tracking corrects |
+| `tracking-normal` | 0 (font default) | Everything else — `body`, `h2`, `h3`, data/tabular text |
+| `tracking-wide` | roughly +4 to +8% | Uppercase labels/captions/eyebrow text only — all-caps text needs *added* spacing to stay legible, the opposite correction from large display type |
+
+Never apply `tracking-tight` to body text or data — it measurably reduces
+legibility at small sizes, which is exactly the density/legibility trade-off
+this file's own body-size range (14–16px) is already tuned against. Per
+`ux-engine/localization.md`'s Non-Latin script section: negative tracking
+on large display type is a Latin-only technique, never applied to a
+non-Latin display heading.
+
 ## Hierarchy via type alone
 Heading levels must be distinguishable by weight + size together even with
 color and layout position stripped away (grayscale, screen-reader "skip to

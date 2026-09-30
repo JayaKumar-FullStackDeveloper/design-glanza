@@ -60,7 +60,16 @@ Falsifiable, measurable statements of "solved," each traceable to the business
 objective (2) or user objective (3) it validates. This is the single most
 load-bearing output of Define: it is what `test.md` measures the built result
 against later — a success criterion that isn't falsifiable makes Test
-unfalsifiable too.
+unfalsifiable too. Where the criteria need a structuring aid beyond "pick
+something measurable," the **HEART** framework (Happiness, Engagement,
+Adoption, Retention, Task success) is an optional lens for *which category*
+a criterion falls into — Task success maps directly to `methodology/
+test.md` dimension 1, the other four map to post-launch metrics outside
+Design-Glanza's own build-time evaluation scope, useful mainly for naming
+what a stakeholder should track after Implement. This is a citation, not a
+requirement — a criterion is still valid without being labeled against it,
+the same optional-citation posture `product-intelligence/
+requirement-engine.md` already gives RICE/Kano for prioritization.
 
 ## Conflict resolution technique
 When a stakeholder need surfaced in Empathize contradicts another (two roles want

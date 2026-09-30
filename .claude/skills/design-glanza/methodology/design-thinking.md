@@ -122,16 +122,26 @@ Problem → Context → User Need → Constraints → Alternatives → Trade-off
 | Context | Empathize dimensions 6–8 (`empathize.md`) — context, frequency, environment |
 | User Need | Empathize dimensions 3–4 (goals, JTBD) + Define output 3 (user objective) |
 | Constraints | Define output 5 (`define.md`) — constraints |
-| Alternatives | Ideate's divergence step — at least 3 structurally different approaches (`ideate.md` item 1) |
+| Alternatives | Ideate's divergence step — at least 3 structurally different approaches (`ideate.md` item 1); for a UX/UI pattern decision specifically, evidenced by `design-research/research-to-design.md`'s Finding → Insight → Design Principle chain rather than reasoned from a blank page (Rule 21) |
 | Trade-offs | Ideate's scoring against criteria 3–7 (efficiency, cognitive load, scalability, accessibility, implementation complexity) |
 | Selected Approach | Ideate's evidence-based selection (item 8) — including what was rejected and why |
 | Expected Outcome | Define output 8 — success criteria, checked against the selected approach |
-| Validation | Test's nine-dimension evaluation (`methodology/test.md`) — whether the expected outcome actually occurred |
+| Validation | Test's nine-dimension evaluation (`methodology/test.md`) — whether the expected outcome actually occurred; the same step satisfies `design-research/research-to-design.md`'s own Validation link for any research finding this decision applied |
 
 This is a naming/indexing convenience, not a new phase or a new technique —
 every step's substance is exactly what its cited file already does. Reach for
 this chain when a decision needs to be walked start-to-finish in a review or
 audit conversation; use the phase files directly for doing the actual work.
+
+**For a significant decision, this chain is now also persisted, not just
+walked in conversation** (added v1.0.15, Rule 26): `product-memory/
+adr-schema.md` gives this exact same nine-step reasoning an ID, a status,
+and a durable home (`ADR-NNN`) — Problem/Context/Alternatives/Trade-offs/
+Selected Approach/Expected Outcome map directly onto an ADR's fields;
+Validation stays owned by `methodology/test.md`'s own re-run Test phase,
+never frozen into the ADR itself. A decision walked here without ever
+being persisted is exactly what `product-memory/auto-recording.md` exists
+to prevent for anything meeting its significance threshold.
 
 **For a specific, important UX/UI pattern decision** (not a whole-product
 decision), the same 9 steps get applied with concrete teeth — 12 weighing

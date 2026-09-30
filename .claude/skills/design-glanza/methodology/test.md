@@ -20,10 +20,14 @@ with a note.
 
 ### 2. Usability
 Apply a heuristic evaluation: recognition over recall, consistency with
-established patterns, minimal necessary user effort, clear system status, and
-forgiving of small mistakes. Check the actual prototype against each heuristic,
-not against the abstract rule in the abstract — a specific screen either
-recognizably violates a heuristic or it doesn't.
+established patterns, minimal necessary user effort, clear system status,
+forgiving of small mistakes, and **flexibility and efficiency of use** — a
+frequent-user accelerator (a keyboard shortcut, a bulk action, a saved
+filter) that a novice never has to discover but an expert can grow into,
+distinct from the interaction model itself being fast by default
+(`methodology/ideate.md` criterion 2). Check the actual prototype against
+each heuristic, not against the abstract rule in the abstract — a specific
+screen either recognizably violates a heuristic or it doesn't.
 
 ### 3. Discoverability
 Can the actor find the feature/action without being told where it is? Check the

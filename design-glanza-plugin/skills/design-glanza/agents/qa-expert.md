@@ -25,6 +25,20 @@ design content itself.
   (`product-intelligence/domain-standards.md`) — for any domain-specific
   quality-gate criteria it adds on top of `config/quality-gates.md`'s
   standard B1–B12 set.
+- `product-builder/research/research-findings.md` and `research-summary.md`
+  (Rule 21, `design-research/research-to-design.md`) — the Validation
+  step for every `applied` CRITICAL/HIGH finding runs here, at Test.
+- `product-builder/ux/scenarios.md` and `ux/ux-coverage-matrix.md`
+  (Rule 22, `ux-scenario-testing/*`) — the walked checkpoint of **B17**
+  runs here, at Audit.
+- `product-builder/ui/baselines/*.json` and `visual-regression/*`
+  (Rule 25) — the final re-check checkpoint of **B20** runs here, at
+  Audit; the first, structural checkpoint runs earlier, folded into
+  `ui-engine/visual-benchmark.md`'s own mandatory cycle.
+- `product-builder/memory/{product-memory,decision-records}.md` and
+  `product-memory/*` (Rule 26) — the Audit checkpoint of **B21** runs
+  here; the design-time checkpoint runs earlier, per each owning agent's
+  own consultation/recording steps.
 
 ## Analysis procedure
 1. Run `methodology/test.md`'s all nine evaluation dimensions — task
@@ -55,17 +69,55 @@ design content itself.
    this is distinct from B12's completeness check, which confirms the specs
    exist, not that a later build honored them.
 7. Score against `evals/evaluation-rubric.md`'s dimensions.
-8. Determine overall gate status against `config/quality-gates.md`'s
+8. Check `product-builder/research/research-summary.md`'s mandatory-
+   influence table: every CRITICAL/HIGH `RF-NNN` finding marked `applied`
+   gets its stated Validation check actually run against the built/tested
+   result; any left `open` past this point is a **B16** finding, routed to
+   `agents/design-setup-specialist.md`.
+9. Walk every `covered`-status `SCENARIO-NNN` in
+   `product-builder/ux/ux-coverage-matrix.md` against `output/*` (or the
+   spec, for a planning-only engagement) via `ux-scenario-testing/
+   continuity-audit.md` — dead ends, unnecessary steps, ambiguous CTAs,
+   missing feedback, inconsistent interaction patterns, and contextual
+   consistency — and re-run `ux-scenario-testing/gap-detection.md` against
+   the built result. Update the matrix's Checkpoint status; any Blocker/
+   Major finding is a **B17** finding, routed per the table in
+   `ux-scenario-testing/coverage-matrix.md`.
+10. Re-run `scripts/validate-visual-regression.py` against every screen
+   with an existing baseline — the final re-check checkpoint of **B20**.
+   Any Critical/High/Medium finding with no fix and no approved
+   `visual-regression/baseline-updates.md` record is routed per
+   `visual-regression/regression-integration.md`'s routing table; a
+   Critical finding on a core-workflow screen also re-triggers that
+   screen's `ux-scenario-testing/*` scenario walk.
+11. Run `scripts/validate-memory.py` against `product-builder/memory/
+   decision-records.md` — **B21**'s Audit checkpoint. Every Blocker/Major
+   finding (duplicate ID, dangling supersession/`Related` reference,
+   invalid status) is a defect; every flagged *potential* contradiction
+   (two `accepted` ADRs with overlapping scope, no supersession link) is
+   reviewed and resolved — a supersession recorded, or confirmed as
+   genuinely non-conflicting with a stated reason — never left
+   unreviewed.
+12. Determine overall gate status against `config/quality-gates.md`'s
    Audit -> Iterate gate and route every finding to its owning agent/file
    per `methodology/design-thinking.md`'s feedback-routing table.
 
 ## Output
 - `product-builder/qa/qa-report.md`
 - `product-builder/qa/traceability.md`
+- `product-builder/ux/ux-coverage-matrix.md` (Checkpoint status updated)
+- `product-builder/ui/visual-baselines.md` (updated per any approved
+  `visual-regression/baseline-updates.md` record this pass)
+- `product-builder/memory/product-memory.md` (any Audit-time findings
+  reviewed and resolved this pass)
 
 ## Quality criteria
 - Passes (or explicitly fails, with reasons) `config/quality-gates.md`'s
-  **B10 (Traceability)** and **B11 (QA)** gates.
+  **B10 (Traceability)**, **B11 (QA)**, **B16 (Research-to-Design
+  Traceability)**'s validation stage, **B17 (UX Scenario Coverage)**'s
+  walked checkpoint, **B20 (Visual Regression Integrity)**'s final
+  re-check, and **B21 (Product Memory Integrity)**'s Audit checkpoint
+  gates.
 - The report states all nine `methodology/test.md` dimensions individually
   — a report that only addresses task completion is rejected on its face,
   per `workflows/execute-product-builder.md`'s completion criteria: the

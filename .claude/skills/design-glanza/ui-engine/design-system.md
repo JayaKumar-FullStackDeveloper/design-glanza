@@ -121,6 +121,52 @@ Full iconography rules (stroke weight, fill convention, color inheritance,
 accessible-vs-decorative distinction) are `component-system.md`'s job; this
 file only fixes the size scale.
 
+### Border-width scale
+Distinct from the radius scale above (radius is corner curvature; this is
+line weight) and from a border's *color* (`color-system.md`'s semantic
+triplets own that) — a closed scale, not a value chosen per component:
+
+| Token | Value | Usage |
+|---|---|---|
+| `border-none` | 0 | No border; separation by whitespace/shadow alone |
+| `border-hairline` | 1px | Default: inputs, cards, dividers, table rows |
+| `border-thick` | 2px | Emphasis/focus rings, selected states — never for ordinary separation |
+
+### Sizing scale (component dimensions)
+Control heights, derived from the same 4px base unit the spacing scale
+uses (`layout-system.md`) — not a second, independent number system:
+
+| Token | Value | Usage |
+|---|---|---|
+| `size-control-sm` | 32px | Compact controls: dense-table inline actions, small buttons |
+| `size-control-md` | 40px | Default control height: buttons, inputs, selects |
+| `size-control-lg` | 48px | Primary CTAs, touch-priority contexts |
+
+Internal padding at each size still comes from the spacing scale
+(`component-system.md` point 3's existing Size variant rule) — this scale
+only fixes the control's outer height, so a button and an input at the
+same size token align to the same row height when placed side by side.
+
+### Z-index scale
+The elevation scale above already states that "elevation level also
+implies z-index ordering" — this makes that implication a concrete,
+checkable integer scale rather than a qualitative statement, with room
+between levels for component-internal stacking (a dropdown's own open
+menu vs. the dropdown trigger) without needing a new named level:
+
+| Elevation level | Z-index value |
+|---|---|
+| 0 (flat) | 0 |
+| 1 (resting cards) | 100 |
+| 2 (hovered/raised, dropdowns) | 200 |
+| 3 (popovers, tooltips) | 300 |
+| 4 (modals, dialogs) | 400 |
+
+A z-index value outside this set (e.g. an arbitrary `9999`) is drift, the
+same category `agents/design-system-expert.md` already catches for
+radius/elevation/motion — never introduced to "just make sure it's on
+top."
+
 ## Consistency rule
 Once a token is set, every component and screen uses it — no one-off value
 introduced outside this set without it being logged as a system gap and either
@@ -152,3 +198,8 @@ prevent.
 - The specific grid/spacing values → `layout-system.md`.
 - Per-component anatomy, variants, and iconography detail → `component-system.md`.
 - The deliverable document fields → `templates/design-system.md`.
+- The machine-readable structure these token families assemble into, the
+  semantic naming layer, theming as a data shape, master/product
+  inheritance, and violation detection → `design-tokens/*` (this file
+  remains the single source for the scale *values* themselves; that folder
+  never restates them, only structures and enforces them).

@@ -33,7 +33,10 @@ half that's convenient.
 6. Determine conformance against the stated baseline (or a domain-mandated
    stricter bar from `product-types/*.md`, or from a matched `product-types/
    domain-standards/` entry per `product-intelligence/domain-standards.md`
-   — whichever is stricter governs) and record findings.
+   — whichever is stricter governs), checked against
+   `accessibility.md`'s Audit-time conformance checklist (keyboard-only,
+   screen reader, 200–400% zoom, forced-colors, reduced-motion) rather
+   than one modality standing in for all of them, and record findings.
 
 ## Output
 - `product-builder/ux/accessibility.md`

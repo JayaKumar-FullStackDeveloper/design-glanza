@@ -46,6 +46,16 @@ the moment it's designed — not as a later accessibility patch. This is the
 concrete, interaction-level enforcement of the accessibility-by-construction
 check already applied at `methodology/ideate.md`'s selection stage.
 
+Concrete thresholds, so "drag" and "long-press" are specified rather than
+left to feel: a drag gesture activates only after roughly **10–15px** of
+pointer movement (a smaller threshold makes an ordinary click/tap
+mis-register as a drag); a long-press activates at roughly **500ms** of
+sustained contact, distinct from a tap. Where a platform reserves a
+gesture for its own system-level use (e.g. an edge-swipe for OS
+navigation), the product's own gesture never overrides it — the system
+gesture always takes priority, and the product's interaction is reachable
+another way on that platform.
+
 ## Undo / confirmation rules
 Chosen by crossing reversibility with risk, not by habit:
 
@@ -84,6 +94,17 @@ element must look interactive and every look-interactive element must
 actually be interactive; a screen review that only checks "does the primary
 action look prominent" (`ui-engine/visual-hierarchy.md`) without checking
 both directions on secondary/tertiary elements misses this class of defect.
+
+## Recovery space after an error
+Once an error is shown and the user begins correcting it, leave a brief,
+deliberate pause — roughly **300–600ms** — before surfacing the *next*
+prompt or validation result, even if the system could respond instantly.
+Immediately chaining a second correction demand onto the first (or
+re-validating faster than the user can read the first message) reads as
+the system rushing them past a mistake rather than giving them room to
+absorb and fix it — the same asymmetric-timing principle in this file's
+Motion and animation section, applied here to error-recovery pacing
+specifically rather than motion.
 
 ## Error prevention through interaction, not just messaging
 Prefer making an invalid action *unavailable* (disabled state, filtered

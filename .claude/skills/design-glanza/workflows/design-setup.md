@@ -22,15 +22,30 @@ Matches `agents/design-setup-specialist.md`'s analysis procedure and
 `workflows/execute-product-builder.md`'s Design Setup actions, in this
 order:
 
-0. **Design Research** — before touching any reference, research current
-   product-design patterns relevant to this product: modern SaaS/admin
-   conventions, this product's own domain conventions (per the confirmed
-   `product-types/*.md`/`domain-standards` match), information density,
-   navigation/dataviz/form-table/interaction/accessibility/responsive
-   patterns, and current visual trends — checked against
-   `ui-engine/visual-trends.md`'s adoption gate, never adopted just because
-   they're current (`design-reference-engine/design-research.md`). Folds
-   directly into the direction below; produces no separate artifact.
+0. **Design Research** — before touching any reference, run the full
+   Design Research Engine (`design-research/research-engine.md`, Rule 21):
+   write a Research Brief classifying full vs. lightweight research for
+   this scope (`design-research/templates/research-brief.md`); gather
+   evidence across Domain (this product's own conventions, per the
+   confirmed `product-types/*.md`/`domain-standards` match —
+   `design-research/domain-analysis.md`), Interaction
+   (`interaction-analysis.md`), and Visual (`visual-analysis.md`) — User
+   evidence is Empathize's own output, cited not re-derived; run
+   Competitor/Pattern analysis where a named reference exists
+   (`competitor-analysis.md`, `pattern-analysis.md`), applying the
+   Anti-Generic Design challenge to any common pattern before it's
+   accepted. Every finding is recorded as a real `RF-NNN` entry — labeled
+   Known/Assumed/Inferred/Unknown and CRITICAL/HIGH/MEDIUM/LOW-prioritized
+   (`research-methodology.md`, `research-to-design.md`) — in
+   `product-builder/research/research-findings.md`, rolled up in
+   `product-builder/research/research-summary.md`. Current visual trends
+   are still checked against `ui-engine/visual-trends.md`'s adoption gate,
+   never adopted just because they're current. **Every CRITICAL finding,
+   and every HIGH finding affecting a core workflow, must produce a Design
+   Principle** carried into step 5 below, or an explicit, reasoned
+   deferral — this is what **B16** checks. The condensed, Critical/High
+   subset feeds the direction below; the full evidence trail persists as
+   its own artifact, not folded away.
 1. **Detect references** — scan `products/<slug>/BRD/*` for any of the 13
    recognized reference forms (`design-reference-engine/
    reference-analysis.md`).
@@ -49,9 +64,14 @@ order:
    `design-samples/` entry only for Default mode, matched against Product
    Architect's confirmed domain — never one generic style regardless of
    domain (Admin Panel ≠ E-commerce ≠ Healthcare ≠ ERP ≠ Fintech ≠ CRM).
+   For Default mode specifically, apply `design-research/pattern-
+   analysis.md`'s Anti-Generic Design challenge to the selected sample's
+   own component/register choices before accepting them as-is.
 5. **Write `product-builder/ui/design-direction.md`** — every field
    `templates/design-direction.md` requires, filled per
-   `design-reference-engine/design-direction.md`'s synthesis discipline.
+   `design-reference-engine/design-direction.md`'s synthesis discipline,
+   citing step 0's Critical/High `RF-NNN` findings in the Design principles
+   field.
 6. **Present the Design Direction Summary and gate on approval** — a
    concise summary (not the full document), asking *"Does this design
    direction match your expectations?"* A requested change loops back to
@@ -61,10 +81,12 @@ order:
 ## Gate
 Must pass `config/quality-gates.md`'s **Design Setup → Prototype**
 phase-transition gate — which resolves to **B13 (Design Direction
-Completeness)** passing — before `workflows/create-ux.md` may begin. This
-operationalizes Rule 18 (`config/operating-rules.md`): design direction is
-established and, where possible, confirmed before any screen or token is
-built against it.
+Completeness)** and **B16 (Research-to-Design Traceability, findings/
+insight/principle stage)** passing — before `workflows/create-ux.md` may
+begin. This operationalizes Rule 18 (design direction is established and,
+where possible, confirmed before any screen or token is built against it)
+and Rule 21 (`config/operating-rules.md`: research has actually shaped that
+direction, not merely documented alongside it).
 
 ## Relationship to Prototype's ordering (Rule 4/5 still governs)
 Design Setup establishes visual/interaction **intent** — it does not move
@@ -79,8 +101,9 @@ those existing points, not a reordering of them.
 ## Explicitly not here
 - The extraction/questionnaire/classification/authoring techniques
   themselves → `design-reference-engine/*`.
-- The design-research technique itself → `design-reference-engine/
-  design-research.md`.
+- The full Design Research Engine's own technique → `design-research/*`
+  (see `design-research/README.md`); `design-reference-engine/
+  design-research.md` is only this workflow's Step-0 entry pointer.
 - Comparing the eventual generated screen back against this direction →
   `ui-engine/visual-benchmark.md`, `ui-engine/ui-audit-framework.md`.
 - The default sample library's own content → `design-samples/`.

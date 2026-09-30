@@ -5,7 +5,7 @@ Concrete test scenarios that check Design-Glanza's own outputs and its own
 *decision to act at all* — not the product being designed. ("Given input X,
 does the requirement matrix contain Y? Given input Z, does Design-Glanza
 correctly decline to engage?") This is internal quality assurance for the
-master skill, evaluated against `evaluation-rubric.md`'s 21 dimensions and
+master skill, evaluated against `evaluation-rubric.md`'s 27 dimensions and
 tracked over time in `benchmark-matrix.md` — distinct from
 `methodology/test.md`, which validates a *product design* against user
 needs, not Design-Glanza's own reasoning quality.
@@ -73,13 +73,17 @@ rather than one flow with brittle conditional steps; `traceability.md`'s
 REQ×USER trace rows correctly show one requirement serving multiple roles
 differently.
 
-## Coverage across the 21 evaluation dimensions
+## Coverage across the 27 evaluation dimensions
 Every dimension in `evaluation-rubric.md` is exercised by at least one
 scenario above; several are exercised primarily by a specific one. (This
-table's header previously undercounted at "19" even before this pass —
-corrected now while the file is open for the Visual benchmark & audit
-cycle addition, per the same disclosed-fix precedent
-`config/master-config.md`'s changelog uses elsewhere.)
+table's header previously undercounted at "19" even before the Visual
+benchmark & audit cycle addition, corrected then; it was extended again
+for the Research-to-design traceability addition, then UX scenario
+coverage, then Token inheritance integrity, then Component registry
+conformance, then Visual regression integrity; this pass extends it once
+more for the Product memory integrity addition, per the same
+disclosed-fix precedent `config/master-config.md`'s changelog uses
+elsewhere.)
 
 | Dimension | Primarily stressed by |
 |---|---|
@@ -104,6 +108,12 @@ cycle addition, per the same disclosed-fix precedent
 | Design direction quality | 1, 2 |
 | Preview & run verification | 3, 9 |
 | Visual benchmark & audit cycle | 1, 4 |
+| Research-to-design traceability | 1, 2 |
+| UX scenario coverage | 3, 10 |
+| Token inheritance integrity | 1, 7 |
+| Component registry conformance | 2, 4 |
+| Visual regression integrity | 4, 6 |
+| Product memory integrity | 3, 9 |
 
 ## Triggering behavior test cases
 Distinct from the 10 scenarios above: these test whether Design-Glanza (or a

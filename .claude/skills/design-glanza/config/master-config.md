@@ -7,7 +7,386 @@ everywhere, it belongs here.
 
 ## Skill identity & version
 - **Name:** design-glanza
-- **Version:** 1.0.9 — upgraded UI generation and UI audit quality, without
+- **Version:** 1.0.16 — a second, deeper **selective integration pass**
+  over `designer-skills-main` (the same 111-skill/9-category external
+  collection `1.0.5` already drew from once). The user's literal request
+  was to "add the existing skill completely"; per Rule 14 (domain-agnostic
+  core — no wholesale external copying) and the fact this exact source was
+  already analyzed once, the user was asked how to proceed and explicitly
+  chose **selective, analyzed integration**: read the real content (9
+  parallel research passes, one per category), keep only what's genuinely
+  new, fold it into existing files as citations/extensions, never copy raw
+  files, and directly re-verify every flagged "gap" before touching
+  anything — several fork-reported gaps turned out to be false positives
+  (content already present under different phrasing: `empathize.md`'s JTBD
+  template and multi-source synthesis rule, `visual-hierarchy.md`'s
+  Fitts's-law edge/corner note, `prototype.md`'s fidelity ladder,
+  `localization.md`'s cultural-color-table principle) and were correctly
+  left alone rather than duplicated. What was genuinely missing, added as
+  small surgical extensions to existing files: a functional/emotional/
+  social JTBD lens (`empathize.md`), a HEART-framework citation
+  (`define.md`), five named structural interaction-model axes and a
+  comparable-fidelity rule (`ideate.md`), "flexibility and efficiency of
+  use" as a distinct heuristic from Ideate's fast-decision criterion
+  (`test.md`), concrete locale-formatting examples (`localization.md`), a
+  new audit-time conformance checklist cited from `agents/
+  accessibility-expert.md` (`accessibility.md`), a findability heuristic
+  distinct from raw depth (`information-architecture.md`), concrete
+  drag/long-press thresholds and a post-error recovery-pause section
+  (`interaction-design.md`), a workflow-resumption rule
+  (`navigation-system.md`), a frontstage/backstage service-blueprint
+  distinction (`user-flow-engine.md`), a sixth Gestalt grouping signal —
+  common region (`visual-hierarchy.md`), a chart zero-baseline rule
+  (`component-system.md`), a letter-spacing/tracking scale
+  (`typography.md`, propagated into `design-tokens/token-schema.md`, the
+  JSON Schema, and the reference template — added optional, not required,
+  so previously-generated token files don't break), dark-mode
+  near-white-text and a theme-selection default
+  (`color-system.md`), three new evidence-reading sections — behavioral/
+  analytics data pitfalls, qual-vs-quant reconciliation, and a
+  cite-don't-restate pointer to `empathize.md`'s existing synthesis rule
+  (`design-research/evidence-model.md`), a Direct/Indirect/Aspirational
+  competitor classification (`design-research/competitor-analysis.md`), a
+  required counter-example and conflict-priority rank per design principle
+  (`templates/design-direction.md`), and a redundant-tokens check
+  (`design-tokens/token-audit.md` + a new `_check_redundant_tokens()` in
+  `scripts/validate-tokens.py`) — tested against the reference token
+  template via a throwaway scaffolded product, which surfaced a real
+  false-positive bug (typography's weight/lineHeight/family axes
+  intentionally repeat values across type-scale roles) fixed with a
+  documented `REDUNDANCY_CHECK_EXCLUDED_CATEGORIES` exclusion, re-verified
+  clean, then the test product removed. Two genuinely homeless
+  capabilities got new files rather than forced into an existing one:
+  `ux-engine/conversational-ux.md` (turn structure reusing
+  `user-flow-engine.md`'s six-part notation, a three-step error-reprompt
+  ladder, voice rules citing `ux-writing.md`) and `ux-engine/
+  onboarding-design.md` (a four-pattern selection table — progressive/
+  wizard/sample-data/tour — an activation-vs-completion distinction, and a
+  skippability rule), both added as a new `SKILL.md` progressive-
+  disclosure row. Rejected/out of scope: the collection's organizational,
+  interpersonal, and live-user-study skills, which don't fit an
+  autonomous-generation pipeline with no human research team to run them.
+  Still 26 rules, 21 quality-gate dimensions, 12 phases — no architecture
+  change, matching the `1.0.4`/`1.0.5` precedent for this kind of pass.
+  Deliberately not touched: `products/projectflow/` (Rule 15),
+  `design-glanza-plugin/`, the `~/.claude/` installed copies (until the
+  explicit sync step).
+
+  **The explicit sync step, now done:** an invocation-integrity audit found
+  `/design-glanza` was resolving to a stale `~/.claude/skills/design-glanza/`
+  copy frozen at v1.0.7 (missing Rules 17-26, Gates B14-B21, and all 6
+  engines added since), with `~/.claude/design-glanza-plugin/` equally stale
+  and, on inspection, not even an active plugin registration (absent from
+  `settings.json`'s `enabledPlugins` and `plugins/installed_plugins.json` —
+  orphaned content, not a live invocation path). Fixed: the stale global
+  skills-dir copy was backed up in full, then mirror-synced from this file's
+  own directory (`.claude/skills/design-glanza/`, the sole source of truth)
+  — verified byte-identical afterward (differing only in regenerable
+  `__pycache__` bytecode) and confirmed via two independent re-invocations
+  both loading v1.0.16. Separately, `design-glanza-plugin/skills/design-
+  glanza/` (this repo's own plugin package, stuck at v1.0.9) was brought to
+  v1.0.16 the same way, with `docs/PLUGIN.md`'s two documented plugin-form
+  adaptations (`SKILL.md`'s dual invocation phrasing, `scripts/_common.py`'s
+  `_resolve_project_root()`) reapplied on top — `plugin.json` bumped
+  `1.2.0` → `1.3.0` accordingly. The orphaned `~/.claude/design-glanza-
+  plugin/` copy was left untouched (unregistered, so not a live invocation
+  risk) and remains a known follow-up if it's ever registered.
+- **Previously, 1.0.15** — added **Product Memory & Architecture/Design
+  Decision Records (ADR)**: a new top-level `product-memory/` folder
+  (`README.md`, `memory-model.md`, `adr-schema.md`, `consultation-rule.md`,
+  `contradiction-prevention.md`, `auto-recording.md`,
+  `memory-integration.md`, 2 `templates/*`) that indexes/cross-references
+  decision categories already scattered across the engine rather than
+  duplicating them; the one genuinely new artifact is the persisted
+  `ADR-NNN` record. New **Rule 26** (26 rules); new **B21** gate (21
+  dimensions), checked at both a design-time consultation checkpoint and
+  an Audit checkpoint. New `scripts/validate-memory.py` (duplicate-ID,
+  supersession-pointer, and cross-file `Related` integrity, plus a
+  potential-contradiction flag) — verified, then its test artifacts
+  removed. `ADR-NNN` added as a sixth sideways reference in
+  `traceability.md`'s model. No new phase; no new action row.
+- **Previously, 1.0.14** — added the **Visual Regression & Comparison
+  System**: a new top-level `visual-regression/` folder (`README.md`,
+  `baseline-model.md`, `diff-detection.md`, `tolerance-thresholds.md`,
+  `severity-classification.md`, `baseline-updates.md`,
+  `regression-integration.md`, `templates/{visual-baseline,
+  visual-diff-report}.md`) so a later pass never silently breaks a screen
+  that already worked. This is explicitly **temporal**, distinct from
+  `ui-engine/visual-benchmark.md`'s existing three-way (Reference/
+  Direction/Generated) comparison, which is point-in-time and has no
+  notion of a prior version to compare against — a screen can cleanly
+  pass B15 on pass 3 while still regressing pass 2's already-correct
+  state, which B15 cannot see by construction. A **baseline** is a
+  structured snapshot (regions, components with `component-registry/*`
+  bases, `design-tokens/*` paths, breakpoint behavior) captured only once
+  a screen's `templates/visual-gap-analysis.md` reaches Final status
+  `pass` — never pixels, since this system reasons over the same
+  structured artifacts every other engine already produces. The 9
+  requested detection categories (layout shifts, spacing/typography/
+  color changes, component inconsistencies, alignment problems, missing/
+  unexpected elements, responsive regressions) are each reconciled
+  explicitly against `visual-benchmark.md`'s existing 9 gap types in
+  `diff-detection.md` — some are the same concept viewed temporally, four
+  (layout shifts, typography changes, color deviations, unexpected
+  elements) are genuinely new. Tolerance is expressed in **token scale
+  steps**, never raw pixel deltas (Rule 23 makes this the correct unit).
+  Severity uses a Critical/High/Medium/Low label, explicitly mapped onto
+  the one shared Blocker/Major/Minor/Note vocabulary — the same
+  reconciliation already established for `design-research/*`'s
+  CRITICAL/HIGH/MEDIUM/LOW finding priority, never a second competing
+  scale. Intentional changes are preserved via an explicit, logged
+  Baseline Update record (reusing `design-system.md`'s existing "logged
+  system gap, absorbed or rejected" pattern, already reused once for
+  `design-tokens/token-audit.md`'s Token gap log — the same discipline, a
+  third time, for a temporal diff). New **Rule 25** (25 rules); new
+  **B20** gate (20 dimensions), checked at **both** existing checkpoints
+  B15 already uses (Prototype → Implement, structural; Audit → Iterate,
+  final re-check) — the same dual-checkpoint posture already established
+  for B8/B16/B17. A new, real, deterministic script, `scripts/
+  validate-visual-regression.py` (modeled directly on `validate-
+  tokens.py`), structurally diffs a baseline JSON against a `.current.json`
+  capture — verified with a clean/identical pass, a "no current capture
+  yet" edge case, and 8 deliberately-introduced diffs (one per category,
+  including a raw non-token value) all confirmed firing with the correct
+  Critical/High/Medium label and mapped severity, then removed. No new
+  agent (`agents/qa-expert.md` owns B20's Audit checkpoint; the
+  Prototype-time checkpoint folds into `ui-designer.md`/`design-system-
+  expert.md`'s existing visual-benchmark cycle, the same agents who
+  already run it); no new ID scheme (a baseline is addressed by the
+  `SCREEN-NNN` it snapshots, not a new sequential id) — no new action row
+  in `workflows/execute-product-builder.md`'s table either, folded into
+  the existing "Run the mandatory visual-benchmark-and-audit cycle" and
+  "Audit the product" actions, continuing the restrained pattern
+  `design-tokens/*` and `component-registry/*` both established.
+  **While updating that action table's completion-criteria list for B20,
+  found and fixed a real, unrelated omission**: B18 and B19 had never
+  actually been added to its "every earlier gate... still holding" list
+  in the two prior versions that introduced them — corrected now,
+  disclosed here per this changelog's own established precedent for an
+  incidentally-found gap. Deliberately not touched:
+  `products/projectflow/` (Rule 15), `design-glanza-plugin/`, the
+  `~/.claude/` installed copies (until the explicit sync step).
+- **Previously, 1.0.13** — added the **Component Intelligence Registry**: a
+  new top-level `component-registry/` folder (`README.md`,
+  `registry-schema.md`, `components-{actions-inputs,navigation,
+  containers-display,feedback-status}.md` — ~24 pre-populated components
+  across Button/Input/Select/Search/Filter/Date Picker/Upload/Tabs/
+  Navigation/Sidebar/Header/Dropdown/Pagination/Card/Table/Modal/Drawer/
+  Chart/Toast/Tooltip/Empty State/Loading State/Error State/Confirmation
+  — `composition-patterns.md` (Data Table and Form as organisms, plus
+  Record Detail View), `registry-integration.md`) so a Product Builder
+  starts every component from professionally-reasoned guidance instead of
+  a blank page. `ui-engine/component-system.md`'s existing 8-point
+  framework (Purpose/Anatomy/Variants/States/Behavior/Content rules/
+  Accessibility/Responsive behavior) is unchanged and un-restated — this
+  registry supplies pre-filled *instances* of it plus 5 genuinely new
+  fields per entry (When to use, When NOT to use, Validation rules,
+  Composition rules, Common UX mistakes; Domain-specific usage cites
+  `product-types/*.md` rather than restating it). The Master Registry ↔
+  Product Inventory relationship mirrors `design-tokens/
+  token-inheritance.md`'s model exactly, applied to components instead of
+  tokens: a product's `templates/component-spec.md` instance now carries
+  a **Registry base** field, citing which entry (or `composition-
+  patterns.md` organism) it instantiates, or a stated reason none fit.
+  New **Rule 24 — Component Intelligence** (24 rules now); **B6** sharpened
+  again in place (registry-base citation joins the token check it already
+  sharpened last version); new **B19 (Component Registry Conformance)**
+  gate (19 dimensions now) for the master↔product component relationship
+  specifically, checked at the same existing Prototype → Implement
+  transition — no new transition, no new phase. No new ID scheme (a
+  registry entry is referenced by name, not sequentially numbered — the
+  same deliberate difference already stated for `RF-NNN`/`SCENARIO-NNN`).
+  No new agent: `agents/design-system-expert.md` owns B19, the same agent
+  that already owns B6 and B18 — its existing reuse-vs-new decision
+  (`component-system.md`'s Reuse rule) now runs registry-first, then
+  product-inventory-second, rather than product-inventory-only.
+  Deliberately **no new script and no new `scripts/create-product-
+  builder.py` SECTION_SPECS entry** — unlike Research Findings/UX
+  Scenarios/Design Tokens, the registry is reference material consulted
+  during generation (like `product-types/*.md` or `design-samples/`), not
+  a new per-product fillable artifact category, and registry-conformance
+  is a judgment call (does this component's purpose genuinely match an
+  entry), not a deterministic pattern-match — kept honestly agent-owned
+  rather than forced into a script that couldn't meaningfully check it.
+  Explicitly wired into `ux-scenario-testing/{gap-detection,
+  continuity-audit,scenario-model}.md` (a "missing action"/"inconsistent
+  pattern" finding is very often exactly a registry-first violation) and
+  into `design-tokens/*` (every registry entry's values are stated as
+  token paths, inheriting Rule 23's discipline automatically) per this
+  task's explicit integration requirement. Deliberately not touched:
+  `products/projectflow/` (Rule 15), `design-glanza-plugin/`, the
+  `~/.claude/` installed copies (until the explicit sync step).
+- **Previously, 1.0.12** — added the **Design Token Intelligence Layer** so
+  generated screens stop inventing arbitrary colors, typography, spacing,
+  radius, borders, shadows, component dimensions, breakpoints, motion, and
+  z-index values, and instead consume one coherent, machine-readable token
+  system. Since `ui-engine/*` already defines nearly every scale this
+  requirement named, this pass split cleanly in two: (1) three genuinely
+  missing scales — border-width, a component-dimension/sizing scale, and
+  an explicit numeric z-index scale (previously only implied by
+  elevation) — added directly to `ui-engine/design-system.md`'s own token
+  taxonomy, the file that already owns "token families with no other
+  home"; (2) a new top-level `design-tokens/` folder (`README.md`,
+  `token-schema.md`, `semantic-tokens.md`, `theming.md`,
+  `token-inheritance.md`, `token-audit.md`,
+  `design-tokens.schema.json`, `templates/design-tokens.json`) that
+  structures, names, themes, and enforces those (and every pre-existing)
+  scale — never re-deriving a single value. The canonical semantic names
+  (`primary`, `secondary`, `surface`, `background`, `text`, `muted`,
+  `success`, `warning`, `error`, `info`) are reconciled explicitly against
+  `color-system.md`'s existing vocabulary (`error` is the schema name for
+  what `color-system.md`'s prose calls `danger` — same triplet, not a
+  second concept; `secondary`/`background` were named in `templates/
+  design-direction.md` but never given ramp-construction treatment before
+  now). Light/dark theming is expressed as a real `{light, dark}` data
+  shape per token, operationalizing `design-system.md`'s existing Theming
+  rule rather than leaving it prose-only. A new, real, deterministic
+  script, `scripts/validate-tokens.py`, checks required categories/
+  semantic tokens, theme completeness, and scans generated artifacts for
+  raw hex/`rgb()` values with no logged Token gap exception (reusing
+  `design-system.md`'s existing "logged system gap" resolution path, not a
+  new tagging system) — verified by scaffolding a throwaway product,
+  dropping in the template token file (clean pass), then deliberately
+  breaking four structural checks and one raw-value case one at a time to
+  confirm each fires, then removing the test artifacts. New **Rule 23 —
+  Design Token Intelligence** (23 rules now); **B6 (Design System)**'s
+  pass criterion sharpened in place (not superseded) to cite the schema
+  and the new script concretely; new **B18 (Token Inheritance Integrity)**
+  gate (18 dimensions now) for the master↔product relationship
+  specifically — both checked at the existing Prototype → Implement
+  transition, no new transition. No new ID scheme (a token is
+  path-addressable, not sequentially numbered, so it doesn't join
+  `RF-NNN`/`SCENARIO-NNN` in `product-intelligence/traceability.md`'s
+  sideways-reference model — a deliberate, stated difference, not an
+  oversight). No new agent: `agents/design-system-expert.md` owns both
+  gates, the same agent that already owned B6. `scripts/
+  create-product-builder.py` now scaffolds a new product's
+  `ui/design-tokens.json` from the master template (with
+  `$inherits.masterSkillVersion` set live) rather than leaving it
+  unscaffolded, and gained a 23rd generated-SKILL.md section ("Design
+  Tokens"). Deliberately not touched: `products/projectflow/` (Rule 15),
+  `design-glanza-plugin/`, the `~/.claude/` installed copies (until the
+  explicit sync step).
+- **Previously, 1.0.11** — added the **UX Scenario Testing** engine so a
+  generated product is validated as a complete end-to-end user journey,
+  not a collection of individually-attractive screens. A new top-level
+  `ux-scenario-testing/` folder (`README.md`, `scenario-model.md`,
+  `scenario-types.md`, `gap-detection.md`, `continuity-audit.md`,
+  `coverage-matrix.md`, plus 2 `templates/*`) introduces exactly four
+  genuinely new things and reuses everything else by citation (its own
+  `README.md` states this explicitly, the same honest-disclosure posture
+  `ui-audit-framework.md` already set as precedent): (1) a mandatory,
+  8-type scenario taxonomy (primary/alternate/error/empty/loading/
+  permission/offline/recovery) walked **per flow**, not left ad hoc; (2)
+  structural gap detection — missing screens/transitions/actions/
+  validations/feedback — cross-checked against the actual spec; (3) a
+  cross-screen continuity audit — dead ends, unnecessary steps, ambiguous
+  CTAs, missing feedback, inconsistent interaction patterns, broken
+  contextual consistency — since `ui-audit-framework.md`/
+  `craft-critique.md` are both explicit about auditing one finished screen
+  at a time, never a scenario's full sequence; (4) the UX Coverage Matrix
+  artifact and its own gate. Everything else — the canonical flow
+  notation, the 13 mandatory states, recovery paths, navigation pattern
+  selection, task-completion/discoverability evaluation — is cited from
+  `ux-engine/user-flow-engine.md`, `state-design.md`, `navigation-
+  system.md`, and `methodology/test.md`, never restated. New **Rule 22 —
+  UX Scenario Testing** (22 rules now) and new **B17 (UX Scenario
+  Coverage)** gate (17 measurable dimensions now), checked cumulatively at
+  two existing transitions (Prototype → Implement, spec-level; Audit →
+  Iterate, walked) rather than a new phase-transition — mirroring B15/B16's
+  own two-checkpoint pattern. `SCENARIO-NNN` is a new sideways reference in
+  `product-intelligence/traceability.md`'s model, the same category as
+  `BR-NNN`/`EDGE-NNN`/`DEP-NNN`/`RF-NNN` — explicitly *not* inserted into
+  Rule 9's REQ→USER→FLOW→SCREEN→COMPONENT→TEST chain itself (a scenario
+  touches several screens across one walk, not one link in the chain).
+  No new agent: `agents/ux-architect.md` and `agents/interaction-
+  designer.md` jointly own checkpoint 1 (they already own the flows/
+  screens/states a scenario is built from); `agents/qa-expert.md` owns
+  checkpoint 2 (it already owns Test/Audit); `agents/design-system-
+  expert.md` gained one line treating an inconsistent-interaction-pattern
+  finding as drift at the pattern level, the same category as its existing
+  token/component drift review. No new `product-builder/` top-level
+  subdir — scenario artifacts (`scenarios.md`, `ux-coverage-matrix.md`)
+  live inside the existing `ux/` subdir alongside flows/IA/navigation/
+  states, since they're UX-phase artifacts through and through; only
+  `scripts/create-product-builder.py`'s `SECTION_SPECS` (a 22nd generated-
+  SKILL.md section) and `BUILDER_SUBDIR_PURPOSE`'s `ux` description text
+  changed, plus its hardcoded action count (39→41) — verified by
+  generating, checking the new section rendered, and removing a throwaway
+  test product. `workflows/execute-product-builder.md`'s action table grew
+  39→41 (one new action at the end of Prototype-UX, one new action at the
+  Test→Audit bridge) — `create-ux.md`, `create-ui.md`, `build-product.md`,
+  `preview-run.md`, and `audit-product.md`'s Order-range citations all
+  updated to match, each again showing its full shift history rather than
+  only the latest number. `evaluation-rubric.md` gained a 23rd dimension
+  (22→23 dimensions, Tier B 13→14 dimensions, 245→255 total points);
+  `test-cases.md` updated to match. Deliberately not touched:
+  `products/projectflow/` (Rule 15), `design-glanza-plugin/`, the
+  `~/.claude/` installed copies (until the explicit sync step). A
+  disclosed limitation, matching v1.0.10's own: no validator script yet
+  cross-checks `SCENARIO-NNN` referential integrity — left for a future
+  pass alongside the same open item for `RF-NNN`.
+- **Previously, 1.0.10** — upgraded Design Setup's Step 0 (v1.0.9's folded-in
+  Design Research) into a structured **Design Research Engine**, a new
+  top-level `design-research/` folder (`README.md`, `research-engine.md`,
+  `research-methodology.md`, `evidence-model.md`, `insight-model.md`,
+  `domain-analysis.md`, `interaction-analysis.md`, `visual-analysis.md`,
+  `pattern-analysis.md`, `competitor-analysis.md`, `research-to-design.md`,
+  `research.schema.json`, plus 5 `templates/*`), so research becomes an
+  **active input to UI generation** rather than documentation generated
+  alongside it: Research → Evidence → Insight → Design Principle → UX
+  Decision → UI Pattern → Validation, every finding a real `RF-NNN` record
+  (Known/Assumed/Inferred/Unknown-labeled, CRITICAL/HIGH/MEDIUM/LOW-
+  prioritized) stored in a new `product-builder/research/` folder — not
+  folded silently into `design-direction.md` with nothing else surviving,
+  v1.0.9's posture. **Every CRITICAL finding, and every HIGH finding
+  affecting a core workflow, must produce a cited UX Decision and/or UI
+  Pattern, or an explicit reasoned deferral** — a new Anti-Generic Design
+  challenge (`design-research/pattern-analysis.md`, 5 questions) is applied
+  to every common/default pattern before it's accepted. New **Rule 21 —
+  Evidence-Based Design (Research-to-Design Traceability)** (21 rules now)
+  and new **B16 (Research-to-Design Traceability)** gate (16 measurable
+  dimensions now), checked cumulatively at three existing transitions
+  (Design Setup → Prototype, Prototype → Implement, Audit → Iterate) rather
+  than a new phase-transition or a new phase (the 12-phase lifecycle is
+  unchanged). `RF-NNN` is a new sideways reference in
+  `product-intelligence/traceability.md`'s model (Product Memory), the same
+  category as `BR-NNN`/`EDGE-NNN`/`DEP-NNN`. `design-reference-engine/
+  design-research.md` rewritten to defer to `design-research/*` as its
+  actual technique rather than restating a shallow version of it.
+  `scripts/_common.py` gained `RF` to `ID_SCHEMES` and `research` to
+  `BUILDER_SUBDIRS`; `scripts/create-product-builder.py` gained a 21st
+  generated-`SKILL.md` section ("Research Findings", 20→21) and a
+  `research/` builder subdir, verified by generating and validating a
+  throwaway test product, then removing it. `workflows/execute-product-
+  builder.md`'s action table grew 37→39 (Design Setup's single folded-in
+  Design Research action replaced by 3: Research Brief, Evidence gathering,
+  Insight/Principle synthesis) — `create-ux.md`, `create-ui.md`,
+  `build-product.md`, `preview-run.md`, and `audit-product.md`'s Order-range
+  citations all updated to match, each showing its full shift history
+  rather than just the latest number, continuing the disclosed-fix
+  precedent v1.0.8 established for this exact citation pattern. **While
+  `evaluation-rubric.md` was already open for its 22nd dimension addition
+  (21→22 dimensions, Tier B 12→13 dimensions, 235→245 total points), a
+  second, independent pre-existing miscount was found and fixed**: its
+  "new-marked
+  dimension count" sentence said "Nine" while the table itself has always
+  had 7 rows marked **new** (the 1.0.7-era fix corrected a *different*
+  "six vs. seven" miscount in the same sentence, not this one — both are
+  now disclosed). `evals/test-cases.md` updated to 22 dimensions with a new
+  coverage-table row. No new agent (`agents/design-setup-specialist.md`
+  owns Step 0 as before; `agents/ux-architect.md`, `ui-designer.md`,
+  `design-system-expert.md`, and `qa-expert.md` each gained a
+  mandatory-input citation to `RF-NNN` findings, mirroring how Rule 17's
+  domain-standards rollout touched the same agent set). Deliberately not
+  touched: `products/projectflow/` (Rule 15), `design-glanza-plugin/`, and
+  the `~/.claude/` installed copies (until the explicit sync step). A
+  disclosed limitation: no validator script yet cross-checks `RF-NNN`
+  referential integrity the way `validate-requirements.py` already does for
+  `BR-NNN`/`DEP-NNN`/`EDGE-NNN` — `RF-NNN` citations live in `ux/`/`ui/`
+  artifacts, not `requirement-matrix.md`, so the existing sibling-file
+  check doesn't fit without inventing a new script; left for a future pass.
+- **Previously, 1.0.9** — upgraded UI generation and UI audit quality, without
   adding a new lifecycle phase or a new Product Builder. Design Setup
   (v1.0.7) gained a new **Step 0, Design Research** — before reference
   detection, research current SaaS/admin patterns, this product's own
@@ -686,6 +1065,198 @@ everywhere, it belongs here.
     full detail. Deliberately not touched: `products/projectflow/`,
     `design-glanza-plugin/`, the `~/.claude/` installed copies (until the
     explicit sync step).
+  - 1.0.10 — the Design Research Engine: a new top-level `design-research/`
+    folder (12 files + 5 `templates/*`) implementing the mandatory
+    Research → Evidence → Insight → Design Principle → UX Decision → UI
+    Pattern → Validation chain (Rule 21, 21 rules now), with a
+    Known/Assumed/Inferred/Unknown confidence model, a CRITICAL/HIGH/
+    MEDIUM/LOW priority model, a full/lightweight complexity threshold, and
+    an Anti-Generic Design challenge every common pattern must clear. New
+    **B16 (Research-to-Design Traceability)** gate (16 dimensions),
+    checked cumulatively at three existing transitions — no new phase, no
+    new agent. `RF-NNN` added as a new sideways reference in
+    `product-intelligence/traceability.md`'s model. `design-reference-
+    engine/design-research.md` rewritten to defer to `design-research/*`
+    rather than restating a shallow version of it; `agents/{design-setup-
+    specialist,ux-architect,ui-designer,design-system-expert,qa-expert}.md`
+    each gained an `RF-NNN` mandatory-input citation.
+    `scripts/_common.py`/`create-product-builder.py` gained `RF` to
+    `ID_SCHEMES`, a `research/` builder subdir, and a 21st generated-
+    SKILL.md section (verified by generating/validating/removing a
+    throwaway test product). `execute-product-builder.md`'s action table
+    grew 37→39 (one folded-in action replaced by 3); five downstream
+    workflow files' Order-range citations updated to match.
+    `evaluation-rubric.md` gained a 22nd dimension (235→245 points) and,
+    while open for that, a second independent pre-existing "Nine vs. seven
+    new-marked rows" miscount (distinct from 1.0.7's already-fixed "six vs.
+    seven") was found and corrected; `test-cases.md` updated to match. See
+    the Version summary above for full detail. Deliberately not touched:
+    `products/projectflow/`, `design-glanza-plugin/`, the `~/.claude/`
+    installed copies (until the explicit sync step).
+  - 1.0.11 — the UX Scenario Testing engine: a new top-level
+    `ux-scenario-testing/` folder (`README.md`, `scenario-model.md`,
+    `scenario-types.md`, `gap-detection.md`, `continuity-audit.md`,
+    `coverage-matrix.md`, 2 `templates/*`) validating a product as a
+    complete end-to-end journey — a mandatory 8-type scenario taxonomy
+    walked per flow (`SCENARIO-NNN`), structural gap detection against the
+    spec, a cross-screen continuity audit (dead ends, ambiguous CTAs,
+    inconsistent patterns, broken context) distinct from the existing
+    single-screen `ui-audit-framework.md`/`craft-critique.md` passes, and
+    the UX Coverage Matrix artifact — new **Rule 22** (22 rules) and new
+    **B17** gate (17 dimensions), checked at two existing transitions
+    (Prototype → Implement, Audit → Iterate), mirroring B15/B16's
+    two-checkpoint pattern. `SCENARIO-NNN` added as a new sideways
+    reference in `product-intelligence/traceability.md`'s model. No new
+    agent (`ux-architect.md`/`interaction-designer.md` jointly own
+    checkpoint 1, `qa-expert.md` owns checkpoint 2, matching B15/B16's
+    joint-ownership precedent); no new `product-builder/` top-level
+    subdir — scenario artifacts live inside the existing `ux/` subdir.
+    `execute-product-builder.md`'s action table grew 39→41; five
+    downstream workflow files' Order-range citations updated to match.
+    `evaluation-rubric.md` gained a 23rd dimension (245→255 points);
+    `test-cases.md` updated to match. See the Version summary above for
+    full detail, including the explicit new-vs-cited-technique disclosure
+    `ux-scenario-testing/README.md` states up front. Deliberately not
+    touched: `products/projectflow/`, `design-glanza-plugin/`, the
+    `~/.claude/` installed copies (until the explicit sync step). Same
+    disclosed limitation as v1.0.10: no validator script yet cross-checks
+    `SCENARIO-NNN` referential integrity.
+  - 1.0.12 — the Design Token Intelligence Layer: three genuinely missing
+    scales (border-width, sizing/component-dimensions, an explicit
+    numeric z-index scale) added to `ui-engine/design-system.md`'s own
+    taxonomy; a new top-level `design-tokens/` folder (`README.md`,
+    `token-schema.md`, `semantic-tokens.md`, `theming.md`,
+    `token-inheritance.md`, `token-audit.md`, `design-tokens.schema.json`,
+    `templates/design-tokens.json`) structuring every scale — existing and
+    new — into one machine-readable, semantically-named, themeable,
+    master-inheriting JSON shape. New **Rule 23** (23 rules); **B6**
+    sharpened in place (not superseded); new **B18** gate (18 dimensions)
+    for master↔product token integrity specifically. A new, real
+    validator, `scripts/validate-tokens.py`, checking required categories/
+    semantic tokens/theme completeness/raw-value scanning/inheritance —
+    verified with a clean pass against the template instance, then five
+    deliberately-broken cases confirmed firing, then removed.
+    `scripts/create-product-builder.py` now scaffolds `ui/design-
+    tokens.json` from the master template on generate, and gained a 23rd
+    generated-SKILL.md section. No new ID scheme (tokens are path-
+    addressable, not sequentially numbered — stated as a deliberate
+    difference from `RF-NNN`/`SCENARIO-NNN`, not an oversight); no new
+    agent (`agents/design-system-expert.md` owns both B6 and B18, the same
+    agent that already owned B6 alone). `evaluation-rubric.md` gained a
+    24th dimension, Token inheritance integrity (255→265 points, Tier B
+    14→15 dimensions); `test-cases.md` updated to match. See the Version
+    summary above for
+    full detail, including the explicit new-vs-cited-technique disclosure
+    `design-tokens/README.md` states up front. **While sweeping the skill
+    for stale counts this pass, found and fixed one unrelated, longstanding
+    staleness bug**: `config/output-contract.md`'s own "Explicitly not
+    here" section had cited "12 measurable quality-gate dimensions" since
+    v1.0.1/1.0.0 — six version bumps (1.0.6 through 1.0.11) each grew that
+    count without this file ever being touched to match; corrected to 18
+    now, disclosed here per the same precedent this changelog uses
+    elsewhere for an incidentally-found bug. Deliberately not touched:
+    `products/projectflow/`, `design-glanza-plugin/`, the `~/.claude/`
+    installed copies (until the explicit sync step).
+  - 1.0.13 — the Component Intelligence Registry: a new top-level
+    `component-registry/` folder (`README.md`, `registry-schema.md`, 4
+    `components-*.md` files covering ~24 components, `composition-
+    patterns.md`, `registry-integration.md`) supplying pre-populated,
+    professionally-reasoned instances of `ui-engine/component-system.md`'s
+    existing 8-point framework, plus 5 genuinely new per-entry fields
+    (When to use, When NOT to use, Validation rules, Composition rules,
+    Common UX mistakes). New **Rule 24** (24 rules); **B6** sharpened
+    again in place; new **B19** gate (19 dimensions) for the master↔
+    product component relationship, mirroring B18's role for tokens,
+    checked at the same existing transition. `templates/component-
+    spec.md` gained a **Registry base** field. No new ID scheme (entries
+    are name-referenced, not sequentially numbered); no new agent
+    (`agents/design-system-expert.md` owns B19 too, its existing
+    reuse-vs-new decision now registry-first); deliberately **no new
+    script or SECTION_SPECS entry** — the registry is consulted reference
+    material, not a per-product fillable artifact, and conformance is a
+    judgment call kept honestly agent-owned rather than force-fit into a
+    script. Explicitly wired into `ux-scenario-testing/*` (a scenario
+    gap/continuity finding is very often a registry-first violation) and
+    `design-tokens/*` (every entry's values are token paths) per this
+    task's explicit integration requirement. `evaluation-rubric.md`
+    gained a 25th dimension (265→275 points); `test-cases.md` updated to
+    match. See the Version summary above for full detail. Deliberately
+    not touched: `products/projectflow/`, `design-glanza-plugin/`, the
+    `~/.claude/` installed copies (until the explicit sync step).
+  - 1.0.14 — the Visual Regression & Comparison System: a new top-level
+    `visual-regression/` folder (`README.md`, `baseline-model.md`,
+    `diff-detection.md`, `tolerance-thresholds.md`, `severity-
+    classification.md`, `baseline-updates.md`, `regression-
+    integration.md`, 2 `templates/*`) — temporal baseline-vs-current
+    diffing, distinct from `ui-engine/visual-benchmark.md`'s existing
+    point-in-time three-way comparison. 9 detection categories (layout
+    shifts, spacing/typography/color changes, component inconsistencies,
+    alignment problems, missing/unexpected elements, responsive
+    regressions), each reconciled against `visual-benchmark.md`'s
+    existing 9 gap types — 4 genuinely new. Token-step-based tolerance
+    (never raw pixels); Critical/High/Medium/Low severity mapped onto the
+    shared Blocker/Major/Minor/Note vocabulary; intentional changes
+    preserved via a logged Baseline Update record. New **Rule 25** (25
+    rules); new **B20** gate (20 dimensions), checked at both of B15's
+    existing checkpoints. New script, `scripts/
+    validate-visual-regression.py` (modeled on `validate-tokens.py`),
+    verified with a clean pass, an edge case, and 8 deliberately-
+    introduced diffs all confirmed firing correctly, then removed. No new
+    agent, no new ID scheme, no new action row — folded into the existing
+    visual-benchmark-and-audit cycle and Audit actions. While updating
+    the completion-criteria list for B20, found and fixed a real,
+    unrelated omission: B18/B19 had never been added to it since their
+    own versions introduced them — corrected and disclosed here. See the
+    Version summary above for full detail. Deliberately not touched:
+    `products/projectflow/`, `design-glanza-plugin/`, the `~/.claude/`
+    installed copies (until the explicit sync step).
+  - 1.0.15 — Product Memory & Decision Records: a new top-level
+    `product-memory/` folder (`README.md`, `memory-model.md`,
+    `adr-schema.md`, `consultation-rule.md`, `contradiction-
+    prevention.md`, `auto-recording.md`, `memory-integration.md`, 2
+    `templates/*`) — an index/cross-reference layer over content that
+    (per its own `README.md`, stated up front) mostly already existed
+    across the engine, plus the one genuinely new artifact: a persisted
+    `ADR-NNN`, the storage form of `design-thinking.md`'s existing design
+    decision framework. New **Rule 26** (26 rules); new **B21** gate (21
+    dimensions), checked at a design-time consultation checkpoint (4
+    existing agents, each already owning the decision category it checks)
+    and an Audit checkpoint (`qa-expert.md`). New script, `scripts/
+    validate-memory.py`, extending `validate-requirements.py`'s sibling-
+    file pattern to `ADR-NNN` — duplicate IDs, supersession-pointer
+    integrity, cross-file `Related` referential integrity, and a
+    potential-contradiction flag (two `accepted` ADRs, overlapping scope,
+    no supersession link) — verified with a clean pass, a dedicated
+    contradiction test, and a combined multi-violation run, then removed.
+    `ADR-NNN` added as a sixth sideways reference in `product-
+    intelligence/traceability.md`'s model. `scripts/create-product-
+    builder.py` gained a `memory` builder subdir and a 24th generated-
+    SKILL.md section — verified end to end, then removed. Explicitly
+    wired into `design-tokens/token-inheritance.md`, `component-registry/
+    registry-integration.md`, `ux-scenario-testing/coverage-matrix.md`,
+    and `visual-regression/baseline-updates.md`. No new phase, no new
+    action row. See the Version summary above for full detail.
+    Deliberately not touched: `products/projectflow/`,
+    `design-glanza-plugin/`, the `~/.claude/` installed copies (until the
+    explicit sync step).
+  - 1.0.16 — a second, deeper selective-integration pass over
+    `designer-skills-main` (analyzed via 9 parallel category research
+    passes, not copied wholesale; original untouched). Small surgical
+    extensions across `methodology/{empathize,define,ideate,test}.md`,
+    `ux-engine/{localization,accessibility,information-architecture,
+    interaction-design,navigation-system,user-flow-engine}.md`,
+    `ui-engine/{visual-hierarchy,component-system,typography,
+    color-system}.md`, `design-research/{evidence-model,
+    competitor-analysis}.md`, `templates/design-direction.md`, and
+    `design-tokens/token-audit.md` (+ a new, tested
+    `_check_redundant_tokens()` in `scripts/validate-tokens.py`); two new
+    files for genuinely homeless capabilities (`ux-engine/
+    {conversational-ux,onboarding-design}.md`, new `SKILL.md` routing
+    row). Several fork-reported "gaps" were verified as false positives
+    (content already present) and correctly left untouched rather than
+    duplicated. See the Version summary above for the full list. Rejected:
+    the source's organizational/interpersonal/live-study skills. Still 26
+    rules, 21 quality-gate dimensions, 12 phases — no architecture change.
 
 ## Phase registry
 The canonical 12 orchestration phases, in order. Detail lives in
@@ -719,7 +1290,7 @@ Test evaluates it. Neither is one of the 5 core design-thinking phases
 own) — same category as Architect/Implement/Audit/Iterate.
 
 ## Rule registry
-The 20 Operating Rules (full definitions in `config/operating-rules.md`) — listed
+The 26 Operating Rules (full definitions in `config/operating-rules.md`) — listed
 here only as an index so any file can cite "Rule N" without restating it:
 
 | # | Rule |
@@ -744,9 +1315,15 @@ here only as an index so any file can cite "Rule N" without restating it:
 | 18 | Design Setup / Visual Direction |
 | 19 | Preview & Run |
 | 20 | Design Research & Visual Quality Assurance |
+| 21 | Evidence-Based Design (Research-to-Design Traceability) |
+| 22 | UX Scenario Testing |
+| 23 | Design Token Intelligence |
+| 24 | Component Intelligence |
+| 25 | Visual Regression Integrity |
+| 26 | Product Memory & Decision Records |
 
 ## Quality-gate dimension registry
-The 15 measurable quality dimensions (full pass criteria in
+The 21 measurable quality dimensions (full pass criteria in
 `config/quality-gates.md` Section B) — listed here as an index:
 
 | ID | Dimension |
@@ -766,6 +1343,12 @@ The 15 measurable quality dimensions (full pass criteria in
 | B13 | Design Direction Completeness |
 | B14 | Preview & Run Verification |
 | B15 | Visual Benchmark & Audit Cycle Completeness |
+| B16 | Research-to-Design Traceability |
+| B17 | UX Scenario Coverage |
+| B18 | Token Inheritance Integrity |
+| B19 | Component Registry Conformance |
+| B20 | Visual Regression Integrity |
+| B21 | Product Memory Integrity |
 
 ## Role registry
 The reasoning personas (full detail in each `agents/*.md` file), mapped to the

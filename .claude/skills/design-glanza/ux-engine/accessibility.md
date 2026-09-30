@@ -73,6 +73,27 @@ e.g. WCAG AA) applies to every product unless a domain
 (`product-types/*.md`) requires a stricter bar, in which case that overlay's
 stricter target supersedes this default for that product only.
 
+## Audit-time conformance checklist
+`agents/accessibility-expert.md`'s Audit-phase pass checks the rules above
+against each of these modalities explicitly, not just "keyboard operable in
+principle" — a rule can hold in the abstract and still fail under one
+specific modality:
+- **Keyboard-only** — every interaction reachable and operable with no
+  mouse/touch at all, in the focus order this file already specifies.
+- **Screen reader** — content and state changes actually announced, not
+  just structurally present (spot-check against a screen reader's actual
+  output, not just the markup's semantic correctness on paper).
+- **200%–400% text zoom / browser text-resize** — content reflows per
+  this file's Zoom and text scaling section, not just "doesn't crash."
+- **Forced-colors / high-contrast mode** — per this file's High-contrast
+  section, every non-color-only distinction still holds.
+- **Reduced-motion preference** — per `ux-engine/interaction-design.md`'s
+  Motion section, decorative motion degrades, state-indicating motion
+  shortens rather than vanishing.
+
+A conformance pass that only checked one modality (commonly: keyboard-only,
+skipping the rest) is not a complete B8 pass, per this checklist.
+
 ## WCAG 2.2-specific rules
 Concrete, frequently-missed criteria worth stating explicitly rather than
 leaving to a generic "meets WCAG AA" target:

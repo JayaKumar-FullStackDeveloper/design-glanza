@@ -1,7 +1,7 @@
 # Operating Rules
 
 ## Responsibility
-The constitution: 20 behavioral rules that apply to every phase, every domain, and
+The constitution: 26 behavioral rules that apply to every phase, every domain, and
 every agent, regardless of product-type. `SKILL.md` and every other file link here
 instead of restating these. Each rule below states what it requires, why, and which
 file actually executes it — this file is the rule, not the mechanism.
@@ -270,9 +270,198 @@ check ran, rather than skipping it.
   22 named senior-design principles those checks draw on) —
   `templates/visual-gap-analysis.md` is the required artifact.
 
+### RULE 21 — Evidence-Based Design (Research-to-Design Traceability)
+Research is an active input to design, never documentation generated
+alongside it. Before any non-trivial screen or pattern is generated, run
+the full chain — Research → Evidence → Insight → Design Principle → UX
+Decision → UI Pattern → Validation — and never accept a common/default
+pattern without applying the Anti-Generic Design challenge (why is this
+pattern appropriate, what user problem does it solve, what evidence
+supports it, is there a better pattern for this domain, is it consistent
+with this product's information architecture). Every research finding is
+labeled Known, Assumed, Inferred, or Unknown — never presented as more
+certain than its actual evidence supports — and classified CRITICAL, HIGH,
+MEDIUM, or LOW. **Every CRITICAL finding, and every HIGH finding affecting a
+core workflow, must produce a recorded Design Principle and a cited UX
+Decision and/or UI Pattern** — or an explicit, reasoned deferral; it is
+never silently dropped. A small, already-well-understood, non-core change
+may use lightweight research (citing this product's own prior findings)
+rather than running the full chain from scratch — but a genuinely new
+screen or structural pattern is never generated with zero research behind
+it and zero prior research to cite.
+- **Enforced by:** `config/quality-gates.md`'s new **B16 (Research-to-Design
+  Traceability)** measurable gate, checked across the Design Setup →
+  Prototype, Prototype → Implement, and Audit → Iterate transitions.
+- **Executed via:** `design-research/*` (the full engine — `research-
+  engine.md`'s mechanics and complexity threshold, `research-methodology.md`'s
+  inputs and confidence model, `evidence-model.md`, `insight-model.md`,
+  `domain-analysis.md`, `interaction-analysis.md`, `visual-analysis.md`,
+  `pattern-analysis.md`'s Anti-Generic Design challenge,
+  `competitor-analysis.md`, and `research-to-design.md`'s mandatory-mapping
+  mechanism and priority classification), run by
+  `agents/design-setup-specialist.md` as Design Setup's Step 0
+  (`workflows/design-setup.md`), producing
+  `product-builder/research/research-findings.md` and `research-summary.md`
+  — real, `RF-NNN`-tagged artifacts, never folded silently into
+  `design-direction.md` with nothing else surviving. `RF-NNN` is a sideways
+  reference in `product-intelligence/traceability.md`'s model (Product
+  Memory), the same category as `BR-NNN`/`EDGE-NNN`/`DEP-NNN`.
+
+### RULE 22 — UX Scenario Testing
+A product is validated as a complete end-to-end user journey, not a
+collection of individually-attractive screens. Every important flow is
+walked as a named scenario across the mandatory 8-type taxonomy (primary,
+alternate, error, empty, loading, permission, offline, recovery) —
+applicable or explicitly not-applicable with a reason, never silently
+skipped. Every scenario walk checks both structural completeness (no
+missing screen, transition, action, validation, or feedback rule against
+the spec) and experiential continuity (no dead end, unnecessary step,
+ambiguous CTA, missing feedback, inconsistent interaction pattern, or
+broken contextual consistency across the screens it actually visits).
+Every scenario traces to the `FLOW-NNN`, and transitively the `REQ-NNN`,
+it instantiates.
+- **Enforced by:** `config/quality-gates.md`'s new **B17 (UX Scenario
+  Coverage)** measurable gate, checked at the Prototype → Implement
+  (spec-level) and Audit → Iterate (walked) transitions.
+- **Executed via:** `ux-scenario-testing/*` — `scenario-model.md`'s
+  `SCENARIO-NNN` scheme and field mapping onto `ux-engine/
+  user-flow-engine.md`'s existing canonical notation, `scenario-types.md`'s
+  8-type taxonomy, `gap-detection.md`'s structural check,
+  `continuity-audit.md`'s cross-screen experiential walk, and
+  `coverage-matrix.md`'s roll-up artifact and Quality Engine integration —
+  run by `agents/ux-architect.md` and `agents/interaction-designer.md`
+  jointly (checkpoint 1) and `agents/qa-expert.md` (checkpoint 2), per
+  `ux-scenario-testing/README.md`'s explicit account of what's newly added
+  versus what's cited from already-existing technique. `SCENARIO-NNN` is a
+  sideways reference in `product-intelligence/traceability.md`'s model,
+  the same category as `BR-NNN`/`EDGE-NNN`/`DEP-NNN`/`RF-NNN`.
+
+### RULE 23 — Design Token Intelligence
+No generated screen invents an arbitrary color, type size/weight/line-
+height, spacing value, grid measure, radius, border, shadow, component
+dimension, breakpoint, motion duration, or z-index. Every value a
+component/screen uses resolves to a path in the product's machine-readable
+`design-tokens.json` — never a raw value silently introduced. A value with
+no fitting token is logged as a system gap (`ui-engine/design-system.md`'s
+existing Consistency rule) and either absorbed into the token set or
+rejected, never left unlogged. Semantic tokens (`primary`, `secondary`,
+`surface`, `background`, `text`, `muted`, `success`, `warning`, `error`,
+`info`) are named consistently across the whole product, theme-mapped
+(light/dark) where theming applies. A product's token set inherits the
+master scales (`ui-engine/*`) and may extend them with product-specific
+seed values and a `product.*` namespace — it never redefines a closed
+scale, and nothing product-specific is ever written back into the master
+engine (Rule 15).
+- **Enforced by:** `config/quality-gates.md`'s sharpened **B6 (Design
+  System)** pass criterion and new **B18 (Token Inheritance Integrity)**
+  gate, both checked at the Prototype → Implement transition.
+- **Executed via:** `design-tokens/*` — `token-schema.md`'s 14-category
+  structure (citing, not restating, each scale's actual values),
+  `semantic-tokens.md`'s canonical naming, `theming.md`'s light/dark data
+  shape, `token-inheritance.md`'s master/product override contract, and
+  `token-audit.md`'s violation-detection technique — checked by
+  `agents/design-system-expert.md` and enforced deterministically by
+  `scripts/validate-tokens.py`. `product-builder/ui/design-tokens.json`
+  (`design-tokens/templates/design-tokens.json`) is the required artifact.
+
+### RULE 24 — Component Intelligence
+No component is designed from a blank page when a professionally-reasoned
+answer already exists. Before specifying a new component, the master
+Component Registry is checked first, then the product's own inventory —
+only when both come back negative, and the proposed component's purpose
+doesn't match anything already registered, is a genuinely new component
+justified. Common components combine into named, pre-reasoned patterns
+(a Data Table is Search + Filters + Sorting + Pagination + Selection +
+Bulk actions + Empty/Loading/Error states, not four independently-
+invented pieces); a product never re-derives a composition the registry
+already specifies. Every component instantiated from the registry
+inherits its token discipline (Rule 23) automatically. A product-specific
+component need is added to the product's own inventory, never written
+back into the master registry (Rule 15) — a recurring need graduates
+upstream deliberately, the same way a recurring domain pattern graduates
+into a `product-types/*.md` pack.
+- **Enforced by:** `config/quality-gates.md`'s sharpened **B6 (Design
+  System)** pass criterion and new **B19 (Component Registry
+  Conformance)** gate, both checked at the Prototype → Implement
+  transition.
+- **Executed via:** `component-registry/*` — `registry-schema.md`'s
+  13-field entry shape (extending, not replacing,
+  `ui-engine/component-system.md`'s 8-point framework),
+  `components-{actions-inputs,navigation,containers-display,
+  feedback-status}.md`'s ~24 pre-populated entries,
+  `composition-patterns.md`'s organism-level patterns, and
+  `registry-integration.md`'s registry-first enforcement and Quality
+  Engine/UX Scenario Testing wiring — checked by
+  `agents/design-system-expert.md`, the same agent that already owns the
+  reuse-vs-new decision. No new ID scheme: a registry entry is referenced
+  by name, and a product's own components still use `COMPONENT-NNN`
+  (`product-intelligence/traceability.md`), now citing a Registry base.
+
+### RULE 25 — Visual Regression Integrity
+A UI improvement never silently breaks something that already worked.
+Once a screen's generated UI has been confirmed clean
+(`ui-engine/visual-benchmark.md`'s mandatory cycle, gate B15), its
+structural state — regions, components, token paths, breakpoint
+behavior — is captured as a baseline. Every later pass touching that
+screen is diffed against that baseline **before** being considered
+complete: layout shifts, spacing/typography/color changes, component
+inconsistencies, alignment problems, missing or unexpected elements, and
+responsive regressions are all detected, classified Critical/High/
+Medium/Low, and resolved — either fixed, or explicitly approved as an
+intentional Baseline Update with a stated reason. A diff with no fix and
+no approved update is never silently accepted, and a baseline is never
+silently overwritten by an unreviewed pass.
+- **Enforced by:** `config/quality-gates.md`'s new **B20 (Visual
+  Regression Integrity)** measurable gate, checked at the same
+  Prototype → Implement transition B15 already occupies.
+- **Executed via:** `visual-regression/*` — `baseline-model.md`'s
+  structured (never pixel-based) snapshot, `diff-detection.md`'s 9
+  categories, `tolerance-thresholds.md`'s token-step-based tolerance,
+  `severity-classification.md`'s Critical/High/Medium/Low labels (mapped
+  onto the one shared Blocker/Major/Minor/Note vocabulary, never a
+  competing scale), and `baseline-updates.md`'s explicit, logged approval
+  mechanism — checked by `agents/qa-expert.md`, enforced deterministically
+  by `scripts/validate-visual-regression.py`. Folded into the existing
+  visual-benchmark-and-audit cycle action — no new phase, no new agent, no
+  new ID scheme.
+
+### RULE 26 — Product Memory & Decision Records
+The Product Builder remembers its own significant product, UX, UI,
+design-system, component, and architecture decisions throughout the
+lifecycle — it does not repeatedly re-derive or contradict them.
+Before generating or modifying UI, the acting agent checks
+`product-builder/memory/product-memory.md` for a relevant existing
+decision; a genuine contradiction is only ever introduced via a new
+`ADR-NNN` that explicitly supersedes the one it replaces, never silently.
+A significant decision (a real alternative was resolved, it spans more
+than one screen/flow, it departs from a domain/token/registry default, or
+it supersedes a prior decision) is recorded as it's made, not as a
+separate memory-writing pass afterward. Product Memory remains
+completely isolated per product (Rule 15, generalized here across every
+decision category at once) — a Product Builder inherits the master
+engine's standards but never modifies them, and one product's memory is
+never read by, or written into, another's.
+- **Enforced by:** `config/quality-gates.md`'s new **B21 (Product Memory
+  Integrity)** measurable gate, checked at both the Prototype/design-time
+  checkpoint (was memory actually consulted) and the Audit checkpoint (is
+  it internally consistent).
+- **Executed via:** `product-memory/*` — `memory-model.md`'s index (a
+  thin cross-reference over content that mostly already exists elsewhere
+  in the engine, never a duplicate of it), `adr-schema.md`'s persisted
+  form of `methodology/design-thinking.md`'s existing design decision
+  framework, `consultation-rule.md`, `contradiction-prevention.md`'s
+  supersession protocol, and `auto-recording.md`'s significance
+  threshold — checked by the agent owning each decision's domain
+  (`agents/{product-architect,ux-architect,ui-designer,design-system-
+  expert}.md`) and by `agents/qa-expert.md` at Audit, enforced
+  deterministically by `scripts/validate-memory.py`. `ADR-NNN` is a new
+  sideways reference in `product-intelligence/traceability.md`'s model,
+  the same category as `BR-NNN`/`EDGE-NNN`/`DEP-NNN`/`RF-NNN`/
+  `SCENARIO-NNN`.
+
 ## Explicitly not here
 - Registries/constants (rule numbers are referenced here, but the phase/role/domain
   registries themselves) → `master-config.md`.
-- Phase-transition checklists and the 15 measurable quality-gate dimensions →
+- Phase-transition checklists and the 21 measurable quality-gate dimensions →
   `quality-gates.md`.
 - Assumption tag syntax, severity vocabulary, report shapes → `output-contract.md`.

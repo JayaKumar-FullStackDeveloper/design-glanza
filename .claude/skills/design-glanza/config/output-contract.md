@@ -82,6 +82,6 @@ Major keeps the feature open, per Rule 13 (fix and revalidate).
 
 ## Explicitly not here
 - Per-artifact field lists (e.g. what fields a persona has) → `templates/*.md`.
-- Whether an output is *allowed* to proceed and the 12 measurable quality-gate
+- Whether an output is *allowed* to proceed and the 21 measurable quality-gate
   dimensions → `quality-gates.md`.
 - The rules that generate the content being reported on → `operating-rules.md`.

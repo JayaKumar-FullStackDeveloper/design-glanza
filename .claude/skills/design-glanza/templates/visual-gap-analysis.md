@@ -39,7 +39,10 @@ screens produced in the same UI pass).
   categories after refinement, confirming the gap is closed (or, for a
   genuinely-clean pass 1, a re-confirmation that nothing changed).
 - **Final status** — pass / fail, and if fail, which Blocker/Major finding
-  remains and its escalation target.
+  remains and its escalation target. A `pass` status is what triggers
+  `visual-regression/baseline-model.md`'s capture/update of this screen's
+  baseline (Rule 25) — recorded here as a one-line cross-reference, not a
+  duplicate of the baseline's own content.
 
 ## Quality criteria
 - Checked against **B15** — at least one full pass-1-then-refinement cycle

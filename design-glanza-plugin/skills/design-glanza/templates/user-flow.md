@@ -68,3 +68,8 @@ Owns the `FLOW-NNN` scheme (assigned by
   `templates/sitemap.md`.
 - Micro-interaction/feedback timing within a step →
   `ux-engine/interaction-design.md`.
+- Walking this flow as one or more named, testable scenarios (primary/
+  alternate/error/empty/loading/permission/offline/recovery), binding each
+  step to the concrete `SCREEN-NNN`/`COMPONENT-NNN` that realizes it, and
+  checking the result for gaps/continuity → `ux-scenario-testing/*` (the
+  same notation, reused for testing rather than re-derived).

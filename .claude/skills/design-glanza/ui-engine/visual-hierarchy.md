@@ -49,8 +49,8 @@ a visual group must never cut across an IA grouping boundary, since that
 mismatch is what makes a screen "look organized" while actually confusing the
 user's mental model of what belongs together.
 
-Grouping is expressed through five distinct visual signals, not proximity
-alone — checking only proximity misses real grouping defects the other four
+Grouping is expressed through six distinct visual signals, not proximity
+alone — checking only proximity misses real grouping defects the other five
 would catch:
 - **Proximity** — related items placed closer together than unrelated ones.
   This is the primary mechanism and the one most screens rely on by default.
@@ -77,10 +77,20 @@ would catch:
   everything in its own bordered box is itself a hierarchy problem (too many
   equally-strong boundaries flattens emphasis, the same failure the
   Contrast-of-weight rule below names for emphasis levels).
+- **Common region** — elements sharing an actual enclosing region (a
+  background tint, a bordered container) read as one group even when
+  spacing/similarity alone wouldn't group them, and this signal overrides
+  proximity/similarity when they disagree (two dissimilar, non-adjacent
+  items inside one shared card still read as related). Distinct from
+  Closure: Closure is an *implied* boundary read from partial/weak cues;
+  common region is an *actual* shared enclosure already present. Prefer
+  Closure's weaker techniques first per that bullet's own rule — reach for
+  an explicit common-region container only when the grouping genuinely
+  needs that stronger a signal, not as the default.
 
 Applying only proximity while ignoring similarity is the most common way a
 screen "passes" a casual grouping check while still confusing users — treat
-all five as one checklist, not proximity as a stand-in for the others.
+all six as one checklist, not proximity as a stand-in for the others.
 
 ## Scanning
 Choose the scan pattern the layout supports, per content type:

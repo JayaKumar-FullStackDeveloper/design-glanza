@@ -71,7 +71,18 @@ theming rule) remap between themes while keeping their *meaning* stable:
 `danger` stays recognizably red-ish in both themes, adjusted in lightness so
 it still clears the contrast rule above against the theme's background;
 `surface` is near-white in light theme and near-black (not pure black, which
-crushes elevation shadows) in dark theme.
+crushes elevation shadows) in dark theme. `text-primary` in dark theme is
+near-white but likewise never pure white against a near-black surface —
+full-strength white-on-black produces a visible halation/vibration effect
+that reduces comfortable readability at length, the same "near-, not pure-"
+correction applied to the background for a different reason.
+
+**Selecting a theme:** default to the OS/browser-level `prefers-color-
+scheme` signal so the product matches the user's own system setting without
+requiring a decision from them, and additionally expose a manual override
+control when the product has its own persistent per-user setting to store
+it in — auto-detection and a manual override are not alternatives, a
+product offers both where it can.
 
 ## Data-visualization ramps
 Distinct from the semantic UI ramps above (which encode fixed *meaning* —

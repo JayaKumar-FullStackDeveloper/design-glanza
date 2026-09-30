@@ -114,6 +114,12 @@ carries a non-color channel (direct labels, a legend with pattern/texture, or
 hover-revealed values) per the color-blind safety rule. A chart's `empty`
 state (`state-design.md`) shows a stated reason ("no data for this period"),
 never a blank axis with no data indistinguishable from a loading failure.
+Bar and column charts specifically start their value axis at **zero** — a
+truncated/non-zero baseline visually exaggerates the difference between
+values and is a defect regardless of how much clearer it makes a small
+difference look; a line chart's axis may legitimately start elsewhere when
+trend shape, not magnitude comparison, is the point, per the data-shape
+table above.
 
 ## Motion at the component level
 Which specific state transitions use `design-system.md`'s motion tokens is
@@ -128,7 +134,9 @@ polished.
 A new screen's need is met by an existing component variant whenever the need
 fits within an already-specified variant/size/state combination; a genuinely
 new component is justified only when the purpose (point 1) doesn't match
-anything in the inventory. `agents/design-system-expert.md` governs this
+anything in the inventory — checked first against the master
+`component-registry/*` (Rule 24, `config/operating-rules.md`), then against
+the product's own inventory. `agents/design-system-expert.md` governs this
 decision on an ongoing basis, not just at a component's creation.
 
 ## Loop position
@@ -144,3 +152,7 @@ or accessibility finding traces to a specific component's execution, or when
 - The concrete spec document per component → `templates/component-spec.md`.
 - Token values (radius, elevation, motion durations, icon sizes) →
   `design-system.md`.
+- Pre-populated, professionally-reasoned instances of this framework for
+  ~24 common components and their composition patterns →
+  `component-registry/*` (this file remains the single source for the
+  framework itself; that folder never restates it, only instantiates it).

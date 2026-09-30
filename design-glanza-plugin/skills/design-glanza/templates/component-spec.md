@@ -9,7 +9,13 @@ the same way regardless of what data it happens to display.
 ## Required inputs
 - `ui-engine/component-system.md`'s 8-point framework and atomic-to-composite
   taxonomy.
-- `templates/design-system.md`'s tokens (for variants/sizing).
+- `component-registry/*` (Rule 24) — checked first, before any point below
+  is filled from scratch: does a registry entry (or
+  `composition-patterns.md` organism) already cover this component?
+- `templates/design-system.md`'s tokens (for variants/sizing), addressed by
+  their `design-tokens/design-tokens.schema.json` path (e.g.
+  `radius.md`, `color.semantic.primary`) — every value a variant/size/state
+  uses cites a token path, never a raw value (Rule 23, gate **B6**).
 - `ux-engine/state-design.md`'s behavioral states this component must
   visually express.
 - `ux-engine/accessibility.md`'s semantic mapping for this component's role.
@@ -17,6 +23,9 @@ the same way regardless of what data it happens to display.
 ## Output structure
 Exactly the 8 points from `ui-engine/component-system.md`, plus identity:
 - **Header** — per `config/output-contract.md`.
+- **Registry base** — the `component-registry/*` entry this instantiates
+  (e.g. `table`, or the `data-table` composition pattern), or an explicit,
+  reasoned "no registry match — new component" (Rule 24, gate **B19**).
 - **Category** — atom / molecule / organism.
 - **1. Purpose** — the single job this component does.
 - **2. Anatomy** — named parts.
@@ -42,6 +51,12 @@ Exactly the 8 points from `ui-engine/component-system.md`, plus identity:
 - Checked against `config/quality-gates.md`'s **B6 — Design System** gate
   (component-level instance) and cross-checked by
   `agents/design-system-expert.md` for reuse-vs-new-variant discipline.
+  Every value scanned by `scripts/validate-tokens.py` resolves to a token
+  path or carries a logged Token gap entry (`design-tokens/token-audit.md`)
+  — no silent raw value.
+- Passes `config/quality-gates.md`'s **B19 (Component Registry
+  Conformance)** — Registry base is a real entry, a stated composition, or
+  an explicit, reasoned "no registry match."
 
 ## Example structure
 _A generic UI atom present in virtually every product — illustrative, not
@@ -49,6 +64,7 @@ domain content._
 
 ```
 Component: Button                              Category: atom
+Registry base: button (component-registry/components-actions-inputs.md)
 Purpose:   trigger a single action
 Anatomy:   container, icon-slot (optional), label
 Variants:  emphasis(primary/secondary/tertiary/destructive), size(sm/md/lg)
@@ -71,3 +87,5 @@ Owns the `COMPONENT-NNN` scheme (registered via
 - Which behavioral states exist and why → `ux-engine/state-design.md`.
 - Token values (sizes, colors, radii) referenced by variants →
   `templates/design-system.md`.
+- The pre-populated guidance a Registry base actually inherits from →
+  `component-registry/*`.

@@ -35,16 +35,16 @@ across all three forms. The **only** intentional differences are:
 ```json
 {
   "name": "design-glanza",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Master product design and Product Builder factory ...",
   "author": { "name": "Design-Glanza" }
 }
 ```
 
 Note the two independent version numbers: the **plugin package version**
-(`plugin.json`, currently `1.2.0` — bumped on each packaging sync) and the
+(`plugin.json`, currently `1.3.0` — bumped on each packaging sync) and the
 **internal skill capability version** (`config/master-config.md`, currently
-`1.0.9` — Design-Glanza's own changelog, tracking every rule/gate/phase
+`1.0.16` — Design-Glanza's own changelog, tracking every rule/gate/phase
 addition).
 
 ## Keeping the plugin in sync
@@ -52,9 +52,16 @@ addition).
 The plugin folder is a **manually-synced mirror**, not a symlink — every
 change to `.claude/skills/design-glanza/` needs an explicit sync pass to
 `design-glanza-plugin/skills/design-glanza/` (content copy, plus reapplying
-the two documented adaptations above). This has been done through v1.0.9;
+the two documented adaptations above). This has been done through v1.0.16;
 see `config/master-config.md`'s changelog for the exact history of what
 was synced and when.
+
+**Global "skills-dir" install:** this is a separate, manual step outside
+this repo (copying `.claude/skills/design-glanza/` to your own
+`~/.claude/skills/design-glanza/`) — it does not update itself when this
+repo changes, and can silently fall behind if forgotten. If `/design-glanza`
+ever resolves to unexpectedly old content, check that copy's own
+`config/master-config.md` version first.
 
 For installation instructions for any of the three forms, see
 [`INSTALLATION.md`](INSTALLATION.md).

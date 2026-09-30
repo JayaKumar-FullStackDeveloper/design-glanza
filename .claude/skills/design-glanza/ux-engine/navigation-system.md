@@ -123,6 +123,15 @@ Whether back-navigation is allowed at all past a given step is a
 workflows, once a step is committed, cannot be un-stepped) — state that
 constraint explicitly rather than assuming free movement.
 
+**Resuming an interrupted workflow** (the user leaves and returns later):
+the return point names the specific uncompleted state ("Resume: Step 3 of
+5 — Payment details"), not a generic "Welcome back" with no reference to
+where they left off. Where more than one workflow is left incomplete at
+once, surface only the 1–2 most relevant open ones prominently (e.g. the
+most recent, or the one closest to completion) rather than an
+undifferentiated list of every unfinished thing — too many surfaced open
+loops at once reads as clutter/guilt rather than a helpful nudge back in.
+
 ## 12. Cross-module navigation
 Using `product-intelligence/dependency-analysis.md`'s `DEP-NNN` cross-module
 table, provide an explicit in-context link/action where a user legitimately

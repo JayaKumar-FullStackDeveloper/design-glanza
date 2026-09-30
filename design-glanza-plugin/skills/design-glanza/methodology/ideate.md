@@ -20,7 +20,22 @@ axis — if two "different" approaches are actually the same interaction model
 with a different layout, that is not genuine divergence, it is one direction
 presented twice. This is the concrete test for step 8's scoring to be
 meaningful: scoring three restatements of one idea against each other cannot
-produce a real selection.
+produce a real selection. Five named structural axes cover most real
+divergence and are worth checking explicitly rather than relying only on
+the looser examples above: **sequence** (linear vs. branching vs.
+freeform order of steps), **unit of interaction** (one field at a time vs.
+a whole record vs. a bulk batch), **division of labour** (what the system
+does automatically vs. what the user must do themselves), **entry point**
+(where in the user's context the flow starts), and **commitment point**
+(how early the user is asked to decide vs. how long the system defers it).
+
+**Comparable-fidelity rule:** when presenting approaches for comparison,
+render every approach at the *same* level of visual/detail polish — a
+mockup polished to near-final fidelity will out-score a rough
+wireframe of an equally strong (or stronger) approach on presentation
+alone, corrupting the comparison before criteria 3–7 are even applied.
+Mismatched fidelity across a comparison set is a process defect, not an
+acceptable side effect of "we had more time on the first one."
 
 ## 2. Compare interaction models
 For each approach, name its core interaction model explicitly (wizard / single-

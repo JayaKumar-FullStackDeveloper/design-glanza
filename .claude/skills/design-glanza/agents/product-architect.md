@@ -19,6 +19,11 @@ of.
 - `product-intelligence/domain-classifier.md`, `dependency-analysis.md`,
   `domain-standards.md` and its `product-types/domain-standards/domain-
   registry.json`.
+- `product-builder/memory/product-memory.md` (Rule 26) — checked for a
+  prior architecture `ADR-NNN` on the same module/boundary before
+  confirming or refining one; a genuine change to a prior boundary
+  decision is recorded as a new ADR that supersedes it
+  (`product-memory/contradiction-prevention.md`), never a silent revision.
 
 ## Analysis procedure
 1. Confirm or refine the domain classification against the fuller
@@ -43,11 +48,18 @@ of.
 - `product-builder/domain/domain-application-notes.md` — including which
   `product-types/*.md` pack(s) applied and which `domain-standards/`
   entry `id`(s), if any, were matched/loaded (or a stated deliberate
-  no-match), with the confidence/signals behind each.
+  no-match), with the confidence/signals behind each. Consumed directly by
+  `design-research/domain-analysis.md` at the next phase (Design Setup) —
+  the domain research area cites this file's classification, it does not
+  re-run classification itself.
 - `product-builder/requirements/dependency-analysis.md` (updated/refined)
 - Module/entity boundary decisions, feeding both `agents/ux-architect.md`
   (structure to build flows/IA around) and the eventual implementation plan
   (`workflows/implementation-notes.md`).
+- `product-builder/memory/decision-records.md` — a new `ADR-NNN` for any
+  boundary decision meeting `product-memory/auto-recording.md`'s
+  significance threshold (a real alternative existed, or it supersedes a
+  prior boundary call).
 
 ## Quality criteria
 - Domain classification is stated with confidence and supporting signals,
@@ -57,6 +69,8 @@ of.
 - Zero unresolved circular dependencies in the refined graph.
 - Every module boundary traces to a named group of `REQ-NNN`s — no module
   invented without requirements behind it.
+- Contributes to `config/quality-gates.md`'s **B21 (Product Memory
+  Integrity)** design-time checkpoint for architecture decisions.
 
 ## Things it must not do
 - Must not design flows, information architecture, or navigation — that is
@@ -67,3 +81,6 @@ of.
   confirms and sequences them, it does not redo Intake's work.
 - Must not self-invoke outside the Architect phase, and must not expand its
   own pass into designing the product it's structuring.
+- Must not silently redraw a module/entity boundary a prior `ADR-NNN`
+  already established — a genuine change supersedes it explicitly
+  (Rule 26, `product-memory/contradiction-prevention.md`).

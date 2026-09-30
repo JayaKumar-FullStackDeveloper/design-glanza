@@ -27,19 +27,34 @@ and `agents/ui-designer.md` then execute against.
 - Product Architect's confirmed domain classification and any matched
   `product-types/domain-standards/` entry — used to select the right
   default sample when no user-supplied direction exists.
-- `design-reference-engine/{design-research,reference-analysis,
+- `design-research/*` (the full Design Research Engine — Rule 21) and
+  `design-reference-engine/{design-research,reference-analysis,
   design-questionnaire,reference-selection,design-direction}.md`,
   `design-samples/`, `templates/design-direction.md`.
 
 ## Analysis procedure
 0. **Research the design space** (Step 0): before touching any reference,
-   apply `design-research.md`'s technique — current SaaS/admin patterns,
-   this product's own domain conventions (per Product Architect's
-   confirmed classification and any matched `domain-standards/` entry),
-   information density, navigation/dataviz/form-table/interaction/
-   accessibility/responsive patterns, and current visual trends checked
-   against `ui-engine/visual-trends.md`'s adoption gate. Produces no
-   separate artifact — folds into step 5's document.
+   run the full Design Research Engine (`design-research/research-
+   engine.md`) — a Research Brief classifying full vs. lightweight research
+   (`design-research/templates/research-brief.md`), then evidence gathering
+   across Domain (`design-research/domain-analysis.md`, citing Product
+   Architect's confirmed classification and any matched `domain-standards/`
+   entry), Interaction (`interaction-analysis.md`), and Visual
+   (`visual-analysis.md`) — User evidence is Empathize's own output, cited
+   not re-derived — plus Competitor/Pattern analysis where a named
+   reference exists (`competitor-analysis.md`, `pattern-analysis.md`,
+   applying its Anti-Generic Design challenge to any common pattern under
+   consideration). Every finding is Known/Assumed/Inferred/Unknown-labeled
+   and CRITICAL/HIGH/MEDIUM/LOW-prioritized
+   (`design-research/research-methodology.md`,
+   `research-to-design.md`), recorded as a real `RF-NNN` entry in
+   `product-builder/research/research-findings.md` — **not** folded
+   silently into step 5's document with nothing else surviving. Every
+   CRITICAL finding and every HIGH finding affecting a core workflow must
+   produce a Design Principle carried into step 5, or an explicit, reasoned
+   deferral — checked by **B16**. The condensed, Critical/High subset
+   (`product-builder/research/research-summary.md`) feeds step 5's Design
+   principles field directly.
 1. **Detect references** (Step 1): scan the BRD input set for any of the 13
    reference forms `design-reference-engine/reference-analysis.md` names
    (reference images, UI/existing-product screenshots, Figma, website
@@ -92,18 +107,27 @@ and `agents/ui-designer.md` then execute against.
    a confirmation that didn't happen.
 
 ## Output
+- `product-builder/research/research-findings.md` — every `RF-NNN` finding
+  from Step 0, confidence- and priority-tagged.
+- `product-builder/research/research-summary.md` — the roll-up, including
+  the mandatory-influence check for every CRITICAL/HIGH finding.
 - `product-builder/ui/design-direction.md` — complete, classified, and
   either user-confirmed or explicitly recorded as waived-with-reason.
 
 ## Quality criteria
 - Passes `config/quality-gates.md`'s **B13 (Design Direction Completeness)**
-  gate before Prototype's UI pass (`workflows/create-ui.md`) may begin.
+  and **B16 (Research-to-Design Traceability, findings/insight/principle
+  stage)** gates before Prototype's UI pass (`workflows/create-ui.md`) may
+  begin.
 - The reference-decision classification is stated with its rationale, not
   merely asserted — the same confidence-reporting discipline
   `domain-classifier.md` and `domain-standards.md` already require of their
   own classifications.
 - Every fact drawn from a reference is labeled design direction, never
   silently merged into the requirement model BRD Analyst already produced.
+- Every CRITICAL/HIGH research finding either carries a stated Design
+  Principle into `design-direction.md`, or an explicit, reasoned deferral —
+  never left silently unaddressed (Rule 21).
 
 ## Things it must not do
 - Must not extract or alter business requirements, roles, or rules from a
@@ -121,6 +145,11 @@ and `agents/ui-designer.md` then execute against.
   register itself — it records *direction and preference*;
   `agents/design-system-expert.md` and `agents/ui-designer.md` are the
   agents that actually build the governed system and screens from it.
+- Must not treat Step 0 as a documentation exercise — a CRITICAL/HIGH
+  research finding with no stated Design Principle carried forward, or
+  fabricated research evidence, both violate Rule 21
+  (`config/operating-rules.md`) the same way a fabricated business rule
+  violates Rule 10.
 - Must not let Prototype's UI pass begin before this phase's approval gate
   (Step 5) has actually run, per Rule 18 (`config/operating-rules.md`).
 - Must not self-invoke outside Design Setup, and must not re-run once

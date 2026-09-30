@@ -18,7 +18,7 @@ REQ → USER → FLOW → SCREEN → COMPONENT → TEST
 | USER | `ROLE-NNN` (or `SYSTEM`) | `user-roles.md` |
 | FLOW | `FLOW-NNN` | `ux-engine/user-flow-engine.md` |
 | SCREEN | `SCREEN-NNN` | `templates/screen-architecture.md` / `screen-specification.md` |
-| COMPONENT | `COMPONENT-NNN` | `ui-engine/component-system.md` |
+| COMPONENT | `COMPONENT-NNN` | `ui-engine/component-system.md`, instantiating a `component-registry/*` entry where one exists (Rule 24) |
 | TEST | `TEST-NNN` | `methodology/test.md` (design validation) and/or `evals/test-cases.md` (internal QA) |
 
 This file owns the ID *schemes* so every artifact type is uniquely and
@@ -46,12 +46,46 @@ links missing but the requirement is still active/in-progress), or `orphaned`
 (see below).
 
 ## Sideways references vs. the chain
-`BR-NNN` (`business-logic.md`), `EDGE-NNN` (`edge-case-engine.md`), and
-`DEP-NNN` (`dependency-analysis.md`) are not links in this chain — they are
-*governing facts* a requirement cites (via its Business Rule, Validation, and
-Dependency fields in `requirement-engine.md`), not artifacts produced downstream
-of it. Keep them out of the trace record above; overloading the chain with
-every cross-reference makes orphan detection unreliable.
+`BR-NNN` (`business-logic.md`), `EDGE-NNN` (`edge-case-engine.md`),
+`DEP-NNN` (`dependency-analysis.md`), `RF-NNN` (`design-research/
+research-to-design.md`), `SCENARIO-NNN` (`ux-scenario-testing/
+scenario-model.md`), and `ADR-NNN` (`product-memory/adr-schema.md`) are
+not links in this chain — they are *governing facts* a requirement, flow,
+screen, or design-direction field cites (via a requirement's Business
+Rule/Validation/Dependency fields, a `FLOW-NNN`/`SCREEN-NNN`/`ui/
+design-direction.md` citation for `RF-NNN`, `ux/scenarios.md`/`ux/
+ux-coverage-matrix.md` for `SCENARIO-NNN`, or any artifact's `Related`
+field for `ADR-NNN`), not artifacts produced downstream of it. Keep them
+out of the trace record above; overloading the chain with every
+cross-reference makes orphan detection unreliable.
+
+**`ADR-NNN` specifically:** a persisted decision record (Rule 26) is the
+one sideways reference that can itself cite *another* sideways reference
+(an ADR's Related field routinely names the `REQ-NNN`/`FLOW-NNN`/
+`SCREEN-NNN`/`COMPONENT-NNN` it governs, and may cite an `RF-NNN` or
+`SCENARIO-NNN` it resolves) — this is still not a chain link, an ADR
+governs several artifacts across one decision, not one artifact per
+link. An `ADR-NNN` with no `Related` citation at all is an orphaned
+decision — checked by **B21**, the same defect category as an orphaned
+requirement under B10.
+
+**`RF-NNN` specifically:** a Research Finding (Rule 21,
+`config/operating-rules.md`) is the research-stage evidence behind a design
+decision — cited from `ux/user-flows.md`, `ux/screen-architecture.md`,
+`ui/ui-rules.md`, or `ui/design-direction.md` wherever that finding's Design
+Principle actually applies, the same way a `BR-NNN` rule is cited from the
+requirement it governs. A CRITICAL or HIGH priority `RF-NNN` with no
+downstream citation anywhere is an orphaned finding — checked by
+**B16** (`config/quality-gates.md`), the same defect category as an
+orphaned requirement under B10.
+
+**`SCENARIO-NNN` specifically:** a Scenario (Rule 22) is one `FLOW-NNN`
+walked under one named scenario type — it does not sit between FLOW and
+SCREEN in the chain (a scenario touches *several* screens across one
+walk, not one), it sits *beside* the chain, always naming which
+`FLOW-NNN` it instantiates and, through it, which `REQ-NNN`/`ROLE-NNN` it
+serves. A `FLOW-NNN` with no `SCENARIO-NNN` covering it at all is an
+orphaned flow in this same sense — checked by **B17**.
 
 ## Orphan detection
 - **Orphaned requirement** — a `REQ-NNN` with no downstream link beyond a stated

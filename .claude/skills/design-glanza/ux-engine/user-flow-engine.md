@@ -103,6 +103,23 @@ A flow with steps that don't fit this notation cleanly is usually a sign the
 requirement backing it wasn't atomic (`product-intelligence/requirement-engine.md`'s
 decomposition rule) — split it rather than forcing an awkward fit.
 
+## Frontstage and backstage steps
+A **System response** step is sometimes backed by real work that isn't
+just a database write — a human approval, a fulfillment/shipping process,
+a care-coordination hand-off between roles. Name this explicitly as a
+**backstage** step (distinct from the **frontstage** steps the user
+directly sees and acts on) rather than collapsing it into an
+instantaneous-feeling "System response" the way a simple CRUD write is —
+a backstage step needs its own actor (`product-intelligence/
+user-roles.md`), its own expected duration, and its own `processing`/
+`pending` state (`ux-engine/state-design.md`) visible to the user waiting
+on it, not a response time that quietly assumes the backstage work already
+finished. This distinction matters most for approval chains, fulfillment
+flows, and any multi-role handoff already modeled via this file's Branch
+handling for role variation — the frontstage/backstage split names *why*
+a flow needs that handling, the branch-handling rule states *how* to model
+it.
+
 ## Recovery paths
 For every Decision or System Response capable of producing a Failure Condition
 (`business-logic.md` §8) or an enumerated edge case (`EDGE-NNN`,

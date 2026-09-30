@@ -50,6 +50,14 @@ findings down to only the ones that feel urgent.
 Per Rule 20 and gate **B15**: at least one refinement cycle is required
 before a UI pass is considered complete, regardless of how the first
 generated draft looks:
+0. **If this screen already has a baseline** (`visual-regression/
+   baseline-model.md` — i.e. this is not the screen's first pass), diff
+   the current draft against it first (`scripts/
+   validate-visual-regression.py`, Rule 25) and resolve every Critical/
+   High/Medium finding — either fixed or an approved `visual-regression/
+   baseline-updates.md` record — before proceeding to step 1. This is
+   B20's own check, distinct from and prior to the conformance check
+   below.
 1. Run the three-way comparison and gap analysis above on the first draft.
 2. **If gaps were found:** fix them, then re-run the comparison on the
    refined draft — repeat until no new gap is found or a Blocker/Major gap
@@ -59,6 +67,11 @@ generated draft looks:
    comparison ran and found nothing — an unresolvable "we didn't check"
    gap is not an acceptable way to skip this step. A genuinely clean first
    draft is recorded as such, not skipped as unnecessary.
+4. **Once this screen's Final status is `pass`**, capture (first pass) or
+   update (later pass, per any approved Baseline Update from step 0) its
+   `visual-regression/baseline-model.md` snapshot — a screen is never left
+   confirmed-clean with a stale or absent baseline for the next pass to
+   diff against.
 
 Record the full history — what the first draft's gap analysis found (or
 that it found nothing), what changed, and what the re-check confirmed — in
@@ -73,3 +86,6 @@ already applies everywhere else.
 - The gap-analysis document's exact fields →
   `templates/visual-gap-analysis.md`.
 - The gate this enforces → `config/quality-gates.md`'s **B15**.
+- Diffing this pass against a *prior* pass's confirmed-clean state (a
+  temporal concern this file has no notion of by design) →
+  `visual-regression/*`, gate **B20**.

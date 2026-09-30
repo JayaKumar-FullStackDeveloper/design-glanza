@@ -12,6 +12,15 @@ vocabulary regardless of what was audited.
   `validate-screens.py`, `validate-states.py`) results.
 - `evals/evaluation-rubric.md` scores.
 - `product-intelligence/traceability.md`'s trace record.
+- `product-builder/research/research-summary.md`'s mandatory-influence
+  table (Rule 21, `config/quality-gates.md`'s **B16**).
+- `product-builder/ux/ux-coverage-matrix.md` and its Checkpoint status
+  (Rule 22, `config/quality-gates.md`'s **B17**).
+- `visual-regression/templates/visual-diff-report.md` instances (Rule 25,
+  `config/quality-gates.md`'s **B20**).
+- `product-builder/memory/{product-memory,decision-records}.md` and
+  `scripts/validate-memory.py` results (Rule 26, `config/quality-gates.md`'s
+  **B21**).
 - `agents/design-system-expert.md` and `agents/accessibility-expert.md`
   review notes.
 - `methodology/test.md`'s 9-dimension evaluation results for the scope being
@@ -23,7 +32,14 @@ vocabulary regardless of what was audited.
   (`config/output-contract.md` vocabulary), owning file/phase for the fix,
   status (open/fixed/deferred).
 - **Traceability summary** — orphan requirements/artifacts found, per
-  `product-intelligence/traceability.md`.
+  `product-intelligence/traceability.md`, including any CRITICAL/HIGH
+  `RF-NNN` research finding with no cited decision/pattern or Validation
+  result (**B16**), any `FLOW-NNN` with no `SCENARIO-NNN` coverage or an
+  unresolved continuity/gap finding (**B17**), any screen with an
+  unresolved Critical/High/Medium visual-diff finding and no approved
+  Baseline Update (**B20**), and any significant decision with no
+  `ADR-NNN`, or any flagged potential contradiction left unreviewed
+  (**B21**).
 - **Validator results** — pass/fail summary from `scripts/validate-*.py`.
 - **Rubric scores** — per `evals/evaluation-rubric.md` dimensions.
 - **Design-system drift notes** — from `agents/design-system-expert.md`.

@@ -45,7 +45,14 @@ Where a single job spans a longer arc, an optional finer lens is the job's own
 lifecycle (define the need → locate a way to meet it → prepare → confirm →
 execute → monitor → modify → conclude) — useful when "get reimbursed" turns
 out to actually be several distinct moments the product should treat
-differently, not one atomic action.
+differently, not one atomic action. A second optional lens, applied when
+one dimension alone doesn't explain why a job matters: split the outcome
+into **functional** (the task itself gets done), **emotional** (how the
+user wants to feel while/after doing it — confident, unworried, in
+control), and **social** (how the user wants to be perceived by others
+for having done it). A job with an unmet emotional or social component
+often explains a pain point (dimension 5) that a purely functional read
+of the same task would miss entirely.
 
 ### 5. Pain points
 Friction in the current process (an existing product, a manual workaround, or a

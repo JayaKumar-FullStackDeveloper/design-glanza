@@ -70,8 +70,13 @@ METHODOLOGY_LABEL = (
 
 SLUG_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 
-# Section order matches the 20 items required of a generated Product Builder
-# SKILL.md. (title, definition_key, master_file_relpath, builder_artifact_relpath)
+# Section order matches the 24 items required of a generated Product Builder
+# SKILL.md (20 through v1.0.9; v1.0.10 added Research Findings for the
+# Design Research Engine, Rule 21; v1.0.11 added UX Scenarios for the UX
+# Scenario Testing engine, Rule 22; v1.0.12 added Design Tokens for the
+# Design Token Intelligence Layer, Rule 23; v1.0.15 added Product Memory
+# for the Product Memory & Decision Records engine, Rule 26). (title,
+# definition_key, master_file_relpath, builder_artifact_relpath)
 # definition_key is None for sections rendered purely from identity fields.
 SECTION_SPECS = [
     ("Product Identity", None, None, None),
@@ -83,27 +88,33 @@ SECTION_SPECS = [
     ("Requirements", "requirements", "product-intelligence/requirement-engine.md", "requirements/requirement-matrix.md"),
     ("Business Rules", "business_rules", "product-intelligence/business-logic.md", "requirements/business-logic.md"),
     ("Dependencies", "dependencies", "product-intelligence/dependency-analysis.md", "requirements/dependency-analysis.md"),
+    ("Research Findings", "research_findings", "design-research/research-to-design.md", "research/research-findings.md"),
     ("User Flows", "user_flows", "ux-engine/user-flow-engine.md", "ux/user-flows.md"),
     ("Information Architecture", "information_architecture", "ux-engine/information-architecture.md", "ux/sitemap.md"),
     ("Navigation", "navigation", "ux-engine/navigation-system.md", "ux/navigation.md"),
+    ("UX Scenarios", "ux_scenarios", "ux-scenario-testing/coverage-matrix.md", "ux/ux-coverage-matrix.md"),
     ("UX Rules", "ux_rules", "ux-engine/interaction-design.md", "ux/ux-rules.md"),
     ("UI Rules", "ui_rules", "ui-engine/visual-hierarchy.md", "ui/ui-rules.md"),
     ("Design System", "design_system", "ui-engine/design-system.md", "ui/design-system.md"),
+    ("Design Tokens", "design_tokens", "design-tokens/token-schema.md", "ui/design-tokens.json"),
     ("State Rules", "state_rules", "ux-engine/state-design.md", "ux/state-matrix.md"),
     ("Edge Cases", "edge_cases", "product-intelligence/edge-case-engine.md", "requirements/edge-cases.md"),
     ("QA Rules", "qa_rules", "workflows/audit-product.md", "qa/qa-report.md"),
     ("Implementation Rules", "implementation_rules", "config/operating-rules.md", "workflows/implementation-notes.md"),
+    ("Product Memory", "product_memory", "product-memory/adr-schema.md", "memory/product-memory.md"),
     ("Traceability Requirements", "traceability_requirements", "product-intelligence/traceability.md", "qa/traceability.md"),
 ]
 
 BUILDER_SUBDIR_PURPOSE = {
     "product": ("Define-phase output for this product", "methodology/define.md"),
     "requirements": ("Requirement model, roles, business rules, dependencies, edge cases", "product-intelligence/requirement-engine.md"),
-    "ux": ("Flows, information architecture, navigation, states", "ux-engine/user-flow-engine.md"),
-    "ui": ("Design system, components, screen visuals", "ui-engine/design-system.md"),
+    "ux": ("Flows, information architecture, navigation, states, scenarios, and the UX Coverage Matrix", "ux-engine/user-flow-engine.md"),
+    "ui": ("Design system, machine-readable design tokens, components, screen visuals", "ui-engine/design-system.md"),
     "domain": ("Which product-types/*.md pack applies and how it was adapted for this product", "product-types/custom-domain.md"),
+    "research": ("Research Finding (RF-NNN) records, the research summary, and any competitor/pattern analysis instances", "design-research/research-to-design.md"),
     "workflows": ("Per-workflow entry->action->decision->system-response->next-action->completion specs and recovery paths", "ux-engine/user-flow-engine.md"),
     "qa": ("QA findings and the REQ->USER->FLOW->SCREEN->COMPONENT->TEST trace record", "product-intelligence/traceability.md"),
+    "memory": ("The Product Memory index and persisted ADR-NNN decision records", "product-memory/adr-schema.md"),
 }
 
 PENDING_MARKER = "_Pending - not yet run._"
@@ -302,11 +313,11 @@ def build_skill_md(definition: dict, builder_dir: Path, existing_sections: dict)
         "methodology belong upstream, in Design-Glanza itself.\n\n"
         "## How to use this Product Builder\n"
         "This Product Builder's lifecycle is INTAKE -> EMPATHIZE -> DEFINE -> "
-        "IDEATE -> ARCHITECT -> PROTOTYPE -> IMPLEMENT -> TEST -> AUDIT -> "
-        "ITERATE. The full 24-action sequence - which phase does what, which "
-        "master technique each action uses, and the exact "
-        "`product-builder/` file each action must write - is defined once, "
-        f"reusably, at [{lifecycle_relpath}]({lifecycle_link}). Follow it "
+        "IDEATE -> ARCHITECT -> DESIGN SETUP -> PROTOTYPE -> IMPLEMENT -> "
+        "PREVIEW & RUN -> TEST -> AUDIT -> ITERATE. The full 41-action "
+        "sequence - which phase does what, which master technique each "
+        "action uses, and the exact `product-builder/` file each action must "
+        f"write - is defined once, reusably, at [{lifecycle_relpath}]({lifecycle_link}). Follow it "
         "directly; it is not duplicated here. In short: work through "
         "`requirements/` and `product/` (Intake/Empathize/Define/Ideate), "
         "then `ux/` and `ui/` (Architect/Prototype), then implement into "
@@ -401,6 +412,32 @@ def scaffold_builder_subdirs(builder_dir: Path) -> None:
         )
 
 
+DESIGN_TOKENS_TEMPLATE = SKILL_ROOT / "design-tokens" / "templates" / "design-tokens.json"
+
+
+def scaffold_design_tokens(builder_dir: Path, master_skill_version: str) -> None:
+    """Seed product-builder/ui/design-tokens.json from the master template
+    (design-tokens/templates/design-tokens.json) on first generate, per
+    Rule 23 (config/operating-rules.md) and design-tokens/token-
+    inheritance.md. Never overwrites an existing product's own token file —
+    write_if_absent's usual guarantee — so a product's brand/secondary hue
+    customizations and product.* additions are never clobbered by a later
+    --update."""
+    target = builder_dir / "ui" / "design-tokens.json"
+    if target.exists() or not DESIGN_TOKENS_TEMPLATE.is_file():
+        return
+    try:
+        instance = json.loads(DESIGN_TOKENS_TEMPLATE.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return  # malformed master template - never block generation on it
+    instance["$inherits"] = {"masterSkillVersion": master_skill_version}
+    instance.pop("$comment", None)
+    if isinstance(instance.get("product"), dict):
+        instance["product"].pop("$comment", None)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(instance, indent=2) + "\n", encoding="utf-8")
+
+
 def build_product_json(definition: dict, existing: dict | None) -> dict:
     now = datetime.now(timezone.utc).isoformat(timespec="seconds")
     merged = dict(existing) if existing else {}
@@ -478,6 +515,7 @@ def generate(definition: dict, update: bool) -> int:
     builder_dir = product_dir / "product-builder"
     scaffold_top_level(product_dir)
     scaffold_builder_subdirs(builder_dir)
+    scaffold_design_tokens(builder_dir, product_json["master_skill_version"])
 
     existing_sections = parse_existing_skill_sections(builder_dir / "SKILL.md") if exists else {}
     skill_md = build_skill_md(definition, builder_dir, existing_sections)

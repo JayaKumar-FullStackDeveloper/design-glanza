@@ -16,9 +16,12 @@ what was actually implemented — it does not redesign, re-scope, or silently
 skip a screen that fails to load.
 
 ## Step order
-Matches `workflows/execute-product-builder.md`'s actions 32-33 (Order
-column — shifted from 30-31 when v1.0.9's new Design Research and Visual
-Benchmark & Audit Cycle actions were inserted earlier in the table):
+Matches `workflows/execute-product-builder.md`'s actions 35-36 (Order
+column — shifted from 34-35 when v1.0.11's new spec-level UX
+scenario-testing action was inserted earlier in the table; before that,
+32-33 after v1.0.10's restructured Design Research actions (3 rows
+replacing 1), 30-31 after v1.0.9's new Design Research and Visual
+Benchmark & Audit Cycle actions):
 
 1. **Detect the framework and existing development setup** — read
    `output/*`'s own project files (e.g. `package.json`, a framework config

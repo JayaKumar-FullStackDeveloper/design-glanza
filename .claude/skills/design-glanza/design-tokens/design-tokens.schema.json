@@ -1,0 +1,142 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "design-tokens/design-tokens.schema.json",
+  "title": "Design-Glanza Design Tokens",
+  "description": "The machine-readable shape of one product's design-tokens.json, per design-tokens/token-schema.md. Every scale's actual values are owned by ui-engine/design-system.md, typography.md, layout-system.md, color-system.md, and responsive-system.md — this schema only fixes the structure. Not currently invoked by any script directly; scripts/validate-tokens.py implements the equivalent checks (see design-tokens/token-audit.md).",
+  "type": "object",
+  "required": [
+    "$inherits", "color", "typography", "spacing", "grid", "radius",
+    "border", "elevation", "sizing", "breakpoint", "motion", "zIndex"
+  ],
+  "properties": {
+    "$inherits": {
+      "type": "object",
+      "required": ["masterSkillVersion"],
+      "properties": {
+        "masterSkillVersion": {
+          "type": "string",
+          "description": "The design-glanza master skill version this token set was generated against, per config/master-config.md's Version field — same tracking mechanism as product.json's master_skill_version."
+        }
+      }
+    },
+    "token": {
+      "type": "object",
+      "description": "Generic shape reference — every leaf token in every category below follows this shape.",
+      "properties": {
+        "value": { "description": "A bare value, or a {light, dark} pair when themeable is true." },
+        "themeable": { "type": "boolean", "default": false },
+        "description": { "type": "string" }
+      },
+      "required": ["value"]
+    },
+    "color": {
+      "type": "object",
+      "required": ["primary", "neutral", "semantic"],
+      "properties": {
+        "primary": { "type": "object", "description": "9-10 step ramp, ui-engine/color-system.md Palette construction." },
+        "secondary": { "type": "object", "description": "Optional 9-10 step ramp, same technique as primary." },
+        "neutral": { "type": "object", "description": "9-10 step gray ramp." },
+        "semantic": {
+          "type": "object",
+          "required": ["primary", "secondary", "surface", "background", "text", "success", "warning", "error", "info", "neutral"],
+          "description": "Each key (except text) is a {foreground, background, border} triplet per color-system.md. 'text' is {primary, muted}. See design-tokens/semantic-tokens.md for the full name reconciliation (error == color-system.md's 'danger').",
+          "properties": {
+            "text": {
+              "type": "object",
+              "required": ["primary", "muted"],
+              "properties": {
+                "primary": {},
+                "muted": {}
+              }
+            }
+          }
+        },
+        "dataViz": {
+          "type": "object",
+          "description": "Sequential/diverging/categorical ramps, ui-engine/color-system.md Data-visualization ramps.",
+          "properties": {
+            "sequential": { "type": "array" },
+            "diverging": { "type": "array" },
+            "categorical": { "type": "array" }
+          }
+        }
+      }
+    },
+    "typography": {
+      "type": "object",
+      "required": ["family", "size", "weight", "lineHeight"],
+      "properties": {
+        "family": { "type": "object", "description": "ui-engine/typography.md Font pairing rule." },
+        "size": {
+          "type": "object",
+          "required": ["caption", "body", "bodyLarge", "h3", "h2", "h1", "display"],
+          "description": "ui-engine/typography.md's type scale."
+        },
+        "weight": { "type": "object", "description": "400/500/600/700." },
+        "lineHeight": { "type": "object", "description": "Per role, matching the size scale." },
+        "letterSpacing": {
+          "type": "object",
+          "description": "ui-engine/typography.md's letter-spacing (tracking) scale: tight/normal/wide. Optional — theme-invariant, Latin-script default (see typography.md's Non-Latin script section for the exception).",
+          "properties": {
+            "tight": {}, "normal": {}, "wide": {}
+          }
+        }
+      }
+    },
+    "spacing": {
+      "type": "object",
+      "description": "ui-engine/layout-system.md's spacing scale: 4 8 12 16 24 32 48 64 96.",
+      "patternProperties": { "^[0-9]+$": {} }
+    },
+    "grid": {
+      "type": "object",
+      "required": ["columns", "gutter", "margin"],
+      "description": "ui-engine/layout-system.md's grid definition."
+    },
+    "radius": {
+      "type": "object",
+      "required": ["none", "sm", "md", "lg", "full"],
+      "description": "ui-engine/design-system.md's radius scale."
+    },
+    "border": {
+      "type": "object",
+      "required": ["width"],
+      "properties": {
+        "width": {
+          "type": "object",
+          "required": ["none", "hairline", "thick"],
+          "description": "ui-engine/design-system.md's border-width scale."
+        }
+      }
+    },
+    "elevation": {
+      "type": "object",
+      "description": "ui-engine/design-system.md's elevation scale, levels 0-4. themeable: true is expected here (dark-mode lighter-fill expression).",
+      "patternProperties": { "^[0-4]$": {} }
+    },
+    "sizing": {
+      "type": "object",
+      "required": ["controlSm", "controlMd", "controlLg"],
+      "description": "ui-engine/design-system.md's sizing (component dimensions) scale."
+    },
+    "breakpoint": {
+      "type": "object",
+      "required": ["mobile", "tablet", "desktop", "wide"],
+      "description": "ui-engine/responsive-system.md's breakpoint set."
+    },
+    "motion": {
+      "type": "object",
+      "required": ["fast", "base", "slow"],
+      "description": "ui-engine/design-system.md's motion tokens (duration + easing)."
+    },
+    "zIndex": {
+      "type": "object",
+      "description": "ui-engine/design-system.md's z-index scale, mirroring elevation's 0-4 levels as 0/100/200/300/400.",
+      "patternProperties": { "^[0-4]$": { "type": "integer" } }
+    },
+    "product": {
+      "type": "object",
+      "description": "Domain/product-specific additions with no home in the 14 master categories, per design-tokens/token-inheritance.md. Never a replacement for a master category — additions only."
+    }
+  }
+}

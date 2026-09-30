@@ -17,7 +17,18 @@ one-off value.
 - `ui-engine/layout-system.md`, `typography.md`, `color-system.md`,
   `visual-hierarchy.md`, `visual-trends.md`.
 - Design System Expert's current token set and component inventory
-  (`ui/design-system.md`, `ui/components.md`).
+  (`ui/design-system.md`, `ui/components.md`, `ui/design-tokens.json` —
+  Rule 23, `design-tokens/*`) — every value applied cites a token path,
+  never a raw value (a gap is flagged back to Design System Expert per
+  step 5 below, not patched with a one-off).
+- `component-registry/*` (Rule 24) — every screen composed from a
+  registered pattern where one exists (e.g. `composition-patterns.md`'s
+  Data Table/Form) rather than an improvised arrangement of atoms; a gap
+  is flagged back to Design System Expert, not filled ad hoc.
+- `product-builder/memory/product-memory.md` (Rule 26) — checked for a
+  prior UI `ADR-NNN` on this screen/component before applying a register/
+  pattern choice; a genuine change supersedes it explicitly, never
+  silently (`product-memory/contradiction-prevention.md`).
 - Any `product-types/domain-standards/` entry Product Architect matched
   (`product-intelligence/domain-standards.md`) — applied alongside
   `product-types/*.md` conventions in step 1, and for any domain-specific
@@ -30,6 +41,12 @@ one-off value.
 - `ui-engine/ui-design-principles.md`, `ui-audit-framework.md`, and
   `visual-benchmark.md` — the mandatory quality bar and audit-refinement
   cycle applied in step 8, per Rule 20.
+- `product-builder/research/research-findings.md`'s `RF-NNN` records
+  (Rule 21, `design-research/research-to-design.md`) — every CRITICAL/HIGH
+  finding naming a UI pattern is mandatory input to step 4's composition
+  and step 6's pattern-choice reasoning; a common/default pattern chosen
+  from one is only adopted once it's cleared
+  `design-research/pattern-analysis.md`'s Anti-Generic Design challenge.
 
 ## Analysis procedure
 1. Select the visual register (`visual-trends.md`), informed by
@@ -49,7 +66,9 @@ one-off value.
 6. For any visual/layout pattern choice important enough to warrant it (per
    `methodology/design-judgment.md`'s threshold) not already resolved by
    `visual-trends.md`'s register gate, run that engine rather than picking
-   by preference.
+   by preference. Where a CRITICAL/HIGH `RF-NNN` finding names this
+   pattern, cite it directly and mark it `applied` (Rule 21) — or state the
+   reason it wasn't followed.
 7. Once a screen's composition is done, self-critique it against
    `ui-engine/craft-critique.md`'s checks before handing off — this is Rule
    12 applied at the visual layer, not a separate approval step.
@@ -59,6 +78,9 @@ one-off value.
    classify any gap, apply the refinement, and re-check — recorded in
    `templates/visual-gap-analysis.md`. Runs for every screen, even one
    with no gaps found; the first generated pass is never the final one.
+9. Where a register/pattern choice meets `product-memory/
+   auto-recording.md`'s significance threshold, record it as a new
+   `ADR-NNN` in `product-builder/memory/decision-records.md` (Rule 26).
 
 ## Output
 - `product-builder/ui/ui-rules.md` (register decision, hierarchy application)
@@ -68,7 +90,9 @@ one-off value.
 ## Quality criteria
 - Passes `config/quality-gates.md`'s **B5 (Screen Architecture)** gate's
   visual-consistency aspect, contributes to **B6 (Design System)**, and
-  passes **B15 (Visual Benchmark & Audit Cycle Completeness)**.
+  passes **B15 (Visual Benchmark & Audit Cycle Completeness)**, **B16
+  (Research-to-Design Traceability)**'s decision/pattern stage, and **B21
+  (Product Memory Integrity)**'s design-time checkpoint.
 - Every value used (color, spacing, radius, type) is a token from the
   governed set — zero undocumented one-offs.
 - Every semantic color pairing meets `color-system.md`'s contrast rule in

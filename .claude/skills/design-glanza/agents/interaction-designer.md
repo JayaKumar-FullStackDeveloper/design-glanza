@@ -39,7 +39,14 @@ time this agent runs.
 5. For every state resulting from a failure, specify which recovery
    resolution it leads to (retry / abandon-safely / escalate) — never leave
    a failure state without one.
-6. For any interaction/behavior pattern choice important enough to warrant
+6. Jointly with `agents/ux-architect.md`, cross-check this pass's state
+   matrix against `ux-scenario-testing/scenario-types.md`'s 8-type
+   taxonomy — every Empty/Loading/Permission/Offline scenario type a flow
+   requires must have a corresponding state-matrix cell already designed
+   here, not left for the scenario walk to discover missing; contribute
+   the Recovery resolution field to each Error/Recovery-type
+   `SCENARIO-NNN` record in `ux/ux-coverage-matrix.md`.
+7. For any interaction/behavior pattern choice important enough to warrant
    it (per `methodology/design-judgment.md`'s threshold) with no more
    specific owning rule, run that engine rather than picking by preference.
 
@@ -50,6 +57,8 @@ time this agent runs.
 ## Quality criteria
 - Passes `config/quality-gates.md`'s **B7 (State Coverage)** gate: zero
   blank cells, every cell designed/not-applicable/deferred with a reason.
+- Contributes to **B17 (UX Scenario Coverage)**'s spec-level checkpoint:
+  every scenario type a flow requires has its state already designed here.
 - Every recovery path resolves to one of the three stated resolutions.
 - Focus state is specified as visually distinct from hover state (feeds
   Accessibility Expert's review, doesn't substitute for it).

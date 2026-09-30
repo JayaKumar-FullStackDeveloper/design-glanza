@@ -46,7 +46,18 @@ locale's convention, not hardcoded to one — this is a `product-intelligence/
 business-logic.md`-level data-requirement (which locale format applies to
 which field) as much as a display concern; a date field's format is part of
 its Data-type requirement (`product-intelligence/requirement-engine.md`),
-not an afterthought applied at render time.
+not an afterthought applied at render time. Concretely, each of these
+varies by locale independently — never assume one locale choice fixes all
+four: **dates** (MM/DD/YYYY vs. DD/MM/YYYY vs. ISO 8601 — ambiguous
+numeric-only dates are a defect regardless of which convention is chosen,
+since 03/04 is a different day depending on the reader); **numbers**
+(decimal vs. thousands separator — `1,000.50` vs. `1.000,50`); **currency**
+(symbol position — prefix vs. suffix — and whether the currency code or
+symbol is shown, since a bare `$` is ambiguous across multiple
+dollar-denominated locales); **name/address order** (given-family name
+order varies, and an address's field order and required fields are not
+uniform — a fixed "Street/City/State/Zip" form is a US-specific structure,
+not a universal one).
 
 ## Cultural meaning of color and icons
 A color or icon's meaning is not universal (`ui-engine/color-system.md`'s

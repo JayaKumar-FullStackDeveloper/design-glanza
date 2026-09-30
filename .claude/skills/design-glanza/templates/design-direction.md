@@ -7,6 +7,9 @@ Prototype's UI pass, and cited from that point forward by every UI-facing
 agent instead of each one improvising a direction independently.
 
 ## Required inputs
+- `product-builder/research/research-findings.md` and `research-summary.md`
+  (Rule 21, `design-research/research-to-design.md`) — every Critical/High
+  `RF-NNN` finding's Design Principle is mandatory input to this document.
 - `design-reference-engine/reference-analysis.md`'s extracted patterns, if
   any references were provided.
 - `design-reference-engine/design-questionnaire.md`'s answers.
@@ -31,7 +34,24 @@ agent instead of each one improvising a direction independently.
   of visual expression.
 - **Design principles** — 3–5 stated principles this product's design
   answers to (not a restatement of Design-Glanza's own general principles —
-  specific to this product's direction).
+  specific to this product's direction). Each principle sourced from
+  research cites its `RF-NNN` finding directly. Each principle also states
+  one concrete **counter-example** — a plausible-sounding choice this
+  principle rules out — which is what makes a principle checkable against
+  a real screen rather than a vague value statement everything trivially
+  satisfies (e.g. "legibility over personality" alone permits almost
+  anything; pairing it with "therefore: no decorative display face at
+  body-text sizes, even if on-brand" makes it a real constraint). Where
+  two principles could plausibly conflict on a given screen, state which
+  one wins — an unranked set of principles that can disagree leaves the
+  actual call to whoever's building the screen that day.
+- **Research findings applied** — every CRITICAL/HIGH `RF-NNN` finding
+  from `product-builder/research/research-findings.md`, one line each:
+  the finding, its Design Principle, and whether it was applied here or
+  deferred elsewhere with a stated reason. Empty only if genuinely no
+  Critical/High findings exist for this pass (Lightweight research,
+  `design-research/research-engine.md`) — never omitted because research
+  ran but wasn't consulted.
 - **Reference analysis** — per reference provided: what it is, what was
   extracted from it, and its confidence tag (Explicit/Inferred/Assumed),
   per `reference-analysis.md`. Empty/not-applicable if no references were
@@ -86,8 +106,10 @@ agent instead of each one improvising a direction independently.
 
 ## Quality criteria
 - Checked against `config/quality-gates.md`'s **B13 (Design Direction
-  Completeness)** gate — every field above filled or explicitly marked
-  not-applicable with a reason; 0 fields silently blank.
+  Completeness)** and **B16 (Research-to-Design Traceability)** gates —
+  every field above filled or explicitly marked not-applicable with a
+  reason; 0 fields silently blank; 0 Critical/High `RF-NNN` findings
+  unaccounted for in Research findings applied.
 - The reference classification names its evidence, not just its label — a
   classification with no stated rationale fails this template's own bar the
   same way an unstated domain classification would fail
@@ -138,6 +160,13 @@ a drift finding, routed the same way `agents/design-system-expert.md`
 already routes token/component drift.
 
 ## Explicitly not here
+- The full research technique and finding records → `design-research/*`,
+  `templates/research-finding.md`, `templates/research-summary.md`.
+- The machine-readable realization of this document's Color/Typography/
+  Spacing/Grid/Radius/Elevation/Iconography fields → `design-tokens/*`,
+  `product-builder/ui/design-tokens.json` (Rule 23) — this document
+  states the *preference*, that file is the *addressable value* Design
+  System Expert actually establishes from it.
 - How references are analyzed and questions are asked → `design-reference-
   engine/{reference-analysis,design-questionnaire}.md`.
 - How the four-way mode is decided → `design-reference-engine/

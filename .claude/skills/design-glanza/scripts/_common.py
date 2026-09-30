@@ -37,7 +37,7 @@ PRODUCT_TYPES_DIR = SKILL_ROOT / "product-types"
 MASTER_CONFIG_PATH = SKILL_ROOT / "config" / "master-config.md"
 
 TOP_LEVEL_DIRS = ["BRD", "product-builder", "output"]
-BUILDER_SUBDIRS = ["product", "requirements", "ux", "ui", "domain", "workflows", "qa"]
+BUILDER_SUBDIRS = ["product", "requirements", "ux", "ui", "domain", "research", "workflows", "qa", "memory"]
 
 PRODUCT_JSON_FIELDS = [
     "product_name", "product_slug", "product_type", "domain", "sub_domain",
@@ -55,8 +55,16 @@ MANDATORY_STATES = [
 ]
 
 # ID schemes, per product-intelligence/traceability.md and the files that
-# own each one.
-ID_SCHEMES = ["REQ", "ROLE", "BR", "DEP", "EDGE", "FLOW", "SCREEN", "COMPONENT", "TEST"]
+# own each one. RF (Research Finding, design-research/research-to-design.md),
+# SCENARIO (ux-scenario-testing/scenario-model.md), and ADR (persisted
+# decision record, product-memory/adr-schema.md) are sideways references
+# like BR/DEP/EDGE, not chain links — see traceability.md's "Sideways
+# references vs. the chain" section. RF and SCENARIO have no validator
+# script cross-checking their referential integrity yet (a disclosed
+# limitation, see design-research/README.md and ux-scenario-testing/
+# README.md) — ADR is the first of the three to get one,
+# scripts/validate-memory.py.
+ID_SCHEMES = ["REQ", "ROLE", "BR", "DEP", "EDGE", "RF", "SCENARIO", "ADR", "FLOW", "SCREEN", "COMPONENT", "TEST"]
 ID_PATTERNS = {scheme: re.compile(rf"\b{scheme}-\d+\b") for scheme in ID_SCHEMES}
 
 SEVERITIES = ("Blocker", "Major", "Minor", "Note")  # config/output-contract.md

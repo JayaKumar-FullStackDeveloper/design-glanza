@@ -27,9 +27,10 @@ builders — and it stays domain-agnostic while doing it.
   never auto-loads this skill from a passing mention of UI, UX, SaaS, or
   design — the entry point is the user typing **`/design-glanza:design-glanza`**
   (when installed as a plugin) or **`/design-glanza`** (when this skill is
-  project-local), or unambiguously asking to run the Design-Glanza process by
-  name. If a request only loosely touches product/design topics, do the
-  requested work directly rather than pulling in this whole lifecycle.
+  project-local, under `.claude/skills/`), or unambiguously asking to run
+  the Design-Glanza process by name. If a
+  request only loosely touches product/design topics, do the requested work
+  directly rather than pulling in this whole lifecycle.
 - **Minimal tool surface.** Only `Read`/`Write`/`Edit`/`Glob`/`Grep` and a
   narrowly scoped `Bash` limited to this skill's own
   `scripts/{create-product-builder,validate-*,generate-report}.py` — no
@@ -100,12 +101,18 @@ only when you're actually at that step.
 | Matching/loading an external domain-standard document | `product-intelligence/domain-standards.md`, `product-types/domain-standards/domain-registry.json` |
 | Deriving requirements, rules, roles, dependencies, edge cases | `product-intelligence/{requirement-engine,business-logic,user-roles,dependency-analysis,edge-case-engine}.md` |
 | Empathize / Define / Ideate reasoning | `methodology/{empathize,define,ideate}.md` |
-| Researching current design patterns/conventions before any reference or screen exists | `design-reference-engine/design-research.md` |
+| Running the full Design Research Engine — evidence, insight, competitor/pattern analysis that must actively shape UX/UI decisions, not just document them | `design-research/*` (entry point cited from Design Setup's Step 0: `design-reference-engine/design-research.md`) |
 | Establishing/confirming the visual and interaction direction before any screen exists | `design-reference-engine/*`, `design-samples/`, `workflows/design-setup.md` |
 | Structuring flows, IA, navigation, states | `ux-engine/*` |
+| Deriving scenarios from flows, checking for missing screens/transitions/actions/validations/feedback, auditing navigation continuity across a scenario's real screen sequence, building the UX Coverage Matrix | `ux-scenario-testing/*` |
 | Launching and verifying the built output locally, after Implement | `workflows/preview-run.md`, `templates/preview-report.md` |
 | Search/query design, or a non-Latin-script/multi-locale product, or interface wording (errors, CTAs, tone) | `ux-engine/{search-ux,localization,ux-writing}.md` |
+| Ideate selected a conversational interaction model, or designing the first-run/onboarding experience | `ux-engine/{conversational-ux,onboarding-design}.md` |
 | Visual system, layout, components | `ui-engine/*` |
+| Consuming/generating the machine-readable token set (colors, type, spacing, radius, shadows, sizing, breakpoints, motion, z-index), checking a value resolves to a token instead of being invented | `design-tokens/*`, `product-builder/ui/design-tokens.json` |
+| Specifying a component (Button, Table, Modal, Form, …) or a composition pattern (Data Table, Form) — checking the master registry before inventing anything new | `component-registry/*` |
+| Establishing/diffing a screen's baseline across passes, classifying a visual regression, or deciding whether a diff is an intentional change | `visual-regression/*`, `product-builder/ui/baselines/*.json` |
+| Checking what's already been decided before making a new product/UX/UI/architecture decision, or persisting a significant one as an ADR | `product-memory/*`, `product-builder/memory/{product-memory,decision-records}.md` |
 | Reasoning through an important UX/UI pattern decision with no obvious owner | `methodology/design-judgment.md` |
 | Self-critiquing a finished screen/page's visual composition | `ui-engine/craft-critique.md` |
 | Auditing/benchmarking a generated screen against its reference and design direction | `ui-engine/{ui-audit-framework,visual-benchmark}.md`, `templates/visual-gap-analysis.md` |
@@ -178,21 +185,28 @@ before any screen exists (Rule 5: system before screen). Owner:
 ## How Design-Glanza establishes design direction
 
 ### 8. Design Setup / Visual Direction
-Between Architect and Prototype (added v1.0.7): first, research current
-design patterns relevant to this product (Step 0, added v1.0.9 — modern
-SaaS/admin conventions, this product's own domain conventions, density,
-navigation/dataviz/form/table/interaction/accessibility/responsive
-patterns, current visual trends checked against `visual-trends.md`'s
-adoption gate); then detect and analyze any user-supplied design
-references, run a structured design-expectation questionnaire, classify
-the result as Reference-Driven / Guideline-Driven / Custom Design /
-Default Design-Glanza — never one generic style regardless of domain
-(Rule 20) — and produce one approved `product-builder/ui/design-
-direction.md` — confirmed with the user where one is available, never
-assumed from generic defaults when real direction exists, and never
-fabricated from nothing when it doesn't (Rule 18). Screens and tokens are
-never built before this exists. Owner: `agents/design-setup-specialist.md`.
-Detail: `design-reference-engine/*`, `design-samples/`,
+Between Architect and Prototype (added v1.0.7): first, run the full
+**Design Research Engine** (Step 0, restructured v1.0.10 —
+`design-research/*`) — a Research Brief classifying full vs. lightweight
+research, then evidenced findings across Domain/Interaction/Visual (User
+research is Empathize's own output, cited not re-derived) plus Competitor/
+Pattern analysis where a reference exists, each finding labeled Known/
+Assumed/Inferred/Unknown and CRITICAL/HIGH/MEDIUM/LOW-prioritized, recorded
+as a real `RF-NNN` entry — never adopting a common pattern without clearing
+the Anti-Generic Design challenge (Rule 21). Every CRITICAL finding, and
+every HIGH finding affecting a core workflow, must produce a cited UX
+Decision/UI Pattern or an explicit reasoned deferral — checked by **B16**.
+Then detect and analyze any user-supplied design references, run a
+structured design-expectation questionnaire, classify the result as
+Reference-Driven / Guideline-Driven / Custom Design / Default
+Design-Glanza — never one generic style regardless of domain (Rule 20) —
+and produce one approved `product-builder/ui/design-direction.md`,
+citing every Critical/High research finding's design principle —
+confirmed with the user where one is available, never assumed from
+generic defaults when real direction exists, and never fabricated from
+nothing when it doesn't (Rule 18). Screens and tokens are never built
+before this exists. Owner: `agents/design-setup-specialist.md`. Detail:
+`design-research/*`, `design-reference-engine/*`, `design-samples/`,
 `workflows/design-setup.md`.
 
 ## How Design-Glanza designs the product
@@ -203,7 +217,13 @@ architecture, navigation (13 concerns — breadcrumbs are never a default),
 screen architecture, and the *named* interaction model per screen. Owners:
 `agents/ux-architect.md` (structure), `agents/interaction-designer.md` (exact
 behavior/states), `agents/accessibility-expert.md` (structural pass). Detail:
-`ux-engine/*`.
+`ux-engine/*`. **Once flows/screens/states exist, every flow is walked as a
+scenario across 8 mandatory types** (added v1.0.11, Rule 22 — primary,
+alternate, error, empty, loading, permission, offline, recovery), checked
+for missing screens/transitions/actions/validations/feedback and rolled
+into the UX Coverage Matrix (`ux/ux-coverage-matrix.md`) — spec-level
+checkpoint, gate **B17**. Owners: `agents/ux-architect.md` and
+`agents/interaction-designer.md` jointly. Detail: `ux-scenario-testing/*`.
 
 ### 10. UI architecture
 Visual realization on top of that structure: tokens, layout, typography,
@@ -211,14 +231,39 @@ color, component inventory, visual hierarchy, responsive rules — system
 established before screens multiply (Rule 5 again, now at the UI layer),
 consuming Design Setup's approved direction rather than re-deciding it.
 Owners: `agents/design-system-expert.md` (governs the system),
-`agents/ui-designer.md` (applies it). Detail: `ui-engine/*`. **Every
-generated screen then goes through a mandatory visual-benchmark-and-audit
-cycle** (added v1.0.9, Rule 20): an 11-category A–K audit
-(`ui-engine/ui-audit-framework.md`), a three-way Reference/Design-
-Direction/Generated-UI comparison (`ui-engine/visual-benchmark.md`), and
-at least one refinement pass — recorded in
+`agents/ui-designer.md` (applies it). Detail: `ui-engine/*`. **Every token
+is machine-readable and addressable by path** (added v1.0.12, Rule 23 —
+`product-builder/ui/design-tokens.json`, `design-tokens/*`): 14 categories
+including semantic color tokens (`primary`/`secondary`/`surface`/
+`background`/`text`/`muted`/`success`/`warning`/`error`/`info`), themed
+light/dark where applicable, inheriting the master scales without a
+product ever redefining a closed one. A raw value with no fitting token is
+logged as a system gap, never left silent — checked by
+`scripts/validate-tokens.py`, gates **B6**/**B18**. **Every component
+checks the master Component Registry before anything is invented** (added
+v1.0.13, Rule 24 — `component-registry/*`): ~24 pre-populated components
+(Button, Table, Modal, Form, …) and composition patterns (Data Table,
+Form, Record Detail View) each with when-to-use/when-not-to-use,
+composition rules, and a named common-mistakes catalog — a component with
+no cited registry base (or a stated reason none fit) fails gate **B19**.
+Every
+CRITICAL/HIGH `RF-NNN` research finding naming a UI pattern is mandatory
+input here, cited directly in the artifact it shaped — never a common
+pattern accepted without clearing the Anti-Generic Design challenge (Rule
+21, gate **B16**). **Every generated screen then goes through a mandatory
+visual-benchmark-and-audit cycle** (added v1.0.9, Rule 20): an 11-category
+A–K audit (`ui-engine/ui-audit-framework.md`), a three-way Reference/
+Design-Direction/Generated-UI comparison (`ui-engine/visual-benchmark.md`),
+and at least one refinement pass — recorded in
 `templates/visual-gap-analysis.md` even when a screen is clean on first
 pass. The first generated UI is never treated as final. Gate: **B15**.
+**Once confirmed clean, a screen's structural state is captured as a
+baseline** (added v1.0.14, Rule 25 — `visual-regression/*`): every later
+pass diffs current against baseline first — layout shifts, spacing/
+typography/color changes, component inconsistencies, alignment problems,
+missing/unexpected elements, responsive regressions — classified
+Critical/High/Medium/Low and either fixed or explicitly approved as an
+intentional Baseline Update; an unreviewed regression fails gate **B20**.
 
 ## How Design-Glanza builds the product
 
@@ -255,7 +300,13 @@ explicit request and is never required for normal operation. Detail:
 Nine dimensions, every time, never just task completion: task completion,
 usability, discoverability, error prevention, feedback, accessibility,
 responsiveness, edge cases, business-rule correctness. Owner:
-`agents/qa-expert.md`. Detail: `methodology/test.md`.
+`agents/qa-expert.md`. Detail: `methodology/test.md`. **Validated as a
+product, not only as screens** — every scenario the UX Coverage Matrix
+marks `covered` is walked end to end against the built (or spec) result,
+checking for dead ends, ambiguous CTAs, missing feedback, and inconsistent
+interaction patterns across the real screen sequence it visits (added
+v1.0.11, Rule 22, walked checkpoint of gate **B17**). Detail:
+`ux-scenario-testing/continuity-audit.md`.
 
 ### 15. Audit
 Aggregates validator results (`scripts/validate-*.py`), traceability
@@ -273,12 +324,15 @@ Quality gates, next.
 ## Governing principles
 
 ### 17. Quality gates
-`config/quality-gates.md` defines 12 phase-transition gates and 15 measurable
-dimensions (B1-B15: requirement completeness, business logic, user-flow
+`config/quality-gates.md` defines 12 phase-transition gates and 21 measurable
+dimensions (B1-B21: requirement completeness, business logic, user-flow
 completeness, IA, screen architecture, design system, state coverage,
 accessibility, responsive behavior, traceability, QA, implementation
 readiness, design direction completeness, preview & run verification,
-visual benchmark & audit cycle completeness).
+visual benchmark & audit cycle completeness, research-to-design
+traceability, UX scenario coverage, token inheritance integrity,
+component registry conformance, visual regression integrity, product
+memory integrity).
 Completion requires clearing the relevant gates — not a working demo.
 `evals/evaluation-rubric.md` extends this into a scored rubric, weighted so
 visual polish alone can never carry a passing score.
@@ -288,7 +342,12 @@ Every important requirement maps forward:
 `REQ → USER → FLOW → SCREEN → COMPONENT → TEST`
 (`product-intelligence/traceability.md`). An artifact with no upstream
 requirement, or a requirement with no downstream artifact, is a defect unless
-explicitly deferred.
+explicitly deferred. `RF-NNN` (Research Finding), `SCENARIO-NNN` (one
+flow walked under one scenario type), and `ADR-NNN` (a persisted decision
+record) are sideways references in the same model — cited, not chain
+links — and a CRITICAL/HIGH research finding, a flow, or a decision with
+no downstream artifact/`Related` citation is the same defect category
+(Rules 21/22/26).
 
 ### 19. Product isolation
 A generated Product Builder holds product-specific knowledge only; it never
@@ -301,6 +360,19 @@ against the fixed Domain Pack Contract (`product-types/custom-domain.md`) — th
 domain-agnostic core (`config/`, `methodology/`, `product-intelligence/`,
 `ux-engine/`, `ui-engine/`) is never edited to accommodate a domain. (Rule 14
 and Rule 16, `config/operating-rules.md`.)
+
+### 21. Product Memory
+Added v1.0.15 (Rule 26): the Product Builder remembers its own significant
+product/UX/UI/design-system/component/architecture decisions across the
+whole lifecycle, indexed in `product-builder/memory/product-memory.md` —
+mostly a cross-reference over content that already lives in `product/`,
+`ux/`, `ui/`, `domain/`, `research/`, `qa/` (`product-memory/README.md`
+states exactly where, category by category), plus one genuinely new
+persisted artifact: `ADR-NNN`, the storage form of topic 18's design
+decision framework. Before generating or modifying UI, the acting agent
+checks Product Memory first; a contradiction is only ever introduced via
+a new ADR that explicitly supersedes the one it replaces — never
+silently. Gate: **B21**. Detail: `product-memory/*`.
 
 ---
 
@@ -327,6 +399,45 @@ and Rule 16, `config/operating-rules.md`.)
 - Do not select the same default design register/sample for every product
   regardless of its matched domain — Admin Panel ≠ E-commerce ≠ Healthcare
   ≠ ERP ≠ Fintech ≠ CRM (8, Rule 20).
+- Do not treat research as documentation generated beside a design decision
+  made some other way — a CRITICAL finding, or a HIGH finding affecting a
+  core workflow, must produce a cited UX Decision/UI Pattern or an
+  explicit, reasoned deferral (8, Rule 21, gate B16).
+- Do not accept a common/default UI pattern without applying the
+  Anti-Generic Design challenge (why is it appropriate, what user problem
+  does it solve, what evidence supports it, is there a better pattern, is
+  it IA-consistent) — `design-research/pattern-analysis.md` (8/10, Rule 21).
+- Do not declare a product complete because every individual screen passed
+  its own audit — every flow must be walked as a scenario end to end, and
+  a dead end, missing screen/transition/action/validation/feedback, or
+  unresolved recovery path anywhere in that walk keeps the product
+  incomplete regardless of how well any single screen tests (9/14, Rule
+  22, gate B17).
+- Do not invent an arbitrary color, type size, spacing value, radius,
+  border, shadow, component dimension, breakpoint, motion duration, or
+  z-index — every value resolves to a `design-tokens.json` path or is
+  logged as a system gap, never left silent (10, Rule 23, gates B6/B18).
+- Do not let a product's token file redefine a closed master scale
+  (radius/elevation/motion/border-width/sizing/z-index/type/spacing/grid/
+  breakpoints) or write a product-specific value back into `ui-engine/*` —
+  extend under `product.*`, never fork the master (10, Rule 23, gate B18).
+- Do not specify a new component before checking `component-registry/*`
+  first, then the product's own inventory — and never write a
+  product-specific component back into that registry (10, Rule 24, gate
+  B19).
+- Do not let a later pass silently change a screen that already passed
+  its visual-benchmark cycle without diffing it against its baseline
+  first — an unreviewed regression (a missing element, a drifted token,
+  a broken breakpoint) is never accepted just because the pass's own new
+  work looks fine (10, Rule 25, gate B20).
+- Do not accept a visual diff as "intentional" with no logged Reason and
+  approval — the same no-invented-facts discipline Rule 10 already
+  requires of an assumption, applied to a Baseline Update (Rule 25).
+- Do not generate or modify UI without first checking
+  `product-builder/memory/product-memory.md` for a relevant existing
+  decision — and do not introduce a contradicting decision without a new
+  `ADR-NNN` that explicitly supersedes the one it replaces (21, Rule 26,
+  gate B21).
 - Do not let a specialist agent self-invoke outside the phase
   `workflows/*.md` assigns it, or redesign work another agent owns — route
   the problem to the owning agent instead (`config/master-config.md`'s Role
