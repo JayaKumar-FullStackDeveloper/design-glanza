@@ -229,6 +229,49 @@ reads at a glance. The default posture for every step above is to actively
 look for these defects, not to assume the first generated layout already
 avoided them.
 
+#### Text overflow — a first-class, explicitly measured defect
+"Clipped content" above is not sufficient coverage on its own — text
+overflow is common enough, and easy enough to miss by reading source
+rather than observing the rendered result, that it gets its own explicit
+sub-list. Each of these is the *same* underlying defect (rendered content
+larger than the box holding it) wearing a different surface, and each is
+checked for by name, not assumed covered by a general "looks fine" read:
+
+- Text overflowing a fixed-width or fixed-height container.
+- Clipped text (cut off mid-character/mid-word with no visual
+  indication it was truncated).
+- Horizontal overflow (content wider than its container, forcing an
+  unintended scrollbar or silently escaping the container's edge).
+- Vertical overflow (content taller than its container).
+- Content escaping its container entirely (overlapping a neighboring
+  element rather than staying clipped within its own bounds).
+- Ellipsis failures — an ellipsis (`text-overflow: ellipsis` or
+  equivalent) applied to a container that doesn't actually have the
+  `overflow`/`white-space` properties needed for it to render, so the
+  text clips raw instead.
+- Overflowing buttons, badges, pills, chips, or table cells
+  specifically — these are named separately from the general case
+  because their small, fixed dimensions make them the most common place
+  a slightly-longer-than-expected real value (a longer status label, a
+  longer localized string, a wider number) breaks first.
+
+**This is measured from the actual rendered result, never inferred by
+reading the HTML/CSS and judging whether it "looks like it would fit."**
+Wherever `scripts/capture-render.py` is available (see that script's and
+`ui-engine/visual-benchmark.md`'s Render-and-measure evidence section),
+`scripts/validate-rendered-layout.py`'s overflow check is the authority
+here: a real `scrollWidth`/`scrollHeight` vs. `clientWidth`/`clientHeight`
+comparison against the live DOM, at every required breakpoint and theme —
+not a visual estimate. A Blocker-severity finding from that script is this
+sub-list's own finding, carried into the gap analysis as a **Rendered-
+layout defect** (`visual-benchmark.md`'s gap-type table), not a separate,
+redundant check. Where rendering isn't available in the current
+environment, this sub-list is still checked qualitatively (does any
+string plausibly exceed its container at realistic content length/
+localization, per `craft-critique.md`'s content-realism discipline) and
+the absence of rendering evidence is disclosed, not silently treated as
+"passed."
+
 ## Reporting shape
 Every finding uses the same **Observation → Problem → Fix** triad
 `craft-critique.md` already established, with a pass/minor/major rating per

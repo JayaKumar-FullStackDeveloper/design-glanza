@@ -137,9 +137,29 @@ Each gate below states: what it measures, the pass criterion, and what checks it
   fixed or logged as a Token gap. A production-ready accessibility score
   based on visual inspection alone, where a deterministic check was
   available and skipped, does not satisfy this gate.
+- **B8.1 — Semantic contrast (tinted-background pairing).** A benchmark
+  run found that a semantic hue passing contrast against the plain
+  surface does not mean it passes against its own lighter, tinted
+  background — the pairing a badge, chip, status pill, delta indicator,
+  semantic icon container, or avatar initials/background actually
+  renders on. `scripts/validate-tokens.py`'s `_check_contrast` now runs a
+  third pass checking every declared `{onSoft, soft}` pair (`design-
+  tokens/semantic-tokens.md`'s optional triplet extension) independently
+  of whether that same key's plain foreground/background pair already
+  passed — 0 findings, or every returned finding fixed or logged as a
+  Token gap, in both light and dark mode, same as the existing passes.
 - **Checked by:** `agents/accessibility-expert.md`, the Contrast and
-  Target Size steps additionally enforced deterministically by
-  `scripts/validate-tokens.py`.
+  Target Size steps (including B8.1) additionally enforced
+  deterministically by `scripts/validate-tokens.py`. Where rendering is
+  available (`scripts/capture-render.py` — see B9/B14/B15 below),
+  `scripts/validate-rendered-layout.py`'s overlap check additionally
+  catches a focus ring, badge, or icon rendered in a way that visually
+  collides with adjacent content at an actual breakpoint — a real-render
+  signal this gate did not have access to before, feeding the same
+  Blocker/Major/Minor/Note handling as every other B8 finding. This does
+  not replace `validate-tokens.py`'s contrast/target-size math (no
+  rendering-based contrast check exists); it is additional evidence
+  where rendering is available, never a required substitute for it.
 
 ### B9 — Responsive Behavior
 - **Measures:** completeness of `ui-engine/responsive-system.md` application,
@@ -159,8 +179,35 @@ Each gate below states: what it measures, the pass criterion, and what checks it
   list (overflow, clipping, overlapping, accidental horizontal scroll,
   broken alignment, unreadable text, compressed controls, inconsistent
   card sizing, broken charts, inaccessible drawers, hidden critical
-  actions) at any supported breakpoint.
-- **Checked by:** `agents/ui-designer.md` review.
+  actions) at any supported breakpoint. Every **become-alternative-
+  component** decision that produces an interrupting overlay (Sidebar →
+  Drawer, Desktop navigation → Mobile drawer) additionally has
+  `responsive-system.md`'s Alternative-component accessibility contract
+  actually checked, not just the decision recorded: focus entry, focus
+  trap, Escape-to-close, focus restoration to the trigger, background
+  inertness, functional keyboard navigation, a visible focus indicator,
+  correct `dialog`/`complementary` ARIA role, and correct
+  `aria-expanded`/`aria-controls` on the trigger — a decision recorded
+  with the contract unchecked fails this gate the same as an undecided
+  element does.
+- **Rendering evidence (where available).** The "Not accepted" defect
+  list above (overflow, clipping, overlapping, broken alignment,
+  inconsistent card sizing, among others) is exactly what
+  `scripts/capture-render.py` + `scripts/validate-rendered-layout.py`
+  measure directly from a real render at each mandatory breakpoint
+  (desktop/tablet/mobile) and theme (light/dark) — see `ui-engine/
+  visual-benchmark.md`'s Render-and-measure evidence section. Wherever
+  Playwright is installed in the current environment, this gate's "every
+  screen independently verified at each breakpoint" requirement is
+  satisfied with measured evidence for these specific defect types, not
+  only an agent's visual read of the markup; where it isn't installed,
+  the agent-review check below still applies in full and the gap is
+  disclosed (`scripts/validate-product.py` emits a Note saying so),
+  never silently treated as passed.
+- **Checked by:** `agents/ui-designer.md` review, jointly with
+  `agents/accessibility-expert.md` for any become-alternative-component
+  decision producing an interrupting overlay — the same joint-ownership
+  precedent B15/B16/B17 already use.
 
 ### B10 — Traceability
 - **Measures:** integrity of the REQ → FLOW → SCREEN → COMPONENT → TEST chain
@@ -173,10 +220,25 @@ Each gate below states: what it measures, the pass criterion, and what checks it
 
 ### B11 — QA
 - **Measures:** aggregate validator and rubric health.
-- **Pass criterion:** `scripts/validate-product.py` (aggregating B1/B5/B7) returns
-  all-pass; `evals/evaluation-rubric.md` score meets or exceeds its stated
-  threshold on every dimension; 0 unresolved Blocker or un-waived Major findings
-  in `templates/qa-report.md`.
+- **Pass criterion:** `scripts/validate-product.py` (aggregating **B1/B5/B7**
+  structural checks, **B6/B8** token checks including **B8.1**'s semantic
+  tinted-background contrast pass, **B14**'s generated-artifact structural
+  validation, **B15**'s Cross-Artifact Data Realism check, and — wherever
+  Playwright is installed in the current environment — **B15**'s rendered-
+  layout evidence via `scripts/capture-render.py` +
+  `scripts/validate-rendered-layout.py` against every `.html` file under
+  `output/`) returns all-pass; `evals/evaluation-rubric.md` score meets or
+  exceeds its stated threshold on every dimension; 0 unresolved Blocker or
+  un-waived Major findings in `templates/qa-report.md`. Every deterministic
+  validator's findings participate in the same Blocker/Major/Minor/Note
+  severity handling as every other B11 input — never a second, parallel
+  pass/fail scale. (B9's new Alternative-component accessibility contract
+  has no deterministic script backing it and is not aggregated here — it
+  stays an agent-review check, per B9's own "Checked by.") Where rendering
+  isn't available, `validate-product.py` returns a single disclosed Note
+  explaining that, and every other aggregated check still runs and still
+  gates this result in full — an unavailable optional capability is never
+  silently treated as a pass, and never blocks the rest of the gate either.
 - **Checked by:** `agents/qa-expert.md`.
 
 ### B12 — Implementation Readiness
@@ -205,7 +267,10 @@ Each gate below states: what it measures, the pass criterion, and what checks it
 ### B14 — Preview & Run Verification
 - **Measures:** whether the implemented output actually launches and runs
   locally, per `product-builder/workflows/preview-report.md` against
-  `templates/preview-report.md`'s required fields.
+  `templates/preview-report.md`'s required fields — whether that output
+  is structurally sound to begin with — and, new this version, whether
+  it is also free of overflow/alignment/spacing/sizing/overlap defects
+  when actually rendered, wherever rendering is available.
 - **Pass criterion:** the build succeeds; a local dev server starts with a
   detected URL/port; no unhandled runtime error blocks the primary
   implemented screen(s); every required field in the preview report is
@@ -213,8 +278,39 @@ Each gate below states: what it measures, the pass criterion, and what checks it
   status, runtime status, implemented screen(s), preview status). An
   optional public/external preview (e.g. ngrok) is recorded only if the
   user explicitly requested one — its absence never fails this gate.
+  **Before** this (`workflows/preview-run.md`'s new structural-validation
+  step), `scripts/validate-generated-artifact.py` runs against `output/*`
+  and returns 0 Blocker/Major findings — unbalanced CSS braces, a
+  malformed selector list mixing a selector with an at-rule, a duplicate
+  custom-property declaration, an invalid `@media` condition, unbalanced
+  HTML tags, a duplicate `id`, a broken same-document reference, a
+  missing `alt`/accessible name, a missing local asset reference, or
+  unbalanced JS brackets. This is a structural safety net distinct from
+  — and checked before — the build/runtime checks above: a file can be
+  structurally invalid in ways that don't actually break the build or
+  throw a visible runtime error, which is exactly why the two checks are
+  both required, neither standing in for the other. **Rendered-layout
+  evidence, layered on top of (not replacing) the above:** a file can
+  pass every structural check above — balanced braces, balanced tags, no
+  duplicate properties — and still be visually broken when actually
+  rendered (overflowing text, misaligned siblings, overlapping elements);
+  `scripts/validate-generated-artifact.py` deliberately stays structural/
+  code-only and does not try to detect this. Wherever Playwright is
+  installed, `scripts/capture-render.py` + `scripts/validate-rendered-layout.py`
+  run as a separate, additional pass against the same `output/*.html`
+  files and must also return 0 Blocker findings — a screen with clean,
+  valid HTML/CSS that nonetheless overflows or misaligns when rendered
+  has **not** cleared this gate, even though the structural check above
+  passed. This is a deliberately separate validator (not merged into
+  `validate-generated-artifact.py`) so the fast, dependency-free
+  structural check always runs, and the rendering-dependent check runs
+  wherever its one extra dependency is available.
 - **Checked by:** the executing session, per `workflows/preview-run.md` —
-  no dedicated reasoning agent, the same posture B12/Implement already has.
+  no dedicated reasoning agent, the same posture B12/Implement already
+  has; the structural-validation step is deterministic
+  (`scripts/validate-generated-artifact.py`), not an agent judgment call;
+  the rendered-layout step is equally deterministic
+  (`scripts/validate-rendered-layout.py`) wherever rendering is available.
 
 ### B15 — Visual Benchmark & Audit Cycle Completeness
 - **Measures:** whether the generated UI was actually checked against
@@ -265,9 +361,88 @@ Each gate below states: what it measures, the pass criterion, and what checks it
   "already clean" explanation) has not demonstrated the refinement did
   anything, and a score adjusted to clear the bar rather than earned by an
   actual fix fails this gate regardless of the number recorded.
+- **Cross-Artifact Data Realism.** Where this screen has at least one KPI
+  tied to a chart, table, or another KPI, `templates/data-bindings.md`'s
+  manifest declares each such relationship and
+  `scripts/validate-data-consistency.py` recomputes it: a KPI must equal
+  its own chart's latest data point, "today" must correspond to that
+  chart's own latest plotted date, a supporting metric (e.g. an average)
+  must equal its stated derivation from its parent KPIs, a labeled peak
+  must equal the series' actual maximum, and a table total must agree
+  with the KPI it restates. A disagreement is logged as a **Data
+  inconsistency** gap (`visual-benchmark.md`'s gap-type table) and routes
+  through the same refinement-and-re-check cycle as any other gap — a
+  screen where every number individually looks plausible but disagrees
+  with another number on the same screen has not cleared this gate.
+- **Modern UI Benchmark Report.** FINALIZE for this screen additionally
+  requires `templates/modern-ui-benchmark-report.md`'s scored summary —
+  the "DESIGN-GLANZA MODERN UI BENCHMARK" scorecard (Design-system
+  validation, the 15-point Final Visual QA audit, the 10-row scored
+  output) — for every screen, whether produced inside a full Product
+  Builder pass or as a standalone screen/benchmark request. A score
+  adjusted to clear a threshold rather than earned by an actual fix fails
+  this gate regardless of the number recorded, the same discipline this
+  gate's Priority-classification and Cross-Artifact Data Realism
+  sub-criteria above already state.
+- **Rendered-evidence evaluation angles (new this version).** The
+  qualitative pixel-level pipeline above is necessary but not, by itself,
+  proof that the screen is correct when actually rendered — a benchmark
+  run found 100%-scored screens with real, measurable UI defects that a
+  source-code-only read had missed. Wherever Playwright is installed in
+  the current environment, this gate's audit-and-refinement cycle
+  additionally covers these 10 angles, each backed by a real render, not
+  an agent's reading of the markup:
+  1. **Rendered layout** — the screen's actual DOM geometry after
+     rendering (`scripts/capture-render.py`'s manifest), not its source
+     structure.
+  2. **Actual spacing** — `scripts/validate-rendered-layout.py`'s
+     measured gap between real sibling elements, against that element
+     set's own modal gap.
+  3. **Actual alignment** — that same script's measured shared-edge
+     drift between real siblings, in real pixels.
+  4. **Actual component dimensions** — measured height/width consistency
+     across a repeating element set, from real `getBoundingClientRect()`
+     data.
+  5. **Overflow/clipping** — real `scrollWidth`/`scrollHeight` vs.
+     `clientWidth`/`clientHeight`, per `ui-audit-framework.md`'s Text
+     overflow sub-list.
+  6. **Responsive rendering** — the same capture run at desktop, tablet,
+     and mobile viewport sizes, each independently measured (not assumed
+     from the desktop measurement).
+  7. **Visual reference comparison** — `scripts/compare-reference-visual.py`'s
+     numeric color/layout similarity against the stated reference image,
+     feeding the **Reference mismatch** gap type
+     (`visual-benchmark.md`'s gap-type table) — never "Reference
+     considered" with no numbers behind it.
+  8. **Component-level visual consistency** — the sibling-set grouping
+     `validate-rendered-layout.py` applies (same parent + same leading
+     class) checked for navigation, header, KPI cards, forms, buttons,
+     filters, tables, charts, badges, alerts, modals, drawers, empty
+     states, and loading states specifically, wherever a screen contains
+     one of these — not only the generic full-DOM pass.
+  9. **Fix/re-render verification** — per `visual-benchmark.md`'s "a fix
+     is only verified after re-rendering" rule: a Rendered-layout defect
+     or Reference mismatch closed by a source-code change alone, with no
+     matching re-capture + re-measure confirming the number actually
+     moved, has not been verified — it is still an open finding.
+  10. **Visual regression** — this screen's capture feeds **B20**'s
+      optional rendered baseline (below), so a later pass can diff
+      against *this* pass's real rendered evidence, not only its
+      structural baseline.
+
+  Wherever rendering isn't available, these 10 angles are disclosed as
+  not run (the single Note `scripts/validate-product.py` emits) and the
+  gate still requires everything else above in full — an unavailable
+  optional capability never lowers this gate's bar, and its absence is
+  never silently treated as these 10 angles having passed.
 - **Checked by:** `agents/ui-designer.md` and
   `agents/design-system-expert.md`, per `ui-engine/visual-benchmark.md`'s
-  mandatory-cycle procedure — no new dedicated agent.
+  mandatory-cycle procedure — no new dedicated agent; Cross-Artifact Data
+  Realism is deterministic (`scripts/validate-data-consistency.py`), not
+  an agent judgment call; the 10 rendered-evidence angles above are
+  likewise deterministic (`scripts/capture-render.py`,
+  `scripts/validate-rendered-layout.py`,
+  `scripts/compare-reference-visual.py`) wherever rendering is available.
 
 ### B16 — Research-to-Design Traceability
 - **Measures:** whether research findings actually shaped the design,
@@ -371,8 +546,25 @@ Each gate below states: what it measures, the pass criterion, and what checks it
   0 unresolved findings of any of those three severities. A screen with
   no baseline yet (first generation) is not gated by B20 — it's gated by
   B15, whose clean pass is what triggers the first baseline capture.
+- **Optional rendered baseline layer (new this version).** Where
+  rendering is available, `visual-regression/baseline-model.md`'s second,
+  complementary rendered layer (screenshots + DOM-geometry manifest +
+  component snapshots, per breakpoint/theme) is also captured/updated at
+  the same two checkpoints as the structural baseline, never on its own
+  schedule. Diffing against it is additional evidence, not a second
+  competing pass/fail path: a meaningful rendered-layer drift
+  (re-measured via `scripts/validate-rendered-layout.py` against the
+  stored manifest) is logged and resolved the same way a structural B20
+  finding is, under the same severity scale — this gate does not grow a
+  separate pixel-delta tolerance system of its own. Do not make this
+  layer the only regression mechanism: a screen with no rendered baseline
+  (rendering unavailable in the current environment) is still fully
+  gated by the structural baseline alone, exactly as before.
 - **Checked by:** `agents/qa-expert.md`, enforced deterministically by
-  `scripts/validate-visual-regression.py` — no new dedicated agent.
+  `scripts/validate-visual-regression.py` for the structural layer, and
+  — wherever rendering is available — `scripts/validate-rendered-layout.py`
+  re-run against the stored rendered baseline's manifest for the optional
+  second layer; no new dedicated agent either way.
 
 ### B21 — Product Memory Integrity
 - **Measures:** whether decisions are actually being remembered and

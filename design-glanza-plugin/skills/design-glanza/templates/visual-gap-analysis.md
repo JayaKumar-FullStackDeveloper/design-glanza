@@ -40,9 +40,10 @@ screens produced in the same UI pass).
   from `visual-benchmark.md`'s list (missing pattern, incorrect hierarchy,
   excessive decoration, weak spacing, poor density, inconsistent
   components, wrong interaction pattern, weak accessibility, domain
-  mismatch, generic/templated), or "none found" — and, for every finding, a
-  P0-P3 priority from that same file's Priority classification table
-  (reconciled onto the shared Blocker/Major/Minor/Note scale).
+  mismatch, generic/templated, data inconsistency), or "none found" — and,
+  for every finding, a P0-P3 priority from that same file's Priority
+  classification table (reconciled onto the shared Blocker/Major/Minor/Note
+  scale).
 - **Refinement applied** — the specific change made in response to each
   gap, or "none needed — pass 1 was clean" if genuinely no gaps were found.
 - **Audit findings (pass 2 / re-check)** — re-run of the same pipeline

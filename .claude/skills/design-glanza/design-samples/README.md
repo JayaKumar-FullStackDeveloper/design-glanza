@@ -23,14 +23,17 @@ interaction) — always consulted **alongside** whichever domain/platform
 folder is selected, never instead of one. See `common/README.md`.
 
 ## Current status
-Every folder currently holds a placeholder `README.md` only — no curated
-reference assets have been populated yet. This is not an error and does not
-block a product from proceeding: `reference-selection.md` uses a
-placeholder folder as a **named starting register**
-(`ui-engine/visual-trends.md`'s Modern SaaS / Dense Enterprise / Consumer
-Playful registers, matched per folder — see each folder's own README for
-which register it maps to) rather than leaving Default mode with nothing to
-select at all.
+8 of 13 folders now hold real curated reference assets — `fintech`,
+`healthcare`, `hrms`, `crm`, `logistics`, `ecommerce`, `common`, and `saas`
+— see each folder's own README for exactly what was added, its source, and
+its confidence. The remaining folders (`admin-panel`, `erp`, `marketplace`,
+`mobile`, `responsive-web`) still hold a placeholder `README.md` only. This
+is not an error and does not block a product from proceeding:
+`reference-selection.md` uses a placeholder folder as a **named starting
+register** (`ui-engine/visual-trends.md`'s Modern SaaS / Dense Enterprise /
+Consumer Playful registers, matched per folder — see each folder's own
+README for which register it maps to) rather than leaving Default mode
+with nothing to select at all.
 
 ## Extending this library
 Populating a folder means adding real curated reference assets (images,

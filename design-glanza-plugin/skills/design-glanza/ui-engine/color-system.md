@@ -41,6 +41,17 @@ color — this is what lets a status badge, an inline alert, and a form error
 all use the same `danger` meaning consistently instead of three
 independently-invented reds.
 
+**Optional `soft`/`onSoft` extension.** The `background` above is sized for
+a larger surface (an inline alert, a toast panel) — a visually lighter,
+more tinted treatment the same semantic meaning also needs for a smaller,
+denser component (a **badge, chip, status pill, delta indicator, semantic
+icon container, or avatar initials/background**) is a genuinely different
+background, not the same one at a glance, and is not automatically safe
+for the same foreground. `design-tokens/semantic-tokens.md`'s `soft`
+(the tinted background) and `onSoft` (the foreground guaranteed to read
+against it) name this pairing explicitly so it gets its own check rather
+than inheriting the plain triplet's result.
+
 ## Contrast compliance rule
 Concrete, checked ratios (WCAG AA baseline, matching the conformance target
 `ux-engine/accessibility.md` states):
@@ -73,11 +84,15 @@ disabled is never itself styled at disabled-level contrast — only the
 disabled control itself is exempt, not surrounding explanatory content.
 
 **Pairing contract, not a one-time pass.** This rule certifies the specific
-pairings it's actually run against — the semantic triplets defined above. It
-does not automatically certify a *new* pairing a later screen improvises
-(e.g. reusing `primary` as a badge fill under `text-primary`, a combination
-never checked because it's outside the defined triplets). Treat the set of
-checked pairings as an explicit, named contract (`agents/design-system-
+pairings it's actually run against — the semantic triplets defined above,
+and the `soft`/`onSoft` pairing where declared. It does not automatically
+certify a *new* pairing a later screen improvises (e.g. reusing `primary`
+as a badge fill under `text-primary`, a combination never checked because
+it's outside the defined triplets). A semantic key's plain foreground/
+background pair passing is likewise never treated as certifying that same
+key's `soft` background — they are checked independently, since `soft` is
+a different, lighter background, not the same one restated. Treat the set
+of checked pairings as an explicit, named contract (`agents/design-system-
 expert.md`'s inventory): a new component proposing a color combination
 outside it is a fresh check against this rule, not an assumed pass by
 association with an already-cleared color. This is the same discipline Rule

@@ -36,6 +36,18 @@ way). Concretely:
    dimensions rather than a visual read; fix or log every returned
    finding, applying the disabled-state exemption (`color-system.md`)
    where it genuinely applies, never as a blanket excuse to skip the step.
+   This includes **B8.1**'s `soft`/`onSoft` tinted-background pass — a
+   badge, chip, status pill, delta indicator, semantic icon container, or
+   avatar initials/background passing against the plain surface is never
+   assumed to also pass against its own lighter `soft` background; that
+   pairing is checked independently, every time. Wherever rendering is
+   available (`scripts/capture-render.py`), also run `scripts/
+   validate-rendered-layout.py`'s overlap check — a focus ring, badge, or
+   icon that visually collides with adjacent content at an actual
+   rendered breakpoint is a real accessibility-adjacent defect no
+   token-level contrast check can catch; this is additional evidence
+   alongside the contrast/target-size math above, never a substitute for
+   it.
 3. **Semantics/ARIA:** landmark and heading-hierarchy correctness,
    semantic/ARIA role mapping for navigation, modals, drawers, tabs, and
    any other structural pattern in use — only the five named attributes,
@@ -46,7 +58,13 @@ way). Concretely:
    color alone.
 5. **Modal/Drawer/Charts:** focus trap, Escape, restoration, and
    background-interaction prevention for every overlay in use; a
-   text-equivalent/data-table alternative for every chart.
+   text-equivalent/data-table alternative for every chart. Jointly with
+   `agents/ui-designer.md` at the Responsive step, confirm every
+   Become-an-alternative-component decision that produced an interrupting
+   overlay (`ui-engine/responsive-system.md`'s Alternative-component
+   accessibility contract) actually inherited this same Modal/Drawer
+   treatment — a decision recorded with the contract unchecked is a B9
+   finding, not a B8 pass.
 6. **Responsive/Touch and conformance determination:** target sizing and
    spacing at touch-relevant breakpoints; recovery-path and permission-
    denied states checked for non-visual reachability; final conformance

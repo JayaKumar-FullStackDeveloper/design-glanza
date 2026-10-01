@@ -111,6 +111,55 @@ An element with no stated decision from this list is the actual mechanism
 behind "desktop UI simply scaled down" — every element crossing a
 breakpoint boundary has one of these seven, recorded, not left implicit.
 
+## Alternative-component accessibility contract
+A gap a benchmark run found: a **Become an alternative component**
+decision was recorded (Sidebar → Drawer), the replacement rendered
+correctly, and the pixel-level audit passed — but the replacement
+component was never actually wired up to the accessibility contract the
+pattern it became requires. Recording the decision is not the same as the
+replacement inheriting what that pattern owes a keyboard/screen-reader
+user. This section closes that gap by naming the rule explicitly — it does
+**not** duplicate `ux-engine/accessibility.md`'s Modal/Drawer step or its
+Semantic/ARIA-role mapping table; it connects this file's own adaptation
+decision to that already-existing contract, which owns every detail below:
+
+**Whenever a Become-an-alternative-component decision produces an
+interrupting overlay** (Sidebar → Drawer, Desktop navigation → Mobile
+drawer, or any other pattern that becomes a `dialog`-role overlay per
+`accessibility.md`'s Semantic/ARIA-role mapping table), the replacement
+inherits `accessibility.md`'s Modal/Drawer pipeline step **in full, not
+partially**: focus moves into it on open, focus is trapped while it's
+modal, Escape closes it, focus returns to the triggering control, the
+background is marked appropriately inert, keyboard navigation inside it
+remains fully functional, a visible focus indicator remains available
+throughout, correct `dialog`/`complementary` ARIA semantics are present
+(per `accessibility.md`'s own role-choice rule for Drawer specifically),
+and the trigger control carries correct `aria-expanded`/`aria-controls`
+(per `accessibility.md`'s ARIA section). A Not-accepted-list "inaccessible
+drawer" finding (below) is exactly a Become-an-alternative-component
+decision that was recorded but not actually checked against this.
+
+**The same principle applies to every other component-swap adaptation**,
+each inheriting whatever contract its *destination* pattern already owns —
+never re-derived here, only connected:
+- **Dropdown → Select** (or any native-equivalent swap) inherits
+  `accessibility.md`'s existing native-element preference — a native
+  control already satisfies its own contract with no ARIA patch needed.
+- **Table → Mobile card/list** inherits `accessibility.md`'s Semantic/
+  ARIA-role mapping table's List/Timeline row (`list`/`listitem`
+  semantics) — the replacement is a real list, not a table styled to look
+  like cards with no semantic change underneath.
+- **Tabs → Scrollable tabs** keeps the exact same `tablist`/`tab`/
+  `tabpanel` triad `accessibility.md` already requires for Tabs — becoming
+  scrollable is a layout change, not a semantic one, and does not reopen
+  that requirement.
+
+Checked as part of the Responsive verification pipeline's Adaptation-
+decision audit step (below), jointly with `agents/accessibility-expert.md`
+for any adaptation that produces an interrupting overlay — the same
+joint-ownership precedent **B15**/**B16**/**B17** already use, not a new
+pattern.
+
 ## Priority-preservation rule
 The primary action (`visual-hierarchy.md`) must remain reachable without
 scrolling at the smallest breakpoint that supports the pattern — secondary
@@ -176,7 +225,11 @@ or in a cited sibling file, not a vague "looks broken" impression:
   Escape-to-close, or scroll-behavior rule specifically at a breakpoint
   where it becomes full-screen (`ux-engine/accessibility.md`'s Modal/
   Drawer pipeline step still applies at every breakpoint, not just
-  desktop).
+  desktop) — including a **Become-an-alternative-component** swap that
+  produced a drawer (e.g. Sidebar → Drawer) and was recorded as a
+  decision but never actually checked against the Alternative-component
+  accessibility contract above; the decision being named is not the same
+  as the contract being met.
 - **Hidden critical actions** — the primary action, or any action the
   Priority-preservation rule protects, missing or requiring more than one
   extra step to reach at a smaller breakpoint.
@@ -202,7 +255,12 @@ Adaptation-decision audit → Not-accepted defect scan
    breakpoints has one of the seven named decisions (stack/collapse/hide/
    move/become-scrollable/become-alternative-component/remain-fixed)
    recorded — an undecided element (one that just "got smaller") fails
-   this step.
+   this step. Every **become-alternative-component** decision additionally
+   has the Alternative-component accessibility contract above actually
+   checked, not just the decision itself recorded — for an interrupting
+   overlay this means focus entry/trap/Escape/restoration/inert-background/
+   ARIA role/`aria-expanded`/`aria-controls` each independently confirmed,
+   jointly with `agents/accessibility-expert.md`.
 5. **Not-accepted defect scan** — the list above, checked against the
    actual reflow at each breakpoint, not assumed clear because the layout
    didn't visibly break in the one viewport size it happened to be

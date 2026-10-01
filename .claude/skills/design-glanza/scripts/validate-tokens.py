@@ -38,6 +38,13 @@ Deterministic, structural checks of a product's design token set
   check). Only certifies the pairings actually checked, per that rule's own
   "pairing contract, not a one-time pass" framing — a new color combination
   a later screen improvises is a fresh check, not an assumed pass.
+- Contrast (B8.1, semantic/tinted-background pairing): every declared
+  `{onSoft, soft}` pair — the optional, additive extension to the semantic
+  triplet (`design-tokens/semantic-tokens.md`) that badges, chips, status
+  pills, delta indicators, semantic icon containers, and avatar initials/
+  backgrounds actually use — computed exactly like the plain triplet above,
+  independently of it: a semantic key's plain foreground/background pair
+  passing is never treated as certifying its `soft` background too.
 - Target size: every `sizing.control*` token cleared against the WCAG 2.2
   Target Size (Minimum) 24px floor (`ux-engine/accessibility.md`) — a real
   dimensional calculation, not a visual "looks big enough" assumption.
@@ -69,7 +76,13 @@ import sys
 from pathlib import Path
 
 import _common
-from _common import Finding, read_text
+from _common import (
+    CONTRAST_MIN_LARGE,
+    CONTRAST_MIN_NORMAL,
+    Finding,
+    contrast_ratio,
+    read_text,
+)
 
 # The 12 master-required top-level categories, per
 # design-tokens/design-tokens.schema.json's own `required` list.
@@ -213,45 +226,6 @@ def _check_theme_completeness(tokens: dict, rel: str) -> list[Finding]:
     return findings
 
 
-# WCAG 2.x contrast thresholds, per ui-engine/color-system.md's Contrast
-# compliance rule — normal body text vs. large text/UI-component boundaries.
-CONTRAST_MIN_NORMAL = 4.5
-CONTRAST_MIN_LARGE = 3.0
-
-
-def _hex_to_rgb(hex_str):
-    """Parse a #rgb/#rrggbb string into an (r, g, b) 0-255 tuple, or None if
-    it isn't a parseable hex color (e.g. a var()/token reference left
-    unresolved) — the contrast check only runs against literal hex values."""
-    if not isinstance(hex_str, str):
-        return None
-    h = hex_str.strip().lstrip("#")
-    if len(h) == 3:
-        h = "".join(c * 2 for c in h)
-    if len(h) != 6 or not re.fullmatch(r"[0-9a-fA-F]{6}", h):
-        return None
-    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
-
-
-def _relative_luminance(rgb):
-    def chan(c):
-        c = c / 255.0
-        return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
-    r, g, b = (chan(c) for c in rgb)
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b
-
-
-def _contrast_ratio(hex_a, hex_b):
-    """WCAG contrast ratio between two hex colors, or None if either isn't a
-    parseable literal hex value."""
-    rgb_a, rgb_b = _hex_to_rgb(hex_a), _hex_to_rgb(hex_b)
-    if rgb_a is None or rgb_b is None:
-        return None
-    la, lb = _relative_luminance(rgb_a), _relative_luminance(rgb_b)
-    lighter, darker = max(la, lb), min(la, lb)
-    return (lighter + 0.05) / (darker + 0.05)
-
-
 def _mode_value(token, mode):
     """A leaf token's resolved hex value for one theme mode — themed tokens
     store {light, dark}; an untethemed token stores a bare string used for
@@ -264,19 +238,45 @@ def _mode_value(token, mode):
     return value if isinstance(value, str) else None
 
 
+# Semantic keys whose `soft`/`onSoft` pairing (Pass 3, below) is checked
+# against a named, real-world component pattern — per
+# ui-engine/color-system.md's Semantic mapping table extension and
+# design-tokens/semantic-tokens.md's Structure section. Keyed by semantic
+# name only to attach a human-readable "this is what actually breaks"
+# pattern list to a finding; any other semantic key with a `soft` field
+# still gets checked, just without a named pattern list (falls back to a
+# generic description).
+SOFT_PAIRING_COMPONENT_PATTERNS = {
+    "success": "badges, chips, status pills, delta indicators (positive), semantic icon containers",
+    "warning": "badges, chips, status pills, semantic icon containers",
+    "error": "badges, chips, status pills, delta indicators (negative), semantic icon containers, form field error states",
+    "info": "badges, chips, status pills, semantic icon containers",
+    "primary": "avatar initials/backgrounds, active/selected nav or tab states",
+    "secondary": "avatar initials/backgrounds, active/selected nav or tab states",
+    "neutral": "avatar initials/backgrounds, disabled-adjacent chips",
+}
+
+
 def _check_contrast(tokens: dict, rel: str) -> list[Finding]:
     """Deterministic pass of ui-engine/color-system.md's Contrast compliance
     rule — the rule states every semantic triplet's foreground-on-background
     pairing is checked in both light and dark theme; this is that check,
-    not a restatement of it. Two passes: (1) every declared {foreground,
-    background} triplet pair (color-system.md's own named contract), and
-    (2) color.semantic.text.{primary,muted} against the two most common
+    not a restatement of it. Three passes: (1) every declared {foreground,
+    background} triplet pair (color-system.md's own named contract); (2)
+    color.semantic.text.{primary,muted} against the two most common
     surfaces (background, surface) — the pairings almost every screen
     actually uses, per token-audit.md's 'checked pairings are an explicit,
-    named contract' framing. A color combination outside these pairings
-    (e.g. text reused as a badge fill) is explicitly NOT certified by this
-    check, matching that same contract language — it is a fresh check for
-    whoever introduces it, not a gap in this function."""
+    named contract' framing; (3) every declared {onSoft, soft} tinted-
+    background pairing — the badge/chip/status-pill/delta-indicator/
+    semantic-icon-container/avatar pattern, checked independently of
+    whether that same semantic key's plain foreground-on-background pair
+    (pass 1) already passed, since a tinted 'soft' background is not the
+    same background and does not inherit pass 1's result. A color
+    combination outside all three pairings above (e.g. text reused as a
+    badge fill with no soft/onSoft declared at all) is explicitly NOT
+    certified by this check, matching color-system.md's 'pairing contract,
+    not a one-time pass' framing — it is a fresh check for whoever
+    introduces it, not a gap in this function."""
     findings: list[Finding] = []
     color = tokens.get("color")
     if not isinstance(color, dict):
@@ -287,17 +287,18 @@ def _check_contrast(tokens: dict, rel: str) -> list[Finding]:
 
     modes = ("light", "dark")
 
-    def add(path: str, mode: str, ratio: float, threshold: float):
+    def add(path: str, mode: str, ratio: float, threshold: float, pattern: str | None = None):
         # Below even the lenient 3:1 large-text/UI-boundary bar: Major
         # regardless of role. Above 3:1 but below the role's own threshold
         # (only reachable for primary-weight text, held to 4.5:1): Minor —
         # still a real defect, just not an unreadable one.
         severity = "Major" if ratio < CONTRAST_MIN_LARGE else "Minor"
+        pattern_note = f" — affects: {pattern}" if pattern else ""
         findings.append(Finding(
             severity,
             f"'{path}' ({mode} mode) has a {ratio:.2f}:1 contrast ratio, "
             f"below the {threshold}:1 minimum (ui-engine/color-system.md's "
-            "Contrast compliance rule)",
+            f"Contrast compliance rule){pattern_note}",
             rel, "contrast-failure",
         ))
 
@@ -310,7 +311,7 @@ def _check_contrast(tokens: dict, rel: str) -> list[Finding]:
             continue
         for mode in modes:
             fg_hex, bg_hex = _mode_value(fg, mode), _mode_value(bg, mode)
-            ratio = _contrast_ratio(fg_hex, bg_hex)
+            ratio = contrast_ratio(fg_hex, bg_hex)
             if ratio is not None and ratio < CONTRAST_MIN_NORMAL:
                 add(f"color.semantic.{key}.foreground on .background", mode,
                     ratio, CONTRAST_MIN_NORMAL)
@@ -333,11 +334,43 @@ def _check_contrast(tokens: dict, rel: str) -> list[Finding]:
                 for mode in modes:
                     text_hex = _mode_value(text_tok, mode)
                     surf_hex = _mode_value(surf_bg, mode)
-                    ratio = _contrast_ratio(text_hex, surf_hex)
+                    ratio = contrast_ratio(text_hex, surf_hex)
                     if ratio is not None and ratio < threshold:
                         add(f"color.semantic.text.{text_key} on "
                             f".semantic.{surf_name}.background", mode,
                             ratio, threshold)
+
+    # Pass 3 (B8.1): every declared {onSoft, soft} tinted-background pair —
+    # the badge/chip/status-pill/delta-indicator/semantic-icon-container/
+    # avatar pattern a benchmark run found failing in generated output even
+    # though the same semantic key's plain foreground/background pair (pass
+    # 1) passed cleanly. `soft` and `onSoft` are optional, additive fields
+    # on the existing triplet (design-tokens/semantic-tokens.md) — a
+    # semantic key with no `soft` declared is unaffected by this pass, not
+    # flagged as missing one; declaring `soft` with no `onSoft` falls back
+    # to checking the key's own plain `foreground` against `soft`, since
+    # that is exactly the "don't assume a token passing against the main
+    # surface also passes against a different, tinted one" case this pass
+    # exists to catch, never silently skipped for lack of a dedicated field.
+    for key, entry in semantic.items():
+        if not isinstance(entry, dict):
+            continue
+        soft = entry.get("soft")
+        if not isinstance(soft, dict):
+            continue
+        on_soft = entry.get("onSoft")
+        fg_field_name = "onSoft" if isinstance(on_soft, dict) else "foreground"
+        fg_token = on_soft if isinstance(on_soft, dict) else entry.get("foreground")
+        if not isinstance(fg_token, dict):
+            continue  # no foreground of any kind to pair with `soft` — nothing to check
+        pattern = SOFT_PAIRING_COMPONENT_PATTERNS.get(key)
+        for mode in modes:
+            fg_hex, soft_hex = _mode_value(fg_token, mode), _mode_value(soft, mode)
+            ratio = contrast_ratio(fg_hex, soft_hex)
+            if ratio is not None and ratio < CONTRAST_MIN_NORMAL:
+                add(f"color.semantic.{key}.{fg_field_name} on .soft", mode,
+                    ratio, CONTRAST_MIN_NORMAL, pattern)
+
     return findings
 
 
@@ -404,13 +437,29 @@ def _check_target_size(tokens: dict, rel: str) -> list[Finding]:
 REDUNDANCY_CHECK_EXCLUDED_CATEGORIES = {"typography"}
 
 
+def _is_expected_onsoft_fallback(paths: list[str]) -> bool:
+    """A semantic key's `onSoft` legitimately equals its own `foreground`
+    exactly when that foreground already clears the `soft`-background bar
+    unaided (design-tokens/semantic-tokens.md's documented fallback,
+    `_check_contrast` pass 3) — this is the intended degenerate case of a
+    real, checked pairing, not an accidental duplicate name, so it's
+    excluded here the same deliberate way typography's sub-axes are."""
+    if len(paths) != 2:
+        return False
+    suffixes = {p.rsplit(".", 1)[-1] for p in paths}
+    prefixes = {p.rsplit(".", 1)[0] for p in paths}
+    return suffixes == {"foreground", "onSoft"} and len(prefixes) == 1
+
+
 def _check_redundant_tokens(tokens: dict, rel: str) -> list[Finding]:
     """Flag two different token paths *within the same top-level category*
     that resolve to the exact same value — design-tokens/token-audit.md's
     Redundant tokens check. Scoped per-category (never cross-category, e.g.
     radius.none vs. border.width.none) since a same-value coincidence across
     unrelated categories is meaningless, not a real duplicate name; typography
-    is excluded entirely (see the constant above)."""
+    is excluded entirely (see the constant above), and a semantic key's
+    `onSoft` intentionally equaling its own `foreground` (the documented
+    fallback case, above) is excluded the same way."""
     findings: list[Finding] = []
     by_category: dict[str, dict] = {}
     for path, token in _iter_leaf_tokens(tokens):
@@ -429,6 +478,8 @@ def _check_redundant_tokens(tokens: dict, rel: str) -> list[Finding]:
     for category, groups in by_category.items():
         for value, paths in groups.items():
             if len(paths) < 2:
+                continue
+            if _is_expected_onsoft_fallback(paths):
                 continue
             findings.append(Finding(
                 "Minor",

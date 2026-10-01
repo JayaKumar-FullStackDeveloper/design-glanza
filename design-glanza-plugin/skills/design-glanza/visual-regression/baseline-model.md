@@ -6,17 +6,64 @@ reasons over structured artifacts, not pixels — why a **structured,
 addressable snapshot** is the right representation of "visual structure,"
 not an image.
 
-## Why structure, not pixels
-Design-Glanza has no screenshot/rendering capability of its own; every
-visual fact already exists as structured data by the time a screen is
-generated — a region map (`templates/screen-architecture.md`), a
+## Why structure, not pixels (the primary baseline layer)
+Every visual fact already exists as structured data by the time a screen
+is generated — a region map (`templates/screen-architecture.md`), a
 component list with registry bases (`component-registry/*`,
 `templates/component-spec.md`), and the token paths each component
 actually resolves to (`design-tokens/*`). A baseline captures exactly
 these facts, addressably, so two snapshots can be **diffed field by
-field** — a structural diff that's exact and reproducible, where a
-pixel-diff would be approximate and require capability this system
-doesn't have.
+field** — a structural diff that's exact and reproducible, which is why
+this stays the primary, always-on baseline mechanism: it requires no
+extra capability, degrades to nothing when unavailable (there is nothing
+to degrade), and distinguishes a legitimate token-scale/rebrand change
+from an accidental drift in a way a pixel-diff alone cannot (see
+`diff-detection.md`). This primary layer is unchanged by the optional
+second layer below — nothing about it is replaced, weakened, or made
+conditional on rendering being available.
+
+## Optional second layer: rendered visual baseline
+Where rendering is available (`scripts/capture-render.py` — see
+`ui-engine/visual-benchmark.md`'s Render-and-measure evidence section),
+a **second, complementary** baseline layer is also captured per
+`SCREEN-NNN`, in addition to the structural baseline above, never
+instead of it:
+
+- **Full-page and viewport screenshots**, per breakpoint
+  (desktop/tablet/mobile) and theme (light/dark).
+- **The DOM-geometry manifest** `capture-render.py` produces alongside
+  each screenshot (every element's real bounding box, scroll-vs-client
+  dimensions, computed overflow) — the same manifest
+  `scripts/validate-rendered-layout.py` analyzes for the current pass.
+- **Component-level snapshots** where practical — the same sibling-set
+  grouping `validate-rendered-layout.py` uses (navigation, header, KPI
+  cards, forms, buttons, filters, tables, charts, badges, alerts, modals,
+  drawers, empty states, loading states) cropped from the full-page
+  screenshot, so a later diff can localize a drift to one component
+  region rather than only "something changed on this screen."
+
+This layer exists because the structural baseline, by design, cannot
+catch a drift that doesn't change any structural field (e.g. a spacing
+*value* that drifted within the same token slot due to a cascade bug, or
+a rendering-engine difference) — exactly the class of defect this
+version's rendering capability was built to catch in the first place. **Do
+not make pixels the only regression mechanism:** the rendered layer is
+additional corroborating evidence, consulted alongside the structural
+diff, not a replacement path that could let a structural regression pass
+because "the screenshot still looked the same," nor a path that invents a
+pixel-tolerance scheme of its own — a meaningful difference here is
+reported as a **Rendered-layout defect** or routed through
+`validate-rendered-layout.py`'s own measurement, the same as any other
+rendered-evidence finding in this version, never a separate pixel-delta
+severity scale.
+
+Storage for this layer sits alongside the structural baseline (below),
+under its own `render-baseline/` subfolder so the two never overwrite
+each other and a tool reading only the structural JSON is unaffected by
+whether the rendered layer exists for a given screen. Wherever rendering
+isn't available in the current environment, this second layer is simply
+absent — the structural baseline alone still satisfies **B20** in full,
+exactly as it always has.
 
 ## What one baseline snapshot captures, per `SCREEN-NNN`
 - **Regions** — the region map's structure (names, order) from
@@ -56,7 +103,11 @@ machine-readable twin, one JSON file per screen under
 `product-builder/ui/baselines/<SCREEN-NNN>.json` — the same
 document-plus-machine-readable-twin pattern `design-tokens/*` already
 established for `design-system.md`/`design-tokens.json`, applied here to
-baselines instead of tokens.
+baselines instead of tokens. Where the optional rendered layer above was
+also captured, its screenshots and manifests live under
+`product-builder/ui/baselines/render-baseline/<SCREEN-NNN>/` — present
+only when rendering was available at capture time, and its absence never
+invalidates the structural JSON beside it.
 
 ## When a baseline is captured or replaced
 - **First capture:** immediately after a screen's `templates/
@@ -73,3 +124,6 @@ baselines instead of tokens.
 - The tolerance model → `tolerance-thresholds.md`.
 - The explicit update mechanism → `baseline-updates.md`.
 - The document/JSON field shapes → `templates/{visual-baseline}.md`.
+- The rendering/capture mechanism itself → `scripts/capture-render.py`;
+  the geometric analysis run against a capture (this pass or a stored
+  baseline alike) → `scripts/validate-rendered-layout.py`.

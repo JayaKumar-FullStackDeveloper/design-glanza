@@ -46,7 +46,16 @@ design content itself.
    accessibility, responsiveness, edge cases, business-rule correctness —
    individually, never collapsed into one verdict.
 2. Run `scripts/validate-requirements.py`, `validate-screens.py`,
-   `validate-states.py` (aggregated by `validate-product.py`).
+   `validate-states.py`, `validate-tokens.py` (including **B8.1**'s
+   `soft`/`onSoft` contrast pass), `validate-generated-artifact.py`
+   (**B14**'s structural-validation layer, against `output/*`), and
+   `validate-data-consistency.py` (**B15**'s Cross-Artifact Data Realism
+   check) — plus, wherever Playwright is installed in the current
+   environment, `scripts/capture-render.py` + `scripts/
+   validate-rendered-layout.py`'s rendered-layout evidence against every
+   `output/*.html` (degrades to one disclosed Note, never a crash, where
+   unavailable) — all aggregated by `validate-product.py` into **B11**'s
+   single pass/fail status.
 3. Check `product-intelligence/traceability.md`'s chain for orphaned
    requirements or artifacts.
 4. Fold in Design System Expert's drift findings, Accessibility Expert's

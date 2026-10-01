@@ -50,11 +50,46 @@ that structure into a single color per semantic name:
 }
 ```
 
+## Optional extension: `soft` / `onSoft`
+Two additional, optional fields on any semantic entry — **not required**,
+and not a fourth required triplet member; a product that never declares
+`soft` is unaffected. They exist because the plain `background` field
+above is designed for a larger surface (an inline alert, a toast panel)
+and is not automatically safe for a visually lighter, more tinted
+treatment the same semantic meaning also needs for a smaller, denser
+component: a **badge, chip, status pill, delta indicator, semantic icon
+container, or avatar initials/background** (`component-registry`'s Badge,
+Toast, and Avatar-shaped entries). A benchmark run found exactly this
+failure mode: a semantic hue that read correctly as an icon/line color on
+a plain surface was reused unchanged as badge text on a lighter, tinted
+background and failed WCAG contrast there — passing against one
+background does not certify a color against a different one.
+
+```json
+"success": {
+  "foreground": { "value": {...}, "themeable": true },
+  "background": { "value": {...}, "themeable": true },
+  "border":     { "value": {...}, "themeable": true },
+  "soft":       { "value": {...}, "themeable": true },
+  "onSoft":     { "value": {...}, "themeable": true }
+}
+```
+
+- **`soft`** — the lighter/tinted background a badge, chip, pill, delta
+  indicator, icon container, or avatar background actually renders on.
+- **`onSoft`** — the foreground guaranteed to read against `soft`
+  specifically. Where a product declares `soft` with no dedicated
+  `onSoft`, the check falls back to that key's own plain `foreground` —
+  which is exactly the "don't assume it's safe" case this extension exists
+  to catch, so the fallback is checked, never silently skipped.
+
 ## Contrast and color-blind safety still apply unchanged
-Every triplet above is still checked against `color-system.md`'s 4.5:1/3:1
-contrast rule and color-blind safety rule, in both themes — this schema
-adds addressability, it does not relax or duplicate that check; **B6**
-still owns it.
+Every triplet above — and the `soft`/`onSoft` pair where declared — is
+still checked against `color-system.md`'s 4.5:1/3:1 contrast rule and
+color-blind safety rule, in both themes — this schema adds addressability,
+it does not relax or duplicate that check; **B6**/**B8** still own it
+(`scripts/validate-tokens.py`'s `_check_contrast`, pass 3 for the
+`soft`/`onSoft` pairing specifically).
 
 ## Explicitly not here
 - Palette-construction technique (ramps, contrast, color-blind safety) →

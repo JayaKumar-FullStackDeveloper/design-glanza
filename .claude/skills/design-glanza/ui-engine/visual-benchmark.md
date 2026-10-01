@@ -25,6 +25,60 @@ generated screen that differs from the raw reference but matches a
 screen that differs from its own design direction with no recorded reason
 is always a gap, reference or no reference.
 
+## Render-and-measure evidence (mandatory wherever rendering is available)
+"Generated UI" in the table above is the **actually rendered result**, not
+the source markup read by the same agent that wrote it. Wherever
+`scripts/capture-render.py` is available in the current environment (it
+degrades to a disclosed Note, never a silent skip, if Playwright isn't
+installed — see that script's and `scripts/validate-product.py`'s own
+docstrings), this comparison runs against real evidence, not prose:
+
+1. **Render the Generated UI** — `scripts/capture-render.py` against the
+   actual output file, at every breakpoint `ui-engine/responsive-system.md`
+   requires (desktop/tablet/mobile) and both themes, producing real
+   screenshots plus a geometric DOM manifest.
+2. **Measure it** — `scripts/validate-rendered-layout.py` against that
+   manifest: real overflow, alignment, spacing, sizing, and overlap
+   findings computed from actual rendered pixels/geometry, never inferred
+   by reading the HTML/CSS. Every finding this step produces is logged as
+   a **Rendered-layout defect** gap (below) — not folded silently into
+   Weak spacing/Incorrect hierarchy, because it carries a specific
+   measured number (e.g. "15px top-edge drift") the qualitative gap types
+   don't.
+3. **Compare against the Reference, where one exists** —
+   `scripts/compare-reference-visual.py` against the reference image and
+   the matching rendered screenshot, producing a numeric color/layout
+   similarity report. This step's output is **mandatory evidence**, not an
+   optional nicety: "Reference considered" or "Visual comparison
+   completed" is never written as this step's result without this
+   script's actual numbers attached (color_similarity, layout_similarity,
+   meaningful_mismatch) — a prose-only claim of comparison, with no
+   numbers behind it, does not satisfy this step. Where Reference-Driven/
+   Guideline-Driven mode applies with no single supplied asset (several
+   `design-samples/` entries informed the direction instead), run this
+   against the closest-matching sample and record which one; where
+   Custom Design truly has no visual reference at all, this step is
+   marked not-applicable, not silently skipped without a reason.
+4. **Reconcile with Step 1's qualitative audit.** Render-and-measure
+   evidence does not replace `ui-audit-framework.md`'s A-K audit or this
+   file's existing gap classification — it is additional, objective
+   evidence feeding the *same* gap-analysis and priority-classification
+   mechanism below, resolved through the same FIX → RECHECK loop. A
+   screen is never marked clean on this step purely because the
+   qualitative audit passed, and never marked clean on the qualitative
+   audit purely because no rendered defect was measured — both run,
+   both must pass.
+
+A **fix is only verified after re-rendering.** Changing source code in
+response to a Rendered-layout defect or a Reference mismatch does not
+close that finding — step 2 of the Mandatory refinement cycle below
+("re-run validation for the specific category/pipeline step(s) the fix
+actually touched") means, for a rendered finding, actually re-running
+`capture-render.py` + `validate-rendered-layout.py` (and
+`compare-reference-visual.py` where relevant) and confirming the specific
+measured number is now within tolerance — not re-reading the changed
+source and assuming the number improved.
+
 ## Gap analysis categories
 Run `ui-engine/ui-audit-framework.md`'s A–K categories as the audit, then
 classify every finding into one of these gap types so the refinement pass
@@ -42,6 +96,9 @@ knows what kind of fix is needed:
 | **Weak accessibility** | A structural or perceptual accessibility rule was specified but not actually honored in the build |
 | **Domain mismatch** | Category K of the audit framework failed — the screen doesn't read as belonging to its actual domain |
 | **Generic/templated** | `ui-audit-framework.md`'s Final Visual QA closing question came back "generic" — the screen could plausibly be handed to an unrelated SaaS product with no rework, even if every individual pipeline step and category above passed. Distinct from Domain mismatch (that's specifically category K's product-types conventions check) and from Excessive decoration (that's specifically added elements) — this gap type covers the aggregate judgment those two don't individually catch. |
+| **Data inconsistency** | `scripts/validate-data-consistency.py` (below, Cross-Artifact Data Realism) found a declared relationship between two displayed numbers that doesn't actually hold — a KPI disagreeing with its own chart's latest point, a supporting metric contradicting the KPIs it's computed from, a labeled peak that isn't the series' real maximum, a table total disagreeing with the KPI it restates. Distinct from the Chart pipeline's existing Data Realism step (a value's own plausibility in isolation) — this is two-or-more displayed values disagreeing with each other. |
+| **Rendered-layout defect** | `scripts/validate-rendered-layout.py` (above, Render-and-measure evidence) found a real, measured overflow, misalignment, inconsistent spacing/sizing, or overlap in the actually-rendered screen — carries the specific measured number (e.g. "scrollWidth 405 vs clientWidth 80") rather than a qualitative description. Distinct from `ui-audit-framework.md`'s Alignment/Spacing/Sizing/Overflow categories (those are the qualitative audit pass); this gap type is that same defect class, but with rendering evidence behind it where rendering was available. |
+| **Reference mismatch** | `scripts/compare-reference-visual.py` reported `meaningful_mismatch: true` against the stated reference with no recorded, deliberate design-direction reason for the departure — a generated screen whose color/tonal register or layout/density rhythm drifted from what the reference established, not merely "didn't copy it pixel-for-pixel" (a reference is design language, not a pixel target; see `design-samples/*/README.md`). |
 
 A gap is recorded even when it's minor — the point of this file is to make
 "looks fine to me" checkable against something concrete, not to filter
@@ -115,7 +172,29 @@ RECHECK → FINALIZE
    baseline → Tablet restructuring → Mobile transformation → Adaptation-
    decision audit → Not-accepted defect scan, gate **B9**) — a screen
    reviewed only at the desktop width it was designed at has not cleared
-   this step, regardless of how correct that one width looks.
+   this step, regardless of how correct that one width looks. Where this
+   screen has at least one KPI tied to a chart, table, or another KPI,
+   **Cross-Artifact Data Realism** also runs here, independently of
+   whether the screen contains a chart at all: `templates/
+   data-bindings.md`'s manifest declares each such relationship, and
+   `scripts/validate-data-consistency.py` recomputes it from the
+   manifest's own series data — a KPI must equal its own chart's latest
+   point, "today" must correspond to that chart's own latest plotted
+   date, a supporting metric (e.g. an average) must equal its stated
+   derivation from its parent KPIs, a labeled peak must equal the series'
+   actual maximum, and a table total must agree with the KPI it restates.
+   A disagreement here is never explained away as "each number looked
+   fine individually" — individually-plausible numbers that contradict
+   each other are exactly what this check exists to catch, and a finding
+   is logged as a **Data inconsistency** gap (above), never silently
+   reconciled by quietly editing one display to match the other without
+   recording which one was actually wrong and why. Wherever rendering is
+   available in the current environment, this same step 1 also runs the
+   **Render-and-measure evidence** pass above (capture → measure →
+   compare-against-reference) — its findings are logged as **Rendered-
+   layout defect** and **Reference mismatch** gaps (above) alongside
+   whatever this qualitative audit itself found, not as a separate pass
+   run some other time.
 2. **If gaps were found:** fix every P0 and un-waived P1 first (P2/P3 may
    ride along where cheap, per the Priority classification table above),
    then re-run validation for the specific category/pipeline step(s) the
@@ -166,6 +245,13 @@ further polish once they do:
 - `evals/evaluation-rubric.md`'s score meets its stated threshold on every
   dimension — no dimension below 3, zero Tier A dimensions below 4, per
   gate **B11**.
+- Where rendering was available in the current environment: zero
+  unresolved **Rendered-layout defect** gaps, and zero unresolved
+  **Reference mismatch** gaps without either a fix or a recorded
+  deliberate-departure reason. A screen is never marked `pass` on
+  this step because "the code looks right" when a render-and-measure
+  pass was possible and simply wasn't run — see this file's Render-and-
+  measure evidence section above.
 
 A screen clean on its very first CRITIQUE still completes one real RECHECK
 confirming that, per step 3 above — "nothing to fix" is not the same as
@@ -184,6 +270,16 @@ written down did not happen, per the same "artifacts, not conversation"
 discipline `workflows/execute-product-builder.md` already applies
 everywhere else.
 
+**FINALIZE additionally requires `templates/modern-ui-benchmark-report.md`'s
+scored summary** — the human-readable "DESIGN-GLANZA MODERN UI BENCHMARK"
+scorecard, for every screen this cycle produced, whether generated inside
+a full Product Builder pass or as a standalone screen/benchmark request.
+This is a required *summary* of findings already recorded above, in that
+file's own three-part shape (Design-system validation, the 15-point Final
+Visual QA audit, the 10-row scored output) — never a second, independent
+audit mechanism, and never an excuse to skip the detailed recording this
+section already requires.
+
 ## Chart verification pipeline
 An additional, mandatory pass for any screen containing at least one
 chart — run inside the Mandatory refinement cycle above, not a separate
@@ -201,7 +297,7 @@ Accessibility Check → Responsive Check → Visual Storytelling Check
 |---|---|
 | **Chart Purpose** | This is genuinely the right visualization *class* for the job — a single tracked number with no meaningful trend/comparison uses `composition-patterns.md`'s KPI/Stat Card instead, per `component-system.md`'s Data visualization section; a chart added because "dashboards have charts" without a stated insight fails here first, before any downstream step is even relevant. |
 | **Chart Type** | `component-system.md`'s data-shape table (trend→line/area, comparison→bar, composition→stacked/donut only within its slice cap, distribution→histogram/box) — the type matches what relationship the data actually has, never preference. |
-| **Data Realism** | Rule 10 applied to every value on the chart, not just its axis labels (already required by `component-system.md`'s chart-label-realism note): realistic ranges, dates, currency, and domain terminology for *this* product — a revenue chart with suspiciously round numbers, or a SaaS metric with e-commerce terminology, fails here even if the chart type and axes are otherwise correct. |
+| **Data Realism** | Rule 10 applied to every value on the chart, not just its axis labels (already required by `component-system.md`'s chart-label-realism note): realistic ranges, dates, currency, and domain terminology for *this* product — a revenue chart with suspiciously round numbers, or a SaaS metric with e-commerce terminology, fails here even if the chart type and axes are otherwise correct. This step checks a value's own plausibility in isolation; whether this chart's values actually *agree* with a KPI, table, or annotation elsewhere on the same screen is the Mandatory refinement cycle's own Cross-Artifact Data Realism check (above, step 1) — a fresh, separate check, not restated here. |
 | **Axis** | Real domain values and real dates (never a `D1`/`D2` index placeholder), correct units stated, meaningful tick intervals (not so sparse the shape is unreadable, not so dense they collide), and the zero-baseline rule for bar/column charts — no truncated or dual-scale axis that visually exaggerates a difference the data doesn't actually show. |
 | **Legend** | Present only when more than one series is shown (a single-series chart with a legend is clutter, not clarity); labels match the data's own terminology; each legend entry's color is the same one used on the chart, never a near-miss; legend position/wrapping has a stated responsive behavior at narrow widths, not silent overlap. |
 | **Tooltip** | On hover/focus, reveals the exact value, the date/time or category it belongs to, and — where a comparison period is part of the chart's story — the prior-period value alongside it; formatted with the same units/currency/locale convention as the rest of the screen, never a raw unformatted number. |
@@ -230,3 +326,14 @@ mechanism.
 - Diffing this pass against a *prior* pass's confirmed-clean state (a
   temporal concern this file has no notion of by design) →
   `visual-regression/*`, gate **B20**.
+- The Cross-Artifact Data Realism manifest's exact fields and the
+  relationships it declares → `templates/data-bindings.md`; the
+  deterministic recomputation itself → `scripts/
+  validate-data-consistency.py`.
+- The rendering/screenshot/DOM-geometry capture mechanism itself →
+  `scripts/capture-render.py`; the geometric analysis that turns a
+  manifest into Rendered-layout defect findings → `scripts/
+  validate-rendered-layout.py`; the reference-image numeric similarity
+  check → `scripts/compare-reference-visual.py`. This file only requires
+  that their evidence feed the gap analysis above — their own thresholds
+  and mechanics live in their docstrings, not duplicated here.

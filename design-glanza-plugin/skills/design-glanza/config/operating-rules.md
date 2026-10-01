@@ -79,16 +79,24 @@ Accessibility is part of the design, not a final decoration applied at the end.
 - **Enforced by:** `config/quality-gates.md`'s Accessibility gate, checked at
   Prototype (structural) and again at Audit (conformance), never only at the end.
 - **Executed via:** `ux-engine/accessibility.md` (structural/behavioral),
-  `ui-engine/color-system.md` (perceptual), applied continuously by
-  `agents/accessibility-expert.md`, not as a one-time pass.
+  `ui-engine/color-system.md` (perceptual, including its optional
+  `soft`/`onSoft` tinted-background extension — **B8.1**), applied
+  continuously by `agents/accessibility-expert.md`, not as a one-time
+  pass; perceptual checks enforced deterministically by
+  `scripts/validate-tokens.py`.
 
 ### RULE 8 — Responsive Thinking
 Every web interface must consider all relevant viewport sizes and interaction
 modes (mouse, touch, keyboard) as part of the initial design, not an afterthought
 adaptation.
-- **Enforced by:** `config/quality-gates.md`'s Responsive Behavior gate.
+- **Enforced by:** `config/quality-gates.md`'s Responsive Behavior gate,
+  including its Alternative-component accessibility contract for any
+  Become-an-alternative-component decision that produces an interrupting
+  overlay.
 - **Executed via:** `ui-engine/responsive-system.md`, coordinated with
-  `ux-engine/interaction-design.md` for input-modality equivalence.
+  `ux-engine/interaction-design.md` for input-modality equivalence and
+  with `ux-engine/accessibility.md`'s Modal/Drawer pipeline step for any
+  component-swap adaptation that becomes an overlay.
 
 ### RULE 9 — Traceability
 Every important requirement should map forward through the full artifact chain:
@@ -237,24 +245,28 @@ real user is present to ask, confirmed.
 Implementation is not complete because the code was written — it is
 complete only once the application actually launches locally and the
 implemented screen(s) can be previewed. After Implement, before Test:
-detect the framework/dev setup, start the local dev server, verify the
-build succeeds, detect the real local URL/port, check for runtime errors,
-and fix build/runtime issues before continuing. A public/external preview
-(e.g. via ngrok) is never set up unless the user explicitly asks for one,
-and ngrok is never required for normal operation.
+detect the framework/dev setup, run structural validation against
+`output/*`, start the local dev server, verify the build succeeds, detect
+the real local URL/port, check for runtime errors, and fix build/runtime/
+structural issues before continuing. A public/external preview (e.g. via
+ngrok) is never set up unless the user explicitly asks for one, and ngrok
+is never required for normal operation.
 - **Enforced by:** `config/quality-gates.md`'s new Implement → Preview & Run
   and Preview & Run → Test phase-transition gates, and the **B14 (Preview &
-  Run Verification)** measurable gate.
+  Run Verification)** measurable gate, including its structural-validation
+  layer.
 - **Executed via:** the new **Preview & Run** phase between Implement and
   Test in the lifecycle (`config/master-config.md`'s Phase registry), per
   `workflows/preview-run.md` — carried out by whatever capability is
   actually executing the build (the same "no dedicated reasoning
   specialist" posture `workflows/build-product.md` already states for
   Implement, since this is verification-by-execution, not new design
-  reasoning). Its output, `product-builder/workflows/preview-report.md`
-  (`templates/preview-report.md`), is the required artifact — a local URL
-  reported only in conversation, with no file written, does not satisfy
-  this rule.
+  reasoning); the structural-validation step is deterministic
+  (`scripts/validate-generated-artifact.py`), checked before the
+  build/runtime steps. Its output, `product-builder/workflows/
+  preview-report.md` (`templates/preview-report.md`), is the required
+  artifact — a local URL reported only in conversation, with no file
+  written, does not satisfy this rule.
 
 ### RULE 20 — Design Research & Visual Quality Assurance
 Design-Glanza reasons like a senior product designer, not a UI template
@@ -276,16 +288,41 @@ and every P0 and un-waived P1 is fixed automatically, never left for a user
 to notice; a screen only reaches FINALIZE once that file's own "When to
 stop" conditions all hold, never earlier, and never by relaxing them to
 get there sooner. Even a clean first draft records that the check ran,
-rather than skipping it.
+rather than skipping it. **Wherever rendering is available** (new this
+version), CRITIQUE additionally means an actual render — GENERATE →
+RENDER → OBSERVE → MEASURE → COMPARE → IDENTIFY DEFECTS → FIX → RE-RENDER
+→ RE-MEASURE → FINALIZE — not only a read of the source markup:
+`scripts/capture-render.py` renders the screen at every required
+breakpoint/theme, `scripts/validate-rendered-layout.py` measures real
+overflow/alignment/spacing/sizing/overlap from that render, and
+`scripts/compare-reference-visual.py` numerically compares it against its
+stated reference where one exists. A defect this loop finds is only
+considered FIXED after a **re-render** confirms the specific measured
+number actually moved — changing source code alone, with no matching
+re-capture, does not close the finding. This governs *how* CRITIQUE and
+RECHECK are carried out wherever rendering is available; it does not
+relax, replace, or stand in for the qualitative Audit Framework pass —
+both run, both must pass, per `ui-engine/visual-benchmark.md`'s
+Render-and-measure evidence section.
 - **Enforced by:** the new **B15 (Visual Benchmark & Audit Cycle
   Completeness)** measurable gate, checked as part of the existing
-  Prototype → Implement transition.
+  Prototype → Implement transition — now including its 10 rendered-
+  evidence evaluation angles wherever rendering is available; **B14**
+  (Preview & Run) and **B20** (Visual Regression) also carry a rendered-
+  evidence layer this version adds.
 - **Executed via:** `design-reference-engine/design-research.md` (Design
   Setup's new Step 0), `ui-engine/ui-audit-framework.md` (the 11-category
-  A–K audit), `ui-engine/visual-benchmark.md` (the three-way comparison and
-  mandatory refinement cycle), and `ui-engine/ui-design-principles.md` (the
-  22 named senior-design principles those checks draw on) —
-  `templates/visual-gap-analysis.md` is the required artifact.
+  A–K audit, including its Text overflow sub-list), `ui-engine/
+  visual-benchmark.md` (the three-way comparison, mandatory refinement
+  cycle, Cross-Artifact Data Realism check, and Render-and-measure
+  evidence section), and `ui-engine/ui-design-principles.md` (the 22
+  named senior-design principles those checks draw on) —
+  `templates/visual-gap-analysis.md` is the required artifact, alongside
+  `templates/data-bindings.md`'s manifest (per screen, where applicable)
+  checked deterministically by `scripts/validate-data-consistency.py`,
+  and — wherever rendering is available — `scripts/capture-render.py`,
+  `scripts/validate-rendered-layout.py`, and
+  `scripts/compare-reference-visual.py`.
 
 ### RULE 21 — Evidence-Based Design (Research-to-Design Traceability)
 Research is an active input to design, never documentation generated

@@ -84,8 +84,30 @@ one-off value.
    by P0-P3 priority, fix every P0 and un-waived P1 before moving on, and
    re-check only what the fix actually touched — recorded in
    `templates/visual-gap-analysis.md`, including this screen's Initial and
-   Final score. Runs for every screen, even one with no gaps found; the
-   first generated pass is never the final one.
+   Final score. Wherever rendering is available (`scripts/
+   capture-render.py`), this same critique pass also renders the screen
+   at every required breakpoint/theme and runs `scripts/
+   validate-rendered-layout.py` against the result — real overflow,
+   alignment, spacing, sizing, and overlap findings, not an inference
+   from reading the markup — and, where a reference image applies,
+   `scripts/compare-reference-visual.py`'s numeric similarity check. A
+   fix to one of these findings is only confirmed by a **re-render**, not
+   by re-reading the changed source (`ui-engine/visual-benchmark.md`'s
+   Render-and-measure evidence section). Where this screen has a KPI tied
+   to a chart, table, or
+   another KPI, declare those relationships in a `templates/
+   data-bindings.md` manifest and run Cross-Artifact Data Realism
+   (`scripts/validate-data-consistency.py`) — a KPI must equal its own
+   chart's latest point, a supporting metric must equal its stated
+   derivation from its parent KPIs, a labeled peak must equal the
+   series' actual maximum; a disagreement is a **Data inconsistency** gap,
+   fixed the same as any other. Runs for every screen, even one with no
+   gaps found; the first generated pass is never the final one. At
+   FINALIZE, produce `templates/modern-ui-benchmark-report.md`'s scored
+   "DESIGN-GLANZA MODERN UI BENCHMARK" summary for this screen — required
+   for every screen this step runs against, a full Product Builder pass
+   or a standalone screen/benchmark request alike, never only when
+   explicitly asked for one.
 9. Where a register/pattern choice meets `product-memory/
    auto-recording.md`'s significance threshold, record it as a new
    `ADR-NNN` in `product-builder/memory/decision-records.md` (Rule 26).

@@ -149,6 +149,50 @@ class Finding:
         return f"[{self.severity}] {self.message}{loc}"
 
 
+# WCAG 2.x contrast math, per ui-engine/color-system.md's Contrast
+# compliance rule. Defined once here (not in validate-tokens.py, where it
+# originated) so scripts/validate-generated-artifact.py's generated-CSS
+# contrast scan (B14) uses the exact same arithmetic as
+# validate-tokens.py's design-tokens.json contrast check (B8/B6) — one
+# implementation, never two independently-written WCAG formulas that could
+# silently drift apart.
+CONTRAST_MIN_NORMAL = 4.5
+CONTRAST_MIN_LARGE = 3.0
+
+
+def hex_to_rgb(hex_str):
+    """Parse a #rgb/#rrggbb string into an (r, g, b) 0-255 tuple, or None if
+    it isn't a parseable hex color (e.g. a var()/token reference left
+    unresolved) — contrast checks only run against literal hex values."""
+    if not isinstance(hex_str, str):
+        return None
+    h = hex_str.strip().lstrip("#")
+    if len(h) == 3:
+        h = "".join(c * 2 for c in h)
+    if len(h) != 6 or not re.fullmatch(r"[0-9a-fA-F]{6}", h):
+        return None
+    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+
+
+def relative_luminance(rgb):
+    def chan(c):
+        c = c / 255.0
+        return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
+    r, g, b = (chan(c) for c in rgb)
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def contrast_ratio(hex_a, hex_b):
+    """WCAG contrast ratio between two hex colors, or None if either isn't a
+    parseable literal hex value."""
+    rgb_a, rgb_b = hex_to_rgb(hex_a), hex_to_rgb(hex_b)
+    if rgb_a is None or rgb_b is None:
+        return None
+    la, lb = relative_luminance(rgb_a), relative_luminance(rgb_b)
+    lighter, darker = max(la, lb), min(la, lb)
+    return (lighter + 0.05) / (darker + 0.05)
+
+
 def discover_product_types() -> list[str]:
     if not PRODUCT_TYPES_DIR.is_dir():
         return []

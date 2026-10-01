@@ -7,7 +7,205 @@ everywhere, it belongs here.
 
 ## Skill identity & version
 - **Name:** design-glanza
-- **Version:** 1.0.25 — a **repository/workspace separation pass**
+- **Version:** 1.0.28 — the **major visual QA engine upgrade**: real
+  render-based visual validation, added as a complementary layer to the
+  existing source-level engine, never a replacement for it (3 new files —
+  `scripts/capture-render.py`, `scripts/validate-rendered-layout.py`,
+  `scripts/compare-reference-visual.py` — 15 existing files modified, 0
+  deleted, 0 renamed, 0 gates/rules/checks removed or weakened). Triggered
+  by a root-cause audit that traced a recurring complaint — screens
+  scoring "100/100 Excellent" while still showing real misalignment,
+  overflow, and reference mismatch — to a structural gap: every prior
+  visual-QA mechanism in this engine was an LLM reading its own generated
+  source code, with zero actual rendering/screenshot/measurement
+  capability (`visual-regression/baseline-model.md` stated this
+  explicitly, by design, as recently as 1.0.26). This version closes that
+  gap:
+  **(A) Real rendering.** `scripts/capture-render.py` — the first,
+  deliberate exception to every other script's stdlib-only constraint
+  (Playwright/Chromium headless, the smallest maintainable dependency
+  that can actually render a page). Takes a standalone HTML file path or
+  an already-running dev-server URL — no Product Builder scaffold
+  required either way — and produces, per required breakpoint
+  (desktop/tablet/mobile) and theme (light/dark): a full-page screenshot,
+  a viewport screenshot, and a generic full-DOM geometry manifest
+  (`getBoundingClientRect()` + scroll-vs-client dimensions + computed
+  overflow for every visible element) — not hardcoded to any particular
+  component taxonomy.
+  **(B) Real measurement.** `scripts/validate-rendered-layout.py` — pure
+  logic, zero rendering, consumes that manifest and emits `_common.Finding`
+  objects for: overflow (scrollWidth/Height vs. clientWidth/Height, the
+  single mechanism covering text overflow, clipping, escaping content,
+  and overflowing badges/buttons/cells alike), alignment (shared-edge
+  drift within a sibling set grouped by parent+class), spacing
+  (consecutive-gap drift within a set), sizing (dimension drift within a
+  set), and overlap (pairwise intersection among direct-text leaf
+  elements, ancestor/descendant pairs excluded). Deliberately separate
+  from the renderer so the analysis is unit-testable against a hand-built
+  JSON fixture with no browser at all, per the "prefer separation"
+  architecture this version was built to.
+  **(C) Real reference comparison.** `scripts/compare-reference-visual.py`
+  — Pillow-based coarse color-histogram and luminance-grid similarity
+  between a reference sample image and a generated screenshot, producing
+  numeric `color_similarity`/`layout_similarity`/`meaningful_mismatch`
+  evidence so "Reference considered" is never written with no numbers
+  behind it.
+  **(D) Engine wiring, strengthening existing gates, never replacing
+  them.** `scripts/validate-product.py` aggregates the new rendered-layout
+  evidence wherever Playwright is installed, degrading to one disclosed
+  Note (never a crash, never a silent skip) otherwise. `ui-engine/
+  visual-benchmark.md` gained a full Render-and-measure evidence section,
+  two new gap types (**Rendered-layout defect**, **Reference mismatch**),
+  and the "a fix is only verified after re-rendering" rule. `ui-engine/
+  ui-audit-framework.md` gained an explicit, first-class Text overflow
+  sub-list (7 named failure shapes), measured from the rendered result,
+  never inferred from source. `config/quality-gates.md` strengthened
+  **B8** (overlap evidence), **B9** (the Not-accepted defect list now has
+  measured backing), **B11** (aggregates the new evidence), **B14** (a
+  separate rendered-layout pass alongside the existing structural
+  validator — Test 7 below is exactly why they stay separate scripts),
+  **B15** (10 new rendered-evidence evaluation angles, named explicitly),
+  and **B20** (an OPTIONAL second, rendered baseline layer alongside —
+  never instead of — the existing structural baseline) — zero new gates
+  created, per this task's explicit constraint. `visual-regression/
+  baseline-model.md` documents that optional second layer. `templates/
+  modern-ui-benchmark-report.md` gained a mandatory Evidence Type
+  (MEASURED/ASSESSED/MIXED) + Source field per scored row, and a "Strong
+  (evidence-limited)" status band so a 90+ total reached without rendering
+  evidence for the three most render-checkable rows (Layout Quality,
+  Spacing & Grid, Component Quality) is never silently labeled plain
+  Excellent. `design-samples/saas/README.md` and `fintech/README.md`
+  gained measurable reference characteristics (spacing scale, card
+  radius, surface hierarchy, type scale, density, component dimensions,
+  layout proportions, color relationships), explicit that these describe
+  **design language**, never a **direct visual target** for pixel
+  cloning. `workflows/preview-run.md` and `execute-product-builder.md`
+  wire the new render-and-measure step into Preview & Run (new step 7a)
+  and the visual-benchmark-and-audit cycle (action 32) respectively.
+  `config/operating-rules.md` Rule 20 and `agents/{ui-designer,
+  qa-expert,accessibility-expert}.md` cite the new capability at the
+  exact points their existing procedures already touch rendering-adjacent
+  work. All of this is additive and conditional: wherever Playwright
+  isn't installed in a given environment, every check behaves exactly as
+  it did in 1.0.27, with one disclosed Note explaining the gap — the
+  source-level engine was never weakened to make room for the new layer.
+  **Verified, not asserted:** all 7 required test cases were actually
+  executed against the new scripts with real, reported results —
+  including the explicitly critical Test 7 (a syntactically clean file
+  with a real 15px misalignment: `validate-generated-artifact.py`
+  returned exit 0/no Blocker-Major findings, `validate-rendered-layout.py`
+  returned exit 1/one Major finding, against the same file) — proving
+  structural validation passing is no longer treated as proof a screen
+  looks correct. No new Rule, no new Gate. Still 26 rules, 21 gates, 12
+  phases.
+- **Previously, 1.0.27** — a **required benchmark-report pass** (1 new file
+  — `templates/modern-ui-benchmark-report.md` — 4 existing files touched:
+  `ui-engine/visual-benchmark.md`, `config/quality-gates.md`,
+  `workflows/execute-product-builder.md`, `agents/ui-designer.md`).
+  Formalizes the "DESIGN-GLANZA MODERN UI BENCHMARK" scorecard — a
+  3-part report (Part A: an 8-item Design-system validation checklist,
+  run before finalizing; Part B: a 15-point Final Visual QA audit, run
+  after generation; Part C: a scored 10-row summary, PASS/PARTIAL/FAIL =
+  10/5/0 points, 100 total, with Excellent/Strong/Needs Refinement/Fail
+  status bands) — as a **required** FINALIZE output for every screen,
+  not an optional extra requested ad hoc. Every one of the 23 named
+  checklist/audit items (8 + 15) cites an existing owning mechanism
+  (Categories A-K, B6/B8/B8.1/B9/B15/B19, `craft-critique.md`,
+  `visual-benchmark.md`'s Chart pipeline and gap-type table) — no new
+  check, no new gate, no new script: this is a required reporting shape
+  over audits this engine already performs, the same "summarize, don't
+  duplicate" relationship `templates/visual-gap-analysis.md` already has
+  to the pipelines it records. The 10-row scorecard's consolidation of
+  the 15-point audit is stated explicitly as a table, not left ad hoc, so
+  a different pass can't quietly redistribute points across rows.
+  `ui-engine/visual-benchmark.md`'s FINALIZE step, `config/
+  quality-gates.md`'s **B15**, `workflows/execute-product-builder.md`'s
+  action 32, and `agents/ui-designer.md`'s step 8 all now require this
+  report explicitly. No new Rule, no new Gate. Still 26 rules, 21 gates,
+  12 phases.
+- **Previously, 1.0.26** — a **quality-engine upgrade pass** (3 new files —
+  `scripts/validate-generated-artifact.py`, `scripts/
+  validate-data-consistency.py`, `templates/data-bindings.md` — each a
+  genuinely new, previously-nonexistent capability per the task's own
+  explicit authorization to create one where none existed; 16 existing
+  files modified, 0 deleted, 0 renamed, 0 gates/rules removed or
+  weakened), converting four defect classes a benchmark run found into
+  deterministic, repeatable checks — explicitly additive to
+  B8/B9/B11/B14/B15, no gate duplicated:
+  **(A) Semantic contrast.** `scripts/validate-tokens.py`'s `_check_contrast`
+  gained a third pass (**B8.1**) checking a new optional `soft`/`onSoft`
+  triplet extension (`design-tokens/semantic-tokens.md`,
+  `ui-engine/color-system.md`) — the badge/chip/status-pill/delta-
+  indicator/semantic-icon-container/avatar pairing a semantic hue's plain
+  foreground/background pass does not automatically certify. The shared
+  WCAG math (`_hex_to_rgb`/`_relative_luminance`/`_contrast_ratio`) moved
+  from `validate-tokens.py` into `scripts/_common.py` (behavior-identical,
+  re-verified) so the new `validate-generated-artifact.py` reuses the
+  exact same arithmetic rather than a second implementation. A new
+  `_is_expected_onsoft_fallback` exclusion keeps the existing redundant-
+  token check from flagging the documented, legitimate `onSoft == 
+  foreground` fallback case as noise. The reference `design-tokens/
+  templates/design-tokens.json` gained real, independently-validated
+  `soft`/`onSoft` values for all four status semantics, in both themes.
+  **(B) Responsive alternative-component focus management.**
+  `ui-engine/responsive-system.md` gained an **Alternative-component
+  accessibility contract** section: any Become-an-alternative-component
+  decision producing an interrupting overlay (Sidebar → Drawer, Desktop
+  nav → Mobile drawer) now must inherit `ux-engine/accessibility.md`'s
+  existing Modal/Drawer pipeline step in full (focus entry/trap/Escape/
+  restoration/inertness/ARIA role/`aria-expanded`/`aria-controls`) — cited,
+  never duplicated; Dropdown→Select, Table→List, and Tabs→Scrollable-tabs
+  each get the same one-line "inherits its destination's existing
+  contract" treatment. Checked jointly by `agents/ui-designer.md` and
+  `agents/accessibility-expert.md` at the Adaptation-decision audit step
+  — the same joint-ownership precedent B15/B16/B17 already use, not a new
+  pattern. No script backs this (an agent-judgment check, same as the
+  rest of B9) — disclosed explicitly in `validate-product.py`'s own
+  docstring rather than silently absent from its aggregation.
+  **(C) Cross-artifact data realism.** A new `templates/data-bindings.md`
+  manifest declares a screen's numeric relationships (a KPI claiming to
+  equal its own chart's latest point, a supporting metric claiming to be
+  a stated ratio of two other KPIs, an annotation claiming to be a
+  series' peak, a table total claiming to match a KPI) and a new
+  `scripts/validate-data-consistency.py` recomputes each one from the
+  manifest's own `series` data — verified against the exact benchmark
+  scenario that motivated it (Revenue 186420 / Orders 24386 claiming a
+  31.60 average correctly flagged; the true 27.86 correctly passes) and
+  against a fully-consistent 14-day manifest (0 findings). Wired into
+  `ui-engine/visual-benchmark.md`'s Mandatory refinement cycle as part of
+  the existing step 1, not a new step, with a new **Data inconsistency**
+  gap type added to its gap-type table and to `templates/
+  visual-gap-analysis.md`'s classification list.
+  **(D) Generated-artifact structural validation.** A new
+  `scripts/validate-generated-artifact.py` — stdlib-only, explicitly
+  heuristic where it can't be a full parser (disclosed in its own
+  docstring) — checks CSS brace/media-query balance, the exact malformed-
+  selector-list and duplicate-custom-property defects this pass's own
+  motivating benchmark produced, HTML tag/id/alt/reference/accessible-name
+  structure, JS bracket balance, and local asset references. Wired into
+  `workflows/preview-run.md` as a new step 2 (renumbering 3-8 to 3-9),
+  running *before* the build/runtime checks since a file can be
+  structurally invalid without breaking either. Explicitly does not
+  duplicate Preview & Run's existing runtime check (console errors,
+  failed loads) — that remains execution-based, unreproducible by a
+  static script, and stays exactly where it already was.
+  **Aggregation (B11).** `scripts/validate-product.py` now also invokes
+  `validate-tokens.py` (previously never aggregated here at all, despite
+  owning B6/B8's deterministic half), the new
+  `validate-generated-artifact.py`, and the new
+  `validate-data-consistency.py` — re-verified against ProjectFlow
+  producing the identical prior 7 findings plus exactly one new,
+  correctly-surfaced one (`design-tokens.json missing-file`, previously
+  invisible to B11's aggregate status). Every existing validator
+  (`validate-requirements.py`, `validate-screens.py`, `validate-states.py`,
+  `validate-memory.py`, `validate-visual-regression.py`) re-run against
+  ProjectFlow and confirmed byte-identical to their pre-upgrade output —
+  zero regression. `config/operating-rules.md` Rules 7/8/19/20 and
+  `agents/{accessibility-expert,ui-designer,qa-expert}.md` cross-reference
+  the four additions at their existing responsibilities — no rule, gate,
+  or agent added; B1-B21 all still present, unchanged in number or name.
+  Still 26 rules, 21 gates, 12 phases.
+- **Previously, 1.0.25** — a **repository/workspace separation pass**
   (no new files; 2 skill files modified — `scripts/_common.py`,
   `config/operating-rules.md` — plus repo-level housekeeping outside the
   skill proper): a read-only audit found this repo conflated two things
