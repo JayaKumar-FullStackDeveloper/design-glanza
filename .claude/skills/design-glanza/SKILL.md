@@ -1,7 +1,6 @@
 ---
 name: design-glanza
 description: Master product-design and Product Builder factory (POC — explicit invocation only, entry point /design-glanza). Given a product requirement, BRD/PRD/SOW, user stories, acceptance criteria, an existing product (screenshots, a live app, or its codebase), or a plain-language product idea, generates a product-specific Product Builder skill that designs, architects, builds, previews, tests, audits, and iterates that product — across SaaS, enterprise (ERP/CRM/admin panels), consumer, healthcare, e-commerce, HRMS, fintech, logistics, marketplace, landing pages/marketing sites, and arbitrary/custom domains. This is a deliberate, heavyweight, multi-phase workflow, run only when the user explicitly invokes /design-glanza or unambiguously asks to run the Design-Glanza product-building process end to end — never merely because a conversation mentions UI, UX, SaaS, or design in passing, and never for an isolated code fix or a single small change.
-disable-model-invocation: true
 allowed-tools:
   - Read
   - Write
