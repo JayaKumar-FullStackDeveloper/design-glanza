@@ -1,8 +1,9 @@
 # Registry: Feedback & Status
 
-Toast, Tooltip, Empty State, Loading State, Error State, Confirmation —
-per `registry-schema.md`'s 13-field shape. Every value cited is a
-`design-tokens/token-schema.md` path, never a raw value.
+Toast, Tooltip, Empty State, Loading State, Error State, Confirmation,
+Badge, Alert/Banner, Progress Indicator — per `registry-schema.md`'s
+13-field shape. Every value cited is a `design-tokens/token-schema.md`
+path, never a raw value.
 
 ---
 
@@ -214,3 +215,151 @@ per `registry-schema.md`'s 13-field shape. Every value cited is a
 13. **Domain-specific usage:** Regulated domains (finance, healthcare)
     often require a stricter, audited confirmation for specific actions
     — cite the matched `product-types/domain-standards/` entry.
+
+---
+
+## Badge
+1. **Purpose:** A small, persistent indicator of a discrete status,
+   category, or count attached to another element — distinct from Toast
+   (transient, standalone) and Alert/Banner (below — a full message, not
+   a label).
+2. **When to use:** A status/category value with a small, closed set of
+   options (order status, a count of unread items, a category tag) that
+   needs to be scannable at a glance alongside its host content.
+3. **When NOT to use:** The information needs explanation, not just a
+   label — use Tooltip or inline text instead; more than roughly 3-4
+   distinct badge values would appear together on one element — that's a
+   sign the underlying data needs a different display (a small table or
+   detail view), not more badges crowded onto one row.
+4. **Variants:** Status (semantic color triplet — success/warning/error/
+   info/neutral, `color-system.md`), count (a number, e.g. an unread
+   count), outline vs. filled — filled is the default; outline is reserved
+   for a lower-emphasis, secondary badge on the same screen as a filled
+   primary one, never mixed without that stated reason.
+5. **States:** This is a small, non-interactive display element by
+   default — no hover/focus states of its own unless it's a dismissible
+   filter-chip variant, in which case it inherits Button's icon-only
+   states for its own dismiss control.
+6. **Interaction behavior:** Never color alone — every status badge
+   carries a text label (or, where labeled text can't fit, an icon plus
+   an accessible name) per `color-system.md`'s color-blind safety rule;
+   a count badge past a stated ceiling (e.g. 99) displays "99+" rather
+   than an unbounded, layout-breaking number.
+7. **Accessibility:** A badge conveying meaning (not purely decorative)
+   has real text content or an accessible name — never conveyed by color/
+   position alone to assistive tech.
+8. **Responsive:** Fixed small size regardless of breakpoint; a badge
+   anchored to a corner of a host element repositions with that host
+   (`component-system.md`'s Badge positioning rule), never floats
+   independently.
+9. **Content rules:** One or two words maximum for a status label
+   ("Delivered," not "This order has been delivered"); numeric badges use
+   tabular figures.
+10. **Validation rules:** Not applicable.
+11. **Composition rules:** Composes onto Card, Table (status column),
+    Navigation (unread count), Tabs (count badge, per that entry's
+    Content rules), and Avatar (a presence indicator). Never stacks two
+    badges on the exact same corner of one host — reposition or combine.
+12. **Common UX mistakes:** Color-only status encoding; an unbounded
+    count badge breaking its host's layout; more badge variants invented
+    ad hoc instead of reusing the closed semantic-color set; a decorative
+    badge with no real status meaning (the specific instance of
+    `craft-critique.md`'s anti-cliché catalog's colored-left-border tell,
+    applied to badges).
+13. **Domain-specific usage:** Cite the matched domain's own status
+    taxonomy where one exists (e.g. order-status values for
+    `product-types/ecommerce.md`, claim-status for insurance).
+
+---
+
+## Alert / Banner
+1. **Purpose:** A persistent, page- or section-level message communicating
+   important status/context the user should see before proceeding —
+   distinct from Toast (transient, auto-dismissing) and Badge (a small
+   label, not a message).
+2. **When to use:** Information that affects the whole page/section and
+   needs to stay visible until dismissed or resolved (a system-wide
+   degradation notice, an unsaved-changes warning, a section-level
+   validation summary).
+3. **When NOT to use:** The information is transient and doesn't need to
+   persist — use Toast; it's specific to one field — use the field's own
+   validation-error treatment, not a page-level banner for a single-field
+   issue.
+4. **Variants:** Inline (within page content flow) vs. sticky (pinned to
+   the top of the viewport/section); semantic type — info/success/
+   warning/error, same triplets as Toast/Badge, never an independently
+   invented color.
+5. **States:** default/visible, dismissing (if dismissible), dismissed.
+6. **Interaction behavior:** A dismissible alert's dismiss control follows
+   Button's icon-only rule (tooltip + `aria-label`); an alert reporting an
+   ongoing condition (not a one-time notice) reappears if the underlying
+   condition recurs after dismissal, rather than being permanently
+   silenced by one dismiss.
+7. **Accessibility:** Announced via an `aria-live` region on appearance,
+   same as Toast/Error State; a dismiss control is keyboard-reachable.
+8. **Responsive:** Sticky variant never covers more than a small,
+   stated fraction of viewport height on mobile — competing with primary
+   content for space is itself a defect.
+9. **Content rules:** States the specific condition and, where actionable,
+   what to do about it — never a vague "Something needs your attention"
+   with no specifics.
+10. **Validation rules:** Not applicable (a section-level validation-
+    summary Alert cites the individual field errors it's summarizing,
+    never restates them differently).
+11. **Composition rules:** Commonly placed at the top of a Form (a
+    validation summary) or a screen (a system-status notice); never
+    nested inside a Card meant for independent, unrelated content.
+12. **Common UX mistakes:** Used for transient information that should
+    have been a Toast (unnecessarily persistent); a sticky banner that
+    crowds out primary content on mobile; a dismissible alert for an
+    ongoing condition that doesn't reappear when the condition recurs,
+    silently hiding an active problem.
+13. **Domain-specific usage:** No domain-specific variance beyond the
+    specific conditions a domain needs to surface.
+
+---
+
+## Progress Indicator
+1. **Purpose:** Communicate how far a multi-step or long-running process
+   has advanced — distinct from Loading State (indeterminate/unknown
+   duration) in that a Progress Indicator specifically communicates
+   *degree of completion*, known or estimable.
+2. **When to use:** A determinate, trackable process (a multi-step form's
+   step position, a file upload's percent-complete, an onboarding
+   checklist's completion count).
+3. **When NOT to use:** The duration/completion is genuinely unknown —
+   use Loading State's spinner instead; a false sense of precision (a
+   progress bar implying a knowable percentage for something that isn't
+   actually measurable) is worse than an honest indeterminate spinner.
+4. **Variants:** Linear bar (a single quantity, e.g. upload percent),
+   step indicator (a wizard's "Step 2 of 4," per `navigation-system.md`
+   item 11), circular/radial (compact contexts, e.g. a dashboard KPI's
+   completion ring).
+5. **States:** in-progress, complete, **error** (the tracked process
+   itself failed partway — distinct from a generic Error State since the
+   partial progress achieved before the failure is still meaningful
+   information, not discarded).
+6. **Interaction behavior:** Updates smoothly as real progress is made
+   (`design-system.md`'s motion tokens, `motion-fast` for frequent small
+   increments) — never jumps discontinuously or fakes progress not
+   actually made.
+7. **Accessibility:** `role=progressbar` with current/min/max values
+   exposed to assistive tech, not just a visual fill; a step indicator
+   announces the current step number and total.
+8. **Responsive:** A step indicator condenses to "Step X of Y" text-only
+   below the breakpoint where all step labels no longer fit
+   (`navigation-system.md` item 11's own condensation rule, cited not
+   restated).
+9. **Content rules:** States the actual unit where it's not visually
+   obvious (percent, step count, items remaining) — a bare bar with no
+   numeric/textual anchor leaves the user guessing how much is left.
+10. **Validation rules:** Not applicable.
+11. **Composition rules:** The step-indicator variant is the visual
+    realization of a Wizard/stepper composition
+    (`layout-system.md`'s Wizard pattern); a linear-bar variant commonly
+    composes with Upload.
+12. **Common UX mistakes:** A progress bar implying false precision for
+    an actually-indeterminate process; progress that visibly jumps or
+    stalls with no explanation; a failed process losing its partial-
+    progress context by falling back to a generic error state.
+13. **Domain-specific usage:** No domain-specific variance.

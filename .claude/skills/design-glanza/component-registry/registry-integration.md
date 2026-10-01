@@ -30,7 +30,7 @@ uses for domain packs), never silently absorbed.
 `agents/design-system-expert.md`'s existing reuse-vs-new decision
 (`component-system.md`'s Reuse rule) now runs in two steps, not one:
 
-1. **Check the master registry first.** Does one of the ~24
+1. **Check the master registry first.** Does one of the ~29
    `component-registry/components-*.md` entries (or a
    `composition-patterns.md` organism) already cover this need? If yes,
    instantiate it — cite the registry entry, fill in product-specific

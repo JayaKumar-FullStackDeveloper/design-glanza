@@ -32,7 +32,7 @@ product — frequency, expertise, task complexity — not to substitute a
 different pattern based on what "looks current." Where a stated user
 expectation (from the questionnaire or a reference) conflicts with what the
 owning rule would select, that's a named conflict to resolve
-(`design-reference-engine/ux-architect.md`'s existing conflict-resolution
+(`agents/ux-architect.md`'s existing conflict-resolution
 posture), not a silent override in either direction.
 
 ## The frequency/expertise cross-check

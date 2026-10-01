@@ -48,8 +48,11 @@ Tabs, Navigation, Sidebar, Header, Dropdown, Pagination — per
    has hedged, not decided (item 3's own rule).
 4. **Variants:** Sidebar vs. top nav bar, chosen by `navigation-system.md`
    item 2's IA-depth/breadth rule — not a stylistic choice.
-5. **States:** default, active-section indication, collapsed (sidebar
-   variant, where screen space is prioritized).
+5. **States:** default, hover, focus (visually distinct from hover, per
+   `component-system.md` point 4 — a keyboard user tabbing through nav
+   items needs the same clear indicator a mouse user gets from hover),
+   active-section indication, collapsed (sidebar variant, where screen
+   space is prioritized).
 6. **Interaction behavior:** Role-based item visibility/order
    (`navigation-system.md` item 13) — a **Deny**-permission item is
    hidden, not disabled, unless deliberately advertising an upgrade path.
@@ -81,7 +84,9 @@ Tabs, Navigation, Sidebar, Header, Dropdown, Pagination — per
 3. **When NOT to use:** A shallow, narrow IA — a top nav bar serves it
    better without wasting screen width on an unearned hierarchy.
 4. **Variants:** Fixed-width, collapsible/expandable, resizable.
-5. **States:** default, collapsed, item-active, item-hover.
+5. **States:** default/expanded, collapsed, item-active, item-hover,
+   item-focus (visually distinct from item-hover, same keyboard-parity
+   reasoning as primary Navigation above).
 6. **Interaction behavior:** Collapse/expand uses `motion-fast`/`motion-
    base` per `design-system.md`'s motion tokens; collapsed state persists
    across navigation, not reset on every screen load.

@@ -9,11 +9,13 @@ at the project root for the full pitch.
 - The master skill lives at `.claude/skills/design-glanza/SKILL.md`. Treat it as the
   single source of truth for Design-Glanza's reasoning process — don't duplicate its
   logic elsewhere.
-- `products/` holds the Product Builder skills that Design-Glanza generates. Each
-  subfolder there is a self-contained, domain-specific skill (its own SKILL.md and
-  supporting files). Design-Glanza's core logic must never be written to assume any
-  one of these domains — the core stays generic; domain specifics live only inside
-  the generated product folders.
+- Generated Product Builder skills never live in this repo — they're written to an
+  external local workspace (`~/Design-Glanza-Workspace/products/<slug>/` by default,
+  `DESIGN_GLANZA_WORKSPACE_ROOT` override), each a self-contained, domain-specific
+  skill (its own SKILL.md and supporting files). `scripts/_common.py` refuses to
+  proceed if that path ever resolves inside this repo. Design-Glanza's core logic
+  must never be written to assume any one of these domains — the core stays generic;
+  domain specifics live only in the external workspace's generated folders.
 - Currently only an architecture shell exists. No phase logic (Intake, Empathize,
   Define, Ideate, Architect, Prototype, Implement, Test, Audit, Iterate) has been
   implemented yet — do not assume it's there.
@@ -26,9 +28,10 @@ at the project root for the full pitch.
 2. **Understand before generating UI.** Intake, Empathize, and Define come before any
    visual or code output.
 3. **Keep the core domain-agnostic.** Extending Design-Glanza to a new domain should
-   only ever mean adding a new skill under `products/`, never editing the core
-   orchestration logic to special-case that domain.
+   only ever mean generating a new skill into the external workspace, never editing
+   the core orchestration logic to special-case that domain.
 4. **Don't auto-advance phases.** Each phase's output should be reviewable before the
    next phase starts, unless the user explicitly asks for a full end-to-end run.
-5. **Stay in sync with `products/`.** If a Product Builder skill's structure changes,
-   revisit whether Design-Glanza's generation template needs updating to match.
+5. **Stay in sync with generated Product Builders.** If a Product Builder skill's
+   structure changes, revisit whether Design-Glanza's generation template needs
+   updating to match.

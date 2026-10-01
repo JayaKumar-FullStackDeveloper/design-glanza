@@ -5,3 +5,9 @@
 # OS cruft
 .DS_Store
 Thumbs.db
+
+# Generated product output must never live in this repo — see
+# scripts/_common.py's WORKSPACE_ROOT / PRODUCTS_DIR and
+# config/operating-rules.md Rule 15. Defense-in-depth only; the real
+# boundary is the workspace-resolution + safety check in _common.py.
+/products/

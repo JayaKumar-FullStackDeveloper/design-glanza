@@ -24,7 +24,7 @@ multiply (Rule 5, `config/operating-rules.md`: system before screen).
   contract (`token-inheritance.md`) this agent's token set must conform
   to; `design-tokens.schema.json` and its starter
   `templates/design-tokens.json`.
-- `component-registry/*` (Rule 24) — the ~24 pre-populated component
+- `component-registry/*` (Rule 24) — the ~29 pre-populated component
   entries (`components-*.md`), organism-level `composition-patterns.md`,
   and `registry-integration.md`'s registry-first rule — consulted *before*
   any new component is specified.

@@ -7,90 +7,260 @@ everywhere, it belongs here.
 
 ## Skill identity & version
 - **Name:** design-glanza
-- **Version:** 1.0.16 — a second, deeper **selective integration pass**
-  over `designer-skills-main` (the same 111-skill/9-category external
-  collection `1.0.5` already drew from once). The user's literal request
-  was to "add the existing skill completely"; per Rule 14 (domain-agnostic
-  core — no wholesale external copying) and the fact this exact source was
-  already analyzed once, the user was asked how to proceed and explicitly
-  chose **selective, analyzed integration**: read the real content (9
-  parallel research passes, one per category), keep only what's genuinely
-  new, fold it into existing files as citations/extensions, never copy raw
-  files, and directly re-verify every flagged "gap" before touching
-  anything — several fork-reported gaps turned out to be false positives
-  (content already present under different phrasing: `empathize.md`'s JTBD
-  template and multi-source synthesis rule, `visual-hierarchy.md`'s
-  Fitts's-law edge/corner note, `prototype.md`'s fidelity ladder,
-  `localization.md`'s cultural-color-table principle) and were correctly
-  left alone rather than duplicated. What was genuinely missing, added as
-  small surgical extensions to existing files: a functional/emotional/
-  social JTBD lens (`empathize.md`), a HEART-framework citation
-  (`define.md`), five named structural interaction-model axes and a
-  comparable-fidelity rule (`ideate.md`), "flexibility and efficiency of
-  use" as a distinct heuristic from Ideate's fast-decision criterion
-  (`test.md`), concrete locale-formatting examples (`localization.md`), a
-  new audit-time conformance checklist cited from `agents/
-  accessibility-expert.md` (`accessibility.md`), a findability heuristic
-  distinct from raw depth (`information-architecture.md`), concrete
-  drag/long-press thresholds and a post-error recovery-pause section
-  (`interaction-design.md`), a workflow-resumption rule
-  (`navigation-system.md`), a frontstage/backstage service-blueprint
-  distinction (`user-flow-engine.md`), a sixth Gestalt grouping signal —
-  common region (`visual-hierarchy.md`), a chart zero-baseline rule
-  (`component-system.md`), a letter-spacing/tracking scale
-  (`typography.md`, propagated into `design-tokens/token-schema.md`, the
-  JSON Schema, and the reference template — added optional, not required,
-  so previously-generated token files don't break), dark-mode
-  near-white-text and a theme-selection default
-  (`color-system.md`), three new evidence-reading sections — behavioral/
-  analytics data pitfalls, qual-vs-quant reconciliation, and a
-  cite-don't-restate pointer to `empathize.md`'s existing synthesis rule
-  (`design-research/evidence-model.md`), a Direct/Indirect/Aspirational
-  competitor classification (`design-research/competitor-analysis.md`), a
-  required counter-example and conflict-priority rank per design principle
-  (`templates/design-direction.md`), and a redundant-tokens check
-  (`design-tokens/token-audit.md` + a new `_check_redundant_tokens()` in
-  `scripts/validate-tokens.py`) — tested against the reference token
-  template via a throwaway scaffolded product, which surfaced a real
-  false-positive bug (typography's weight/lineHeight/family axes
-  intentionally repeat values across type-scale roles) fixed with a
-  documented `REDUNDANCY_CHECK_EXCLUDED_CATEGORIES` exclusion, re-verified
-  clean, then the test product removed. Two genuinely homeless
-  capabilities got new files rather than forced into an existing one:
-  `ux-engine/conversational-ux.md` (turn structure reusing
-  `user-flow-engine.md`'s six-part notation, a three-step error-reprompt
-  ladder, voice rules citing `ux-writing.md`) and `ux-engine/
-  onboarding-design.md` (a four-pattern selection table — progressive/
-  wizard/sample-data/tour — an activation-vs-completion distinction, and a
-  skippability rule), both added as a new `SKILL.md` progressive-
-  disclosure row. Rejected/out of scope: the collection's organizational,
-  interpersonal, and live-user-study skills, which don't fit an
-  autonomous-generation pipeline with no human research team to run them.
-  Still 26 rules, 21 quality-gate dimensions, 12 phases — no architecture
-  change, matching the `1.0.4`/`1.0.5` precedent for this kind of pass.
-  Deliberately not touched: `products/projectflow/` (Rule 15),
-  `design-glanza-plugin/`, the `~/.claude/` installed copies (until the
-  explicit sync step).
-
-  **The explicit sync step, now done:** an invocation-integrity audit found
-  `/design-glanza` was resolving to a stale `~/.claude/skills/design-glanza/`
-  copy frozen at v1.0.7 (missing Rules 17-26, Gates B14-B21, and all 6
-  engines added since), with `~/.claude/design-glanza-plugin/` equally stale
-  and, on inspection, not even an active plugin registration (absent from
-  `settings.json`'s `enabledPlugins` and `plugins/installed_plugins.json` —
-  orphaned content, not a live invocation path). Fixed: the stale global
-  skills-dir copy was backed up in full, then mirror-synced from this file's
-  own directory (`.claude/skills/design-glanza/`, the sole source of truth)
-  — verified byte-identical afterward (differing only in regenerable
-  `__pycache__` bytecode) and confirmed via two independent re-invocations
-  both loading v1.0.16. Separately, `design-glanza-plugin/skills/design-
-  glanza/` (this repo's own plugin package, stuck at v1.0.9) was brought to
-  v1.0.16 the same way, with `docs/PLUGIN.md`'s two documented plugin-form
-  adaptations (`SKILL.md`'s dual invocation phrasing, `scripts/_common.py`'s
-  `_resolve_project_root()`) reapplied on top — `plugin.json` bumped
-  `1.2.0` → `1.3.0` accordingly. The orphaned `~/.claude/design-glanza-
-  plugin/` copy was left untouched (unregistered, so not a live invocation
-  risk) and remains a known follow-up if it's ever registered.
+- **Version:** 1.0.25 — a **repository/workspace separation pass**
+  (no new files; 2 skill files modified — `scripts/_common.py`,
+  `config/operating-rules.md` — plus repo-level housekeeping outside the
+  skill proper): a read-only audit found this repo conflated two things
+  that must never share a git history — the plugin/source itself, and
+  every product Design-Glanza generates from it (`products/projectflow/`
+  had been committed in-repo since v1.0.8). Fixed at the mechanism, not
+  just the symptom: `scripts/_common.py` gained `WORKSPACE_ROOT`
+  (`DESIGN_GLANZA_WORKSPACE_ROOT` override, defaulting to
+  `~/Design-Glanza-Workspace/`) and redefined `PRODUCTS_DIR` to derive from
+  it instead of the repo root, plus a mandatory
+  `_assert_workspace_outside_repo` safety check that refuses to proceed if
+  the resolved workspace ever lands inside this repository — verified to
+  raise correctly on an in-repo override and to resolve cleanly by default,
+  in both the master and plugin copies. `PROJECT_ROOT` itself is untouched
+  (confirmed, via every consumer script, that it was never used for
+  anything but building the old `PRODUCTS_DIR` — a true single-point fix,
+  zero changes needed in `create-product-builder.py`, `validate-product.py`,
+  or `generate-report.py`). Rule 15 (Product Isolation) extended to state
+  this physical boundary explicitly, not just the pre-existing content-isolation
+  rule, citing the new safety check as its enforcement mechanism. `products/`
+  (34 tracked files) copied out to the new workspace, verified byte-identical
+  and re-validated clean against the same findings as before the move, then
+  untracked (`git rm --cached`, history preserved — `git log -- products/`
+  still shows v1.0.8's original commit) and removed from the working tree;
+  root `.gitignore` gained a `/products/` rule as defense-in-depth. Root
+  `README.md`, `.claude/CLAUDE.md`, `docs/INSTALLATION.md`, and
+  `docs/ARCHITECTURE.md` updated to describe the external workspace instead
+  of an in-repo `products/` folder — deliberately **not** touched:
+  `workflows/{analyze-brd,create-product,design-setup,execute-product-builder}.md`,
+  `agents/{brd-analyst,design-setup-specialist}.md`,
+  `product-memory/memory-model.md`, and this file's own Phase registry,
+  since their `products/<slug>/...` citations are relative shorthand for a
+  product's own folder shape, not repo-location claims — that shape is
+  identical at the new root, so rewriting a dozen files for a notational
+  non-issue was deliberately rejected. No new Rule, no new Gate — Rule 15
+  extended in place. Still 26 rules, 21 gates, 12 phases.
+- **Also this pass:** two broken cross-references found by a separate
+  link-integrity audit, fixed: `design-research/interaction-analysis.md`
+  cited `design-reference-engine/ux-architect.md` (file is actually at
+  `agents/ux-architect.md`); `workflows/execute-product-builder.md`'s
+  action-table row 12 cited `templates/research-brief.md` (missing the
+  `design-research/` prefix every other citation of the same file already
+  used correctly).
+- **Previously, 1.0.24** — a **critique-and-iteration loop formalization
+  pass** (no new files; 9 files modified, 0 created): the mandatory
+  audit-and-refinement cycle Rule 20/B15 already required (since v1.0.9)
+  is made explicit as a fixed, named sequence — **GENERATE → CRITIQUE →
+  IDENTIFY DEFECTS → PRIORITIZE DEFECTS → FIX → RECHECK → FINALIZE** — the
+  same steps 0-4 `ui-engine/visual-benchmark.md` has always run, now
+  labeled so the procedure reads as one deliberate loop instead of a list
+  of checks. A new **Priority classification** in that file gives every
+  gap a P0-P3 label (Blocks usability/major defect, Significant
+  production-quality issue, Polish issue, Optional refinement) — not a
+  sixth competing severity scale, an explicit reconciliation onto the
+  existing Blocker/Major/Minor/Note vocabulary, since that's the exact
+  mapping its own "Action this cycle takes" column needed to say P0/un-
+  waived-P1 get fixed automatically while P2/P3 are logged and may be
+  deferred. Step 2's fix-then-recheck language sharpened to re-run only
+  the category/pipeline step(s) a fix actually touched (plus whatever its
+  blast radius reaches) rather than the full pipeline every time, and a
+  new **"When to stop"** list gives FINALIZE seven concrete,
+  simultaneously-required conditions (zero P0, zero un-waived P1, B7/B8/B9
+  each passing, the rubric's own threshold met) instead of an implicit
+  "no gaps" — closing with an explicit "scores are never adjusted to
+  manufacture a pass" line, since a stop-condition list is only real if
+  the numbers behind it can't be bent to satisfy it. The 15-item critique
+  vocabulary this pass was framed around (alignment, spacing, grid,
+  typography, component quality, state completeness, data visualization,
+  interaction, accessibility, responsive behavior, visual hierarchy,
+  modern UI quality, product-context fit, content realism, pixel-level
+  polish) is reconciled onto the existing 11 A-K categories via a new
+  cross-reference table in `ui-audit-framework.md` — every one of the 15
+  already had a home in the engine (several since v1.0.17-23's own
+  pixel/anti-generic/component/chart/accessibility/responsive passes);
+  this table makes that explicit rather than leaving it to be re-derived.
+  Category H's description split into its state-completeness and
+  interaction-quality halves in the same file, naming both explicitly
+  since the 15-item list treats them as two dimensions. `quality-gates.md`
+  B15 and `evaluation-rubric.md` dimension 21 (weight unchanged) both now
+  require the P0-P3 classification and an Initial/Final score recorded,
+  not just that pipeline steps ran. `templates/visual-gap-analysis.md`
+  gained Initial score / Final score fields bookending its existing
+  pass-1/pass-2 structure, and its gap-classification list now carries a
+  priority alongside each gap type. **While updating that template, found
+  and fixed a real, pre-existing omission**: its gap-classification list
+  never actually included **Generic/templated** (the gap type
+  `visual-benchmark.md` itself added at v1.0.19) — corrected now,
+  disclosed here per this changelog's own established precedent for an
+  incidentally-found gap. `operating-rules.md`'s Rule 20 and
+  `agents/ui-designer.md`'s step 8 both now name the loop stages and the
+  automatic-P0/P1-fix requirement explicitly rather than only pointing at
+  `visual-benchmark.md`'s mechanism; `workflows/execute-product-builder.md`'s
+  action 32 renamed to match. No new Rule, no new Gate — this formalizes
+  Rule 20/B15 in place, the same restrained posture v1.0.17-23 each used
+  for their own enhancement passes. Still 26 rules, 21 gates, 12 phases.
+- **Previously, 1.0.23** — a **responsive layout intelligence pass**, under
+  the same explicit constraints as v1.0.18-22 (no new files; only
+  `ui-engine/responsive-system.md`, `ui-engine/visual-benchmark.md`,
+  `ui-engine/ui-audit-framework.md`, `config/quality-gates.md`, and
+  `evals/evaluation-rubric.md` touched — 5 files modified, 0 created).
+  The framing shift is stated up front, in `responsive-system.md`'s own
+  Responsibility line: responsive design is **behavioral adaptation**,
+  never desktop scaled down — and the file's structure now makes that
+  checkable rather than aspirational. A new "Per-breakpoint decision
+  framework" names exactly what gets decided at each tier — Desktop
+  (information hierarchy, grid, navigation, density, primary actions),
+  Tablet (layout restructuring, navigation adaptation, content priority,
+  component resizing), Mobile (single-column behavior, navigation
+  transformation, content stacking, table adaptation, action
+  prioritization, touch targets, overflow handling) — citing the file
+  that already owns each decision (`visual-hierarchy.md`, `navigation-
+  system.md`, `design-system.md`) rather than re-deriving them. A new
+  "The adaptation decision" section names the seven-way vocabulary the
+  task asked for explicitly — stack/collapse/hide/move/become-scrollable/
+  become-alternative-component/remain-fixed — with a stated condition for
+  each, so every element crossing a breakpoint has one of the seven
+  recorded, not an implicit "got smaller." A new "Not accepted, at any
+  breakpoint" list (overflow, clipping, overlapping, accidental
+  horizontal scroll, broken alignment, unreadable text, compressed
+  controls, inconsistent card sizing, broken charts, inaccessible
+  drawers, hidden critical actions) maps each item to its owning rule —
+  several already existed elsewhere (broken charts → the Chart pipeline's
+  Responsive step; inaccessible drawers → the Accessibility pipeline's
+  Modal/Drawer step; inconsistent card sizing → `craft-critique.md` check
+  10's uniformity scan, now explicitly re-applied per breakpoint, not
+  just the reference one) and are cited, not restated; genuinely new ones
+  (accidental horizontal scroll, broken alignment, unreadable text,
+  compressed controls) got real criteria for the first time. A new
+  "Responsive verification pipeline" — Desktop baseline → Tablet
+  restructuring → Mobile transformation → Adaptation-decision audit →
+  Not-accepted defect scan — is the fourth mandatory pipeline wired into
+  `visual-benchmark.md`'s Mandatory refinement cycle this session, after
+  the pixel-precision, chart, and accessibility pipelines: a screen
+  reviewed only at the desktop width it was designed at has not cleared
+  this step. `ui-audit-framework.md`'s Category J and its own pixel-
+  pipeline's Responsive row both updated to cite it. `quality-gates.md`
+  B9 and `evaluation-rubric.md` dimension 14 (still Tier B, weight
+  unchanged) both now require the seven-way adaptation decision recorded
+  per element and zero unresolved Not-accepted items at every breakpoint,
+  not just the one a screen happened to be reviewed at. No new Rule, no
+  new Gate. Still 26 rules, 21 gates, 12 phases.
+- **Previously, 1.0.22** — an accessibility-as-first-class pass (no new
+  files; 9 files modified): closed 4 gaps `accessibility.md` never
+  actually stated — no-keyboard-traps (Blocker), skip navigation, focus
+  restoration generalized, a consolidated ARIA section (5 attributes,
+  native-first). Added the gate pipeline (Keyboard→Focus→Contrast→
+  Semantics→ARIA→Forms→Status Communication→Modal/Drawer→Charts→
+  Responsive/Touch) wired into the existing B8. `scripts/
+  validate-tokens.py` gained `_check_target_size` (WCAG 2.2 24px minimum)
+  alongside `_check_contrast` — tested clean against the reference
+  template and against a deliberately undersized 18px control (caught),
+  then removed. `color-system.md` gained the disabled-state exemption;
+  `quality-gates.md` B8 and rubric dimension 13 (weight unchanged) now
+  require deterministic calculation over visual assumption. Still 26
+  rules, 21 gates, 12 phases.
+- **Previously, 1.0.21** — a data visualization & chart storytelling pass
+  (no new files/engine): fixed a self-inflicted dangling reference (a
+  "chart-care standard" that didn't exist) by building a real mandatory
+  Chart verification pipeline in `visual-benchmark.md` — Chart Purpose →
+  Chart Type → Data Realism → Axis → Legend → Tooltip → Filter → State →
+  Accessibility → Responsive → Visual Storytelling. Chart Purpose routes
+  a single tracked number to the KPI/Stat Card instead of a chart
+  (`component-system.md`); the Chart registry entry gained partial-data/
+  insufficient-data states and filter-responsiveness; `search-ux.md`
+  gained the owning "filter is screen-scoped" rule; drill-down got a home
+  in `interaction-design.md`. `quality-gates.md` B15 and rubric
+  dimension 21 (weight unchanged) require the pipeline. Still 26 rules,
+  21 gates, 12 phases.
+- **Previously, 1.0.20** — a component quality/production-readiness pass
+  (no new files/engine): 5 missing component types added within their
+  existing owning registry files (Badge, Alert/Banner, Progress Indicator
+  in `components-feedback-status.md`; List, Timeline/Activity Feed in
+  `components-containers-display.md`); a KPI/Stat Card composition added
+  to `composition-patterns.md`, explicitly cross-referencing the prior
+  version's anti-generic KPI-formula tell. Missing states filled on
+  existing entries (Card: selected/disabled; Table: row-actions +
+  density; Input: read-only/success; Button: icon-only + Tooltip;
+  Navigation/Sidebar: focus; Modal/Drawer: scroll behavior).
+  `component-system.md` point 4 gained a new Production-readiness
+  pipeline (Component exists → States identified → States designed →
+  Interaction behavior defined → Responsive behavior defined →
+  Accessibility behavior defined → Visual consistency verified) with an
+  explicit state-relevance test. `quality-gates.md` B19 and
+  `evaluation-rubric.md` dimensions 11/25 sharpened (weights unchanged);
+  caught and fixed a stale "12 states" count (always 13). Registry size
+  corrected ~24 → ~29 across 6 current-state files; 2 genuinely
+  historical references correctly left untouched. Still 26 rules, 21
+  gates, 12 phases.
+- **Previously, 1.0.19** — an anti-generic visual quality pass (no new
+  files/engine): `craft-critique.md`'s Anti-cliché catalog (check 8)
+  gained 8 tells (identical KPI-card formula, reflexive Dashboard-grid
+  choice, roundest-radius default, glassmorphism, generic blue-purple
+  palette, placeholder content, generic chart placement, meaningless
+  icons, inconsistent identical-content treatment), each reciprocally
+  cited into its true owning file. Purposeful-vs-excessive whitespace
+  reconciled in `visual-hierarchy.md`. Added the closing question ("does
+  this look intentionally designed for this product, or any unrelated
+  SaaS product?") to `ui-audit-framework.md`'s Final Visual QA step, with
+  a new **Generic/templated** gap type routing it through
+  `visual-benchmark.md`'s existing refinement cycle. B15 requires it
+  recorded. `evaluation-rubric.md` deliberately left untouched — Tier C's
+  cap already prevents score inflation from styling alone. Still 26
+  rules, 21 gates, 12 phases.
+- **Previously, 1.0.18** — a pixel-level UI precision pass (no new files/
+  engine): `ui-audit-framework.md` gained a mandatory "Pixel-level
+  verification pipeline" (Structure → Alignment → Spacing → Sizing →
+  Typography → Component → Responsive → Micro-polish → Final Visual QA)
+  sequencing the existing 11 A-K categories, plus a 12-item "not accepted"
+  defect list wired to B15. Shared alignment edges + Vertical rhythm
+  (`layout-system.md`), a closed Avatar scale (`design-system.md` — fixed
+  a real redundant-token false positive by retuning, not weakening, the
+  check), a Tables section + same-component-same-state rule + badge/
+  tooltip/overflow positioning (`component-system.md`), and craft-critique
+  check 10 (alignment/uniformity scan). `evals/evaluation-rubric.md`
+  dimension 21 sharpened in place — Tier B, ×2 weight, Tier C's cap
+  untouched. `visual-gap-analysis.md` records findings per pipeline step.
+  Still 26 rules, 21 gates, 12 phases.
+- **Previously, 1.0.17** — a UI/UX benchmark remediation pass closing 5
+  gaps a live Modern UI Generation Benchmark run surfaced (a generated
+  dashboard scored 77/100). KPI-tile weighting (`visual-hierarchy.md`),
+  chart-label realism extending Rule 10 (`component-system.md`), drawer
+  focus-trap parity with Modal (`accessibility.md`), mandatory rendered
+  (not just described) empty/loading/error evidence at B15
+  (`visual-benchmark.md`), and a real WCAG contrast-ratio calculator added
+  to `scripts/validate-tokens.py` (`design-tokens/token-audit.md`'s new
+  Contrast validation, mapped to B6/B8) — verified against the reference
+  template (0 false positives) and a deliberately-broken case (caught 3
+  injected failures) via a throwaway scaffolded product, then removed.
+  Still 26 rules, 21 gates, 12 phases.
+- **Previously, 1.0.16** — a second, deeper selective-integration pass over
+  `designer-skills-main` (9 parallel research passes, keeping only what was
+  genuinely new, several fork-reported gaps verified as false positives and
+  correctly left alone): small surgical extensions across `empathize.md`,
+  `define.md`, `ideate.md`, `test.md`, `localization.md`, `accessibility.md`,
+  `information-architecture.md`, `interaction-design.md`,
+  `navigation-system.md`, `user-flow-engine.md`, `visual-hierarchy.md`
+  (6th Gestalt signal), `component-system.md` (chart zero-baseline),
+  `typography.md` (letter-spacing scale, propagated to the token schema/
+  template), `color-system.md`, `design-research/{evidence-model,
+  competitor-analysis}.md`, `templates/design-direction.md`, and a
+  redundant-tokens check in `design-tokens/token-audit.md` +
+  `scripts/validate-tokens.py`; two new files for genuinely homeless
+  capabilities (`ux-engine/{conversational-ux,onboarding-design}.md`).
+  Then closed the deferred sync step: an invocation-integrity audit found
+  `/design-glanza` resolving to a stale `~/.claude/skills/design-glanza/`
+  copy frozen at v1.0.7 (missing Rules 17-26, Gates B14-B21, 6 whole
+  engines) — backed up, then mirror-synced from this file's own directory
+  (the sole source of truth), verified byte-identical and confirmed via
+  two independent re-invocations. `design-glanza-plugin/skills/design-
+  glanza/` (this repo's own plugin package, stuck at v1.0.9) brought to
+  v1.0.16 the same way, its two documented plugin-form adaptations
+  reapplied on top; `plugin.json` bumped `1.2.0` → `1.3.0`. Still 26 rules,
+  21 gates, 12 phases — no architecture change.
 - **Previously, 1.0.15** — added **Product Memory & Architecture/Design
   Decision Records (ADR)**: a new top-level `product-memory/` folder
   (`README.md`, `memory-model.md`, `adr-schema.md`, `consultation-rule.md`,
@@ -1257,6 +1427,159 @@ everywhere, it belongs here.
     duplicated. See the Version summary above for the full list. Rejected:
     the source's organizational/interpersonal/live-study skills. Still 26
     rules, 21 quality-gate dimensions, 12 phases — no architecture change.
+    Also closed the deferred sync step this version left open: stale
+    `~/.claude/skills/design-glanza/` (frozen v1.0.7) mirror-synced from
+    the source of truth and verified via two re-invocations;
+    `design-glanza-plugin/skills/design-glanza/` (stuck v1.0.9) brought
+    current with its two documented adaptations reapplied; `plugin.json`
+    bumped `1.2.0` → `1.3.0`.
+  - 1.0.17 — a UI/UX benchmark remediation pass, closing 5 gaps a live run
+    of the Modern UI Generation Benchmark surfaced (77/100 on a generated
+    admin dashboard). Each fix sharpens an existing rule/gate: KPI-tile
+    weighting (`ui-engine/visual-hierarchy.md`), chart-label realism
+    extending Rule 10 (`ui-engine/component-system.md`), drawer focus-trap
+    parity with Modal (`ux-engine/accessibility.md`), mandatory rendered
+    (not just described) empty/loading/error evidence at B15
+    (`ui-engine/visual-benchmark.md`), and a real WCAG contrast-ratio
+    calculator added to `scripts/validate-tokens.py` (`design-tokens/
+    token-audit.md`'s new Contrast validation, mapped to B6 and B8) —
+    verified against the reference template (0 false positives) and a
+    deliberately-broken case (caught 3 injected failures) via a throwaway
+    scaffolded product, then removed. Still 26 rules, 21 gates, 12 phases —
+    every fix sharpens existing enforcement, none adds new mechanism.
+  - 1.0.18 — a pixel-level UI precision pass under three explicit
+    constraints (no new files, no new/parallel engine, enhance only
+    `ui-engine/`, `visual-benchmark.md`, `quality-gates.md`, `agents/`,
+    `workflows/`, config). Added a mandatory "Pixel-level verification
+    pipeline" to `ui-engine/ui-audit-framework.md` (Structure → Alignment →
+    Spacing → Sizing → Typography → Component → Responsive → Micro-polish →
+    Final Visual QA), sequencing the existing 11 A-K categories rather than
+    a second taxonomy, plus a 12-item "not accepted" defect list wired to
+    B15. Each of the 8 requested categories landed in its pre-existing
+    home: Shared alignment edges + Vertical rhythm (`layout-system.md`), a
+    closed Avatar scale (`design-system.md` — caught and fixed a real
+    false-positive against the redundant-token check via retuning, not
+    weakening it), a Tables section + same-component-same-state rule +
+    badge/tooltip/overflow positioning (`component-system.md`), and check
+    10 (Alignment and uniformity scan) in `craft-critique.md`. Scoring:
+    `evals/evaluation-rubric.md` dimension 21 sharpened to require the
+    pipeline explicitly — still Tier B, still ×2 weight, Tier C's under-5%
+    visual-presentation cap untouched, so precision affects score through
+    an already-correct weighting, not a new inflated path.
+    `visual-gap-analysis.md` now records findings per pipeline step. No new
+    Rule, no new Gate. Still 26 rules, 21 gates, 12 phases.
+  - 1.0.19 — an anti-generic visual quality pass (no new files/engine; only
+    `ui-engine/`, `visual-benchmark.md`, `design-system.md`,
+    `quality-gates.md`, config touched — 9 files). `craft-critique.md`'s
+    existing Anti-cliché catalog (check 8) gained 8 new tells: identical
+    KPI-card formula, reflexive Dashboard-grid choice, roundest-radius
+    default, glassmorphism (fails `visual-trends.md`'s existing Trend
+    Adoption Gate on contrast), generic blue-purple palette not sourced
+    from Design Direction, placeholder content, generic chart placement,
+    meaningless icons, inconsistent treatment of identical content — each
+    reciprocally cited into its true owning file
+    (`layout-system.md`/`design-system.md`/`color-system.md`/
+    `component-system.md`), never duplicated. Purposeful-vs-excessive
+    whitespace reconciled in `visual-hierarchy.md`. Added the requested
+    closing question to `ui-audit-framework.md`'s Final Visual QA step,
+    routed through `visual-benchmark.md`'s existing refinement cycle via a
+    new **Generic/templated** gap-type row. `quality-gates.md`'s B15
+    requires the question be recorded. `evals/evaluation-rubric.md`
+    deliberately left untouched — dimension 21 already maps to B15 and
+    Tier C's cap already prevents score inflation from styling alone.
+    Still 26 rules, 21 gates, 12 phases.
+  - 1.0.20 — a component quality/production-readiness pass (no new
+    files/engine; only `component-registry/*`, `ui-engine/`,
+    `ux-engine/`, `quality-gates.md`, `visual-benchmark.md`, config
+    touched — 14 files). 5 genuinely missing component types added as
+    entries within their existing owning registry files: Badge,
+    Alert/Banner, Progress Indicator (`components-feedback-status.md`),
+    List, Timeline/Activity Feed (`components-containers-display.md`).
+    A KPI/Stat Card composition added to `composition-patterns.md`,
+    explicitly cross-referencing last version's anti-generic KPI-formula
+    tell so it can't license templating. Missing states filled on
+    existing entries (Card: selected/disabled; Table: row-actions +
+    density note; Input: read-only/success; Button: icon-only + Tooltip
+    requirement; Navigation/Sidebar: focus; Modal/Drawer: scroll
+    behavior). `component-system.md` point 4 gained selected/read-only
+    plus a new Production-readiness pipeline (Component exists → States
+    identified → States designed → Interaction behavior defined →
+    Responsive behavior defined → Accessibility behavior defined →
+    Visual consistency verified) with an explicit state-relevance test.
+    `quality-gates.md` B19 now requires that pipeline recorded, not just
+    a Registry-base citation. `evaluation-rubric.md` dimensions 11/25
+    sharpened (weights unchanged) — caught and fixed a stale "12 states"
+    count (state-design.md has always had 13) while there. Registry size
+    claim corrected ~24 → ~29 across 6 current-state files; 2 genuinely
+    historical `master-config.md` references to ~24 correctly left
+    untouched. Still 26 rules, 21 gates, 12 phases.
+  - 1.0.21 — a data visualization & chart storytelling pass (no new
+    files, no separate chart engine; only `ui-engine/`,
+    `component-registry/*`, `ux-engine/`, `quality-gates.md`,
+    `visual-benchmark.md`, config touched — 6 files). Fixed a
+    self-inflicted dangling reference from v1.0.20 (a "chart-care
+    standard" that didn't exist) by building it for real: a new mandatory
+    Chart verification pipeline in `visual-benchmark.md` — Chart Purpose
+    → Chart Type → Data Realism → Axis → Legend → Tooltip → Filter →
+    State → Accessibility → Responsive → Visual Storytelling — run for
+    any screen containing a chart, inside the existing refinement cycle.
+    `component-system.md`'s Data visualization section gained a KPI-vs-
+    chart decision rule (a single tracked number routes to the KPI/Stat
+    Card, never a chart) plus full storytelling/tooltip/legend
+    requirements. The Chart registry entry gained `partial data`/
+    `insufficient data` states and a filter-responsiveness requirement;
+    `search-ux.md`'s Filter facets section gained the owning rule (a
+    filter is screen-scoped, not component-scoped); chart drill-down got
+    a home in `interaction-design.md`'s Sorting and pagination section.
+    `quality-gates.md` B15 and `evaluation-rubric.md` dimension 21
+    (weight unchanged) both require the pipeline — a chart that renders
+    correctly but fails Visual Storytelling is rejected and redesigned.
+    No new Rule, no new Gate. Still 26 rules, 21 gates, 12 phases.
+  - 1.0.22 — an accessibility-as-first-class pass (no new files; 9 files
+    modified). Closed 4 gaps `accessibility.md` never actually stated:
+    no-keyboard-traps (Blocker-severity), skip navigation, focus
+    restoration generalized beyond Modal/Drawer, and a consolidated ARIA
+    section (exactly 5 attributes, native-semantics-first). Added the
+    requested gate pipeline — Keyboard → Focus → Contrast → Semantics →
+    ARIA → Forms → Status Communication → Modal/Drawer → Charts →
+    Responsive/Touch — as `accessibility.md`'s own section, wired into
+    the *existing* B8 rather than a new gate number. `scripts/
+    validate-tokens.py` gained `_check_target_size` (WCAG 2.2 24px
+    minimum on `sizing.control*`) alongside the existing `_check_contrast`
+    — both are the literal Contrast/Responsive-Touch pipeline steps, not
+    a visual read; tested clean against the reference template and
+    against a deliberately undersized 18px control (caught, Major) via a
+    throwaway scaffolded product, then removed. `color-system.md` gained
+    the disabled-state contrast exemption; `form-design.md` gained an
+    `aria-describedby` cross-reference. `quality-gates.md` B8 and rubric
+    dimension 13 (weight unchanged) now state explicitly: a score based
+    on visual inspection alone where a deterministic check was available
+    and skipped does not satisfy the gate. No new Rule, no new Gate.
+    Still 26 rules, 21 gates, 12 phases.
+  - 1.0.23 — a responsive layout intelligence pass (no new files; 5 files
+    modified). `responsive-system.md`'s Responsibility line now states
+    responsive design is behavioral adaptation, never desktop scaled
+    down. New "Per-breakpoint decision framework" names what's decided
+    at Desktop (hierarchy/grid/nav/density/primary actions), Tablet
+    (restructuring/nav adaptation/content priority/component resizing),
+    Mobile (single-column/nav transformation/stacking/table adaptation/
+    action prioritization/touch targets/overflow), each citing its true
+    owning file. New "The adaptation decision" section names the
+    seven-way vocabulary (stack/collapse/hide/move/become-scrollable/
+    become-alternative-component/remain-fixed) with a stated condition
+    per option. New "Not accepted, at any breakpoint" defect list maps
+    each item to its owning rule — several already existed elsewhere
+    (broken charts, inaccessible drawers, inconsistent card sizing) and
+    are cited not restated; genuinely new ones (horizontal scroll,
+    broken alignment, unreadable text, compressed controls) got real
+    criteria for the first time. New "Responsive verification pipeline"
+    (Desktop baseline → Tablet restructuring → Mobile transformation →
+    Adaptation-decision audit → Not-accepted defect scan) is the fourth
+    mandatory pipeline wired into `visual-benchmark.md`'s refinement
+    cycle this session, after pixel-precision, chart, and accessibility.
+    `ui-audit-framework.md` Category J and `quality-gates.md` B9 and
+    rubric dimension 14 (weight unchanged) all updated to cite it. No
+    new Rule, no new Gate. Still 26 rules, 21 gates, 12 phases.
 
 ## Phase registry
 The canonical 12 orchestration phases, in order. Detail lives in

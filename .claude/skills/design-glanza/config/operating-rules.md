@@ -159,6 +159,17 @@ product-specific knowledge without contaminating the master skill. Nothing
 learned or decided while building one product may be written back into
 `config/`, `methodology/`, `product-intelligence/`, `ux-engine/`, `ui-engine/`,
 `workflows/`, `templates/`, or `agents/` as a domain-specific special case.
+This isolation is physical as well as logical: every generated Product
+Builder is written to the external workspace (`scripts/_common.py`'s
+`PRODUCTS_DIR`, defaulting to `~/Design-Glanza-Workspace/products/`,
+overridable via `DESIGN_GLANZA_WORKSPACE_ROOT`) — never inside this
+repository, and a mandatory safety check refuses to proceed if that
+resolution ever lands inside it. Design-Glanza never runs `git add`/
+`commit`/`push` for generated output, and never initializes a repository
+for one — a user wanting a generated product under version control
+creates and manages a separate repository for it themselves.
+- **Enforced by:** `scripts/_common.py`'s `_assert_workspace_outside_repo`
+  safety check, and root `.gitignore`'s defense-in-depth `/products/` rule.
 - **Executed via:** `scripts/create-product-builder.py` scaffolds *from* the core
   outward, never the reverse; a recurring pattern observed across multiple
   products is graduated into a proper `product-types/*.md` file instead
@@ -255,11 +266,17 @@ never adopted blindly, always checked against whether it actually fits
 Where a reference exists, extract its full visual language, not a shallow
 subset. Where none exists, select a domain-matched default — never one
 generic style applied to every product regardless of domain. After a
-screen is generated, it is a draft, not a final answer: run the full UI
-Audit Framework and a three-way Reference/Direction/Generated-UI
-comparison, and complete **at least one** audit-and-refinement cycle before
-declaring the UI complete — even a clean first draft records that the
-check ran, rather than skipping it.
+screen is generated, it is a draft, never the final UI: run the fixed
+critique-and-iteration loop — GENERATE → CRITIQUE → IDENTIFY DEFECTS →
+PRIORITIZE DEFECTS → FIX → RECHECK → FINALIZE (`ui-engine/
+visual-benchmark.md`) — across the full UI Audit Framework and the
+three-way Reference/Direction/Generated-UI comparison, **at least once**,
+before declaring the UI complete. Every defect found is classified P0-P3
+and every P0 and un-waived P1 is fixed automatically, never left for a user
+to notice; a screen only reaches FINALIZE once that file's own "When to
+stop" conditions all hold, never earlier, and never by relaxing them to
+get there sooner. Even a clean first draft records that the check ran,
+rather than skipping it.
 - **Enforced by:** the new **B15 (Visual Benchmark & Audit Cycle
   Completeness)** measurable gate, checked as part of the existing
   Prototype → Implement transition.
@@ -388,7 +405,7 @@ into a `product-types/*.md` pack.
   13-field entry shape (extending, not replacing,
   `ui-engine/component-system.md`'s 8-point framework),
   `components-{actions-inputs,navigation,containers-display,
-  feedback-status}.md`'s ~24 pre-populated entries,
+  feedback-status}.md`'s ~29 pre-populated entries,
   `composition-patterns.md`'s organism-level patterns, and
   `registry-integration.md`'s registry-first enforcement and Quality
   Engine/UX Scenario Testing wiring — checked by

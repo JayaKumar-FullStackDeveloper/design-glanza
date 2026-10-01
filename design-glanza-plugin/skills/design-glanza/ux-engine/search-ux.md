@@ -51,6 +51,18 @@ zero results once combined with the current query — a facet offering an
 option that would produce nothing is a discoverability trap, not a neutral
 default.
 
+**A filter is screen-scoped, not component-scoped.** On a dashboard
+showing the same underlying data through more than one component (a table
+and a chart of the same date range, say), an applied filter narrows every
+data-bearing component on that screen together — never just the one it
+happens to sit next to. A chart that stays unfiltered while an adjacent
+table narrows is reading a different, unstated data set from the rest of
+the screen, which is a correctness defect, not a cosmetic inconsistency
+(`ui-engine/visual-benchmark.md`'s Chart verification pipeline checks this
+explicitly at its Filter step). Active filters remain visible regardless
+of which component the user is currently looking at, and a reset/clear
+action resets every affected component at once, never one at a time.
+
 ## Composing with filter → sort → paginate
 A query first produces the working result set; `interaction-design.md`'s
 fixed filter → sort → paginate order then applies to that set exactly as

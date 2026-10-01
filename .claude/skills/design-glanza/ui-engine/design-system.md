@@ -29,7 +29,12 @@ A closed, named scale — not arbitrary per-component values:
 | `radius-full` | 9999px | Pills, avatars, badges |
 
 A component reaching for a radius value outside this scale is drift —
-`agents/design-system-expert.md` catches it.
+`agents/design-system-expert.md` catches it. Reaching for `radius-lg`/
+`radius-full` on every container *within* the scale is a different failure
+— not drift, but the reflexive "everything is a rounded card" default
+`craft-critique.md`'s anti-cliché catalog names — pick the step each
+container's actual role calls for, not the roundest available option by
+habit.
 
 ### Elevation scale
 Communicates stacking/hierarchy — what's "on top of" what — expressed as a
@@ -146,6 +151,23 @@ Internal padding at each size still comes from the spacing scale
 (`component-system.md` point 3's existing Size variant rule) — this scale
 only fixes the control's outer height, so a button and an input at the
 same size token align to the same row height when placed side by side.
+
+**Avatar scale** — a closed set, distinct from the icon scale above (an
+avatar represents an identity, not an action/label, and is sized by
+context rather than paired with a fixed adjacent element):
+
+| Token | Size | Usage |
+|---|---|---|
+| `avatar-xs` | 20px | Inline in dense table rows/comment threads |
+| `avatar-sm` | 28px | List rows, compact cards |
+| `avatar-md` | 36px | Default: cards, headers, profile summaries |
+| `avatar-lg` | 64px | Profile pages, empty-state illustration context |
+
+Every avatar of the same role (e.g. "customer row avatar" across every
+table in the product) uses the same token — a table whose rows use
+`avatar-sm` on one screen and an unnamed 30px value on another is the
+sizing-consistency defect this scale exists to prevent, the same drift
+`agents/design-system-expert.md` already catches for radius/elevation.
 
 ### Z-index scale
 The elevation scale above already states that "elevation level also

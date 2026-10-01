@@ -42,6 +42,20 @@ the user can even proceed outranks everything else on the screen; secondary
 detail (metadata, timestamps, secondary metrics) recedes in size/contrast and
 is positioned later in scan order.
 
+## Parallel summary metrics (KPI tiles)
+A row of side-by-side summary tiles (KPI cards, stat tiles) is the one place
+the Primary-action discipline above is easiest to skip by default — nothing
+forces a choice the way one primary button does, so every tile quietly gets
+identical size, weight, and treatment. Apply Information priority here too:
+identify which single metric is this screen's most business-critical number
+(cite the requirement or the domain pack's own stated priority — never a
+guess) and differentiate it from its siblings by at least one of size,
+position (placed first in scan order), or a stronger fill/border treatment —
+unless the domain or the requirement explicitly calls for parity among the
+tiles (e.g. a comparison view where equal weight *is* the point). Identical
+treatment across the whole row is a default to justify, not the default
+itself.
+
 ## Grouping
 Visual proximity and enclosure (whitespace gaps, card boundaries, dividers)
 mirror `ux-engine/information-architecture.md`'s logical groupings exactly —
@@ -120,6 +134,18 @@ element increases its perceived importance relative to its neighbors, deployed
 deliberately (around the primary action, around a critical alert) rather than
 applied uniformly "for cleanliness" everywhere, which flattens hierarchy
 instead of creating it.
+
+**Purposeful vs. excessive — the same test either way:** can a viewer point
+to *why* a specific gap is as large as it is (it's separating unrelated
+sections per the spacing scale's tier convention, or it's emphasizing the
+element it surrounds)? If every gap on a screen is generously large with no
+gap reading as more emphatic than another, whitespace has stopped doing the
+job this section describes and become a reflexive "clean minimal SaaS"
+default instead — the same genericness failure `craft-critique.md`'s
+anti-cliché catalog names for other surface choices, applied here. Purposeful
+whitespace is uneven on purpose (tighter where content is dense/related,
+looser where it's separating or emphasizing); uniformly generous whitespace
+is the tell, not the amount itself.
 
 ## Progressive disclosure
 Show only what's needed now; defer secondary detail behind an explicit,

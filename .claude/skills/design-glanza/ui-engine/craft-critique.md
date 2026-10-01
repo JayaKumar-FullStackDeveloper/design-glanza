@@ -136,6 +136,60 @@ choice, not a reflex):
   perpetual slow pan) on a screen with no actual state change to justify
   it — this is exactly what the frequency-based animate/don't-animate gate
   in `ux-engine/interaction-design.md` exists to catch.
+- **A row of KPI/stat cards using the identical icon-in-circle + big-number +
+  trend-arrow formula with zero differentiation** — the specific, extremely
+  common "generic SaaS dashboard" tell, distinct from `visual-hierarchy.md`'s
+  Parallel summary metrics rule (which addresses *weight*): even a correctly
+  weighted KPI row can still be generic if every card's internal anatomy is
+  identically templated with nothing reflecting what's actually being
+  measured for *this* product.
+- **The dashboard-grid composition pattern chosen by default** because the
+  screen happens to be called a dashboard, rather than because it's actually
+  the right shape for this screen's information priority
+  (`layout-system.md`'s Composition patterns section) — a predictable
+  layout is a structure-level instance of this same genericness failure,
+  not just a surface-level one.
+- **Radius defaulted to the largest step in the closed scale
+  (`design-system.md`'s `radius-lg`/`radius-full`) on every container**
+  regardless of role — the same "spend border/fill/radius/shadow by role,
+  not uniformly" discipline `layout-system.md`'s Closure rule already
+  states for enclosure signals, applied here to the specific reflexive
+  choice of always reaching for the roundest available option.
+- **Glassmorphism (heavy blur + low-opacity layering) with no functional
+  reason** — a trend, subject to `visual-trends.md`'s three-point Trend
+  Adoption Gate like any other; it fails that gate on point 1 almost by
+  construction (blurred/translucent surfaces routinely compromise the
+  contrast ratio `color-system.md` requires) and needs a stated
+  register-fit reason to pass point 3, which "it looks modern" is not.
+- **A generic blue-to-purple "SaaS palette" adopted because it's the
+  default the tool reaches for, not because it's this product's actual
+  brand/domain color** — distinct from the AI-gradient tell above (this is
+  about the base *palette choice* itself, gradient or not); check the
+  palette against `color-system.md`'s Palette construction rule and this
+  product's actual `design-direction.md` rather than defaulting to it.
+- **Lorem-ipsum or other placeholder text/data shipped in a "finished"
+  screen** — a direct violation of Rule 10's no-invented-content
+  discipline at the visual-content level, not merely a craft nit.
+- **Two charts placed in a generic top-right or side-by-side pair because
+  "dashboards have charts there,"** rather than because their position
+  reflects this screen's actual information priority
+  (`visual-hierarchy.md`'s Information priority rule) — chart *type*
+  selection is `component-system.md`'s job; chart *placement* relative to
+  everything else on the screen is a hierarchy decision, not a slot to
+  fill by convention.
+- **An icon chosen for decoration or vague thematic fit rather than a
+  specific, correct meaning** — e.g. a generic bar-chart icon used for
+  every analytics-adjacent action regardless of what it actually does, or
+  an icon whose common meaning doesn't match its label. Distinct from the
+  emoji tell above (a real icon can still be the wrong, meaningless one).
+- **Visually inconsistent treatment for structurally identical content** —
+  two cards holding the same kind of information (e.g. two KPI cards, or
+  two list items in the same list) styled noticeably differently with no
+  stated reason — the reflexive-variety failure mode opposite of the
+  identical-KPI-formula tell above: that tell is *too* identical with no
+  differentiation reflecting real content differences; this one is
+  inconsistent where the content is *actually* the same and should read
+  as one visual language, not several.
 
 ### 9. Cognitive load and scanning fit
 Distinct from check 1's hierarchy ratio: count how many independent
@@ -150,8 +204,35 @@ resolves to the one intended end point). A screen that passes every other
 check here can still fail this one by simply presenting too much
 undifferentiated information density for the scan pattern it committed to.
 
+### 10. Alignment and uniformity scan (numeric)
+Distinct from checks 1-9's composition/restraint focus: a literal
+edge-and-dimension pass over the finished screen, checking
+`layout-system.md`'s Shared alignment edges rule and vertical-rhythm rule
+against what was actually produced, not what the spec intended. Three
+sub-checks, each with a concrete pass/fail:
+- **Row/card height uniformity** — every card in the same row, or every row
+  in the same list/table, shares one height (or a stated content-driven
+  reason for the one that doesn't) — a scan for the single most common,
+  most visually-obvious defect this checklist exists to catch.
+- **Overlap and clipping scan** — no element visually overlaps another
+  unless deliberately layered with a stated elevation level
+  (`design-system.md`); no text or content is clipped with no truncation
+  or scroll affordance (`component-system.md`'s Overflow behavior).
+- **Drift-from-scale spot check** — pick 3-4 spacing/sizing values at
+  random from the finished screen and confirm each is a named token, not a
+  close-but-off value introduced by a rounding error or an inherited
+  default — the same "close is not aligned" standard `layout-system.md`
+  states explicitly, verified here rather than assumed.
+
+**Provenance:** unlike checks 1-9, this check is not drawn from the
+external sources cited above — it was added directly in response to a
+UI-generation benchmark run that scored a real generated screen below its
+target specifically on alignment/sizing/spacing precision, not composition
+craft. Recorded as its own addition rather than folded into the "three
+sources" count, matching how check 9 was itself noted separately.
+
 ## Reporting format
-Route every finding from checks 1–9 through the same triad:
+Route every finding from checks 1–10 through the same triad:
 **Observation** (what's actually on screen, stated neutrally) →
 **Problem** (which check it fails and why that matters) → **Fix** (the
 specific, actionable change) — plus a `pass` / `minor issue` / `major issue`

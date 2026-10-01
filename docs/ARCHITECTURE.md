@@ -9,7 +9,12 @@ Design-Glanza is organized as four layers, each with a distinct authority and li
 | **1. Master Skill** | `.claude/skills/design-glanza/` | Permanent, versioned (currently **1.0.9**) | The domain-agnostic reasoning engine: rules, gates, methodology, UX/UI technique, agents, workflows, templates, scripts, evals |
 | **2. Domain Overlays** | `product-types/*.md` + `product-types/domain-standards/` | Permanent, extended over time | 12 authored domain packs (Domain Pack Contract) *and* a 122-entry externally-sourced UI/UX standards registry — two independent, composable domain-matching systems |
 | **3. Portable Plugin** | `design-glanza-plugin/` | Synced snapshot | A Claude Code plugin-packaged mirror of the master skill, for distribution outside this one project |
-| **4. Generated Product Builders** | `products/<slug>/` | One per real product, grows over that product's life | Product-specific requirements, UX, UI, QA artifacts — references the master engine by relative path, never copies it |
+| **4. Generated Product Builders** | `~/Design-Glanza-Workspace/products/<slug>/` (external — never in this repo) | One per real product, grows over that product's life | Product-specific requirements, UX, UI, QA artifacts — references the master engine by relative path, never copies it |
+
+Layers 1-3 are version-controlled in this repository; Layer 4 is
+deliberately not — it lives in the external workspace
+(`scripts/_common.py`'s `PRODUCTS_DIR`) and is never git-added, committed,
+or pushed here.
 
 ## The central architectural invariant
 

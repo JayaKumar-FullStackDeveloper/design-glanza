@@ -59,6 +59,8 @@ claude plugin validate ~/.claude/skills/design-glanza
 - Claude Code (any recent version supporting skills/plugins)
 - Python 3.x on `PATH` (for `scripts/*.py` — standard library only, no `pip install` needed)
 - No other runtime dependencies
+- Optional: `DESIGN_GLANZA_WORKSPACE_ROOT` env var, if you want generated products
+  written somewhere other than the default `~/Design-Glanza-Workspace/`
 
 ## First real use
 
@@ -69,6 +71,9 @@ claude plugin validate ~/.claude/skills/design-glanza
    **Design Setup** → Prototype → Implement → **Preview & Run** → Test →
    Audit → Iterate, stopping for review between phases unless you
    explicitly ask for an end-to-end run.
-4. A generated **Product Builder** appears under `products/<your-product-slug>/`.
+4. A generated **Product Builder** appears under
+   `~/Design-Glanza-Workspace/products/<your-product-slug>/` (or
+   `$DESIGN_GLANZA_WORKSPACE_ROOT/products/<your-product-slug>/` if that's set) —
+   never inside this repository.
 
 See [`WORKFLOW.md`](WORKFLOW.md) for exactly what happens at each phase.

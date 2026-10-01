@@ -57,11 +57,37 @@ an unlogged deviation always is.
 6. Scans for redundant tokens: two different paths resolving to the exact
    same value, flagged for the reuse-vs-alias review above — never
    auto-merged.
+7. Computes a real WCAG contrast ratio (relative luminance, not an
+   eyeballed estimate) for every declared `{foreground, background}`
+   semantic triplet pair and for `text.primary`/`text.muted` against
+   `background`/`surface`, in both light and dark mode, against
+   `ui-engine/color-system.md`'s 4.5:1/3:1 thresholds — see Contrast
+   validation, below.
+8. Computes every `sizing.control*` token's numeric px value against the
+   24px WCAG 2.2 Target Size (Minimum) floor (`ux-engine/accessibility.md`'s
+   WCAG 2.2-specific rules) — a real dimensional calculation, not a
+   visual "looks tappable" read.
 
-Every check above is genuinely mechanical (regex/JSON-structure matching)
-— per the standing instruction to prefer deterministic validation in
-scripts, matching every other `scripts/validate-*.py` file's own stated
-boundary.
+Every check above is genuinely mechanical (regex/JSON-structure matching,
+or in checks 7-8's case real luminance/ratio and dimensional arithmetic —
+still deterministic, still zero judgment) — per the standing instruction
+to prefer deterministic validation in scripts, matching every other
+`scripts/validate-*.py` file's own stated boundary.
+
+## Contrast validation
+`ui-engine/color-system.md`'s Contrast compliance rule states every
+semantic triplet's foreground-on-background pairing is checked against
+4.5:1/3:1 in both themes — this is that check made real rather than left
+as a claim nothing actually computes. Two passes: every declared
+`{foreground, background}` triplet (the rule's own named pairs), and
+`text.primary`/`text.muted` against `background`/`surface` (the pairings
+almost every screen actually uses). A failure below 3:1 (unreadable even
+against the lenient bar) is **Major**; a failure that clears 3:1 but
+misses the stricter 4.5:1 normal-text bar is **Minor**. Per
+color-system.md's own "pairing contract, not a one-time pass" framing,
+this check only certifies the pairings above — a new color combination a
+later screen improvises (a semantic color reused as a badge fill under
+body text, say) is a fresh check, not an assumed pass by association.
 
 ## Redundant tokens
 Distinct from a raw-value violation: two *different* token paths whose
@@ -98,6 +124,14 @@ expert.md`'s), never resolved by the script itself.
   addition, or absence per `token-inheritance.md` — never an
   unauthorized scale extension, and never a value written back into
   `ui-engine/*` (Rule 15).
+- **B8 (Accessibility)** — checks 7-8 (contrast, target size) are the
+  deterministic half of B8's Contrast and Responsive/Touch pipeline steps
+  (`ux-engine/accessibility.md`'s Accessibility verification pipeline);
+  every other step in that pipeline (Keyboard, Focus, Semantics, ARIA,
+  Forms, Status Communication, Modal/Drawer, Charts) stays
+  `agents/accessibility-expert.md`'s structural/behavioral review — this
+  script never claims to cover a step it structurally can't calculate
+  from a token file alone.
 
 ## Explicitly not here
 - The Consistency rule itself → `ui-engine/design-system.md`.

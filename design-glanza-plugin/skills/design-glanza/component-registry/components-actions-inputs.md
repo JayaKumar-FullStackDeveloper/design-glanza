@@ -14,16 +14,27 @@ Button, Input, Select, Search, Filter, Date Picker, Upload — per
    link, styled per `visual-hierarchy.md`, not a button (`component-
    system.md` point 1's own distinction).
 4. **Variants:** Emphasis primary/secondary/tertiary/destructive; size
-   sm/md/lg (`sizing.controlSm/Md/Lg`) — `component-system.md` point 3.
+   sm/md/lg (`sizing.controlSm/Md/Lg`) — `component-system.md` point 3;
+   **label form: labeled (default) vs. icon-only** — icon-only is a
+   deliberate density choice (a dense toolbar, a table's row actions),
+   never the default just because it's more compact.
 5. **States:** default, hover, focus (visually distinct from hover),
    active, disabled, loading (where the action can be triggered) —
    `component-system.md` point 4.
 6. **Interaction behavior:** Feedback timing per `interaction-design.md`'s
    action-feedback table; destructive/irreversible variants require the
-   Undo/confirmation matrix's confirm-before-acting rule.
+   Undo/confirmation matrix's confirm-before-acting rule. **Icon-only
+   requires a visible Tooltip** (the Tooltip registry entry, revealed on
+   hover and focus) in addition to its accessibility name below — the
+   `aria-label` alone serves assistive tech, but a sighted mouse/keyboard
+   user has no other way to learn what an unlabeled icon does; an
+   icon-only button with no tooltip is incomplete regardless of how
+   familiar the icon seems.
 7. **Accessibility:** `role=button`; accessible name matches visible
    label unless icon-only, which requires an `aria-label`
-   (`accessibility.md`).
+   (`accessibility.md`) — distinct from, and in addition to, the visible
+   Tooltip above; the two serve different users, neither substitutes for
+   the other.
 8. **Responsive:** ≥44×44px touch target at mobile/tablet breakpoints
    (`responsive-system.md`).
 9. **Content rules:** Verb-led label, sentence case, single line
@@ -47,11 +58,26 @@ Button, Input, Select, Search, Filter, Date Picker, Upload — per
 3. **When NOT to use:** The value has a fixed option set — use Select;
    the value is a date — use Date Picker.
 4. **Variants:** text/number/email/password/textarea; size sm/md/lg.
-5. **States:** default, hover, focus, disabled, validation error, (rarely)
-   loading (an async-validated field, e.g. a uniqueness check).
+5. **States:** default (empty, showing placeholder), **filled** (holds a
+   value — visually identical to default beyond the value itself; not a
+   separate treatment, named here only to distinguish it from empty),
+   hover, focus, disabled, **read-only** (holds a confirmed value the
+   current context doesn't allow editing — e.g. a Record Detail View
+   rendered for a view-only role, or a field the business rule locks
+   after submission; visually distinct from `disabled`: read-only content
+   looks like normal, legible text with no dimming, since it's the
+   definitive current value, not an unavailable control), validation
+   error, **success** (passed a meaningful validation check worth
+   confirming, e.g. an async availability check — used sparingly; not
+   every valid field needs a success treatment, only ones where the user
+   was genuinely uncertain), (rarely) loading (an async-validated field,
+   e.g. a uniqueness check).
 6. **Interaction behavior:** `form-design.md`'s Validation-timing rule
    (inline where cheap, on-submit where it requires a round-trip) and
    Error-messaging behavior (adjacent to the field, clears on fix).
+   `read-only` never has a `disabled`-looking dimmed treatment applied to
+   it and never intercepts focus/selection/copy — a user can still select
+   and copy read-only text, just not edit it.
 7. **Accessibility:** Label programmatically associated (`for`/`aria-
    labelledby`); error announced via `aria-describedby`, not color alone.
 8. **Responsive:** Full-width on mobile within the form's column span;

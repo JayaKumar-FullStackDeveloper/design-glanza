@@ -30,19 +30,32 @@ Deterministic, structural checks of a product's design token set
   resolving to the exact same value, flagged for a reuse-vs-alias review
   (`design-tokens/token-audit.md`'s Redundant tokens check) — never
   auto-merged.
+- Contrast: every declared `{foreground, background}` semantic triplet
+  pairing, plus `text.primary`/`text.muted` against `background`/`surface`,
+  computed against real WCAG relative-luminance ratios (not eyeballed) in
+  both light and dark mode, against `ui-engine/color-system.md`'s stated
+  4.5:1/3:1 thresholds (`design-tokens/token-audit.md`'s Contrast validation
+  check). Only certifies the pairings actually checked, per that rule's own
+  "pairing contract, not a one-time pass" framing — a new color combination
+  a later screen improvises is a fresh check, not an assumed pass.
+- Target size: every `sizing.control*` token cleared against the WCAG 2.2
+  Target Size (Minimum) 24px floor (`ux-engine/accessibility.md`) — a real
+  dimensional calculation, not a visual "looks big enough" assumption.
 
 What this deliberately does NOT check
 --------------------------------------
 Whether a token is used in the *semantically correct role* on a given
 screen (a `warning`-toned value applied to a primary CTA), whether a
-logged Token gap's proposed resolution is the right one, or raw values
-inside vendored/third-party code Design-Glanza didn't generate — all
-judgment calls, `agents/design-system-expert.md`'s job per
-`design-tokens/token-audit.md`, not this script's. This script also does
-not perform full JSON Schema validation (`design-tokens.schema.json` is
-the canonical shape reference for a human/agent to check against; this
-script implements the equivalent structural checks directly, dependency-
-free, matching every other script in this folder's stdlib-only posture).
+logged Token gap's proposed resolution is the right one, raw values inside
+vendored/third-party code Design-Glanza didn't generate, or a color
+combination outside the pairings named above (e.g. a semantic color reused
+directly as a badge fill under body text) — all judgment calls,
+`agents/design-system-expert.md`'s job per `design-tokens/token-audit.md`,
+not this script's. This script also does not perform full JSON Schema
+validation (`design-tokens.schema.json` is the canonical shape reference
+for a human/agent to check against; this script implements the equivalent
+structural checks directly, dependency-free, matching every other script
+in this folder's stdlib-only posture).
 
 Status: implemented.
 """
@@ -200,6 +213,182 @@ def _check_theme_completeness(tokens: dict, rel: str) -> list[Finding]:
     return findings
 
 
+# WCAG 2.x contrast thresholds, per ui-engine/color-system.md's Contrast
+# compliance rule — normal body text vs. large text/UI-component boundaries.
+CONTRAST_MIN_NORMAL = 4.5
+CONTRAST_MIN_LARGE = 3.0
+
+
+def _hex_to_rgb(hex_str):
+    """Parse a #rgb/#rrggbb string into an (r, g, b) 0-255 tuple, or None if
+    it isn't a parseable hex color (e.g. a var()/token reference left
+    unresolved) — the contrast check only runs against literal hex values."""
+    if not isinstance(hex_str, str):
+        return None
+    h = hex_str.strip().lstrip("#")
+    if len(h) == 3:
+        h = "".join(c * 2 for c in h)
+    if len(h) != 6 or not re.fullmatch(r"[0-9a-fA-F]{6}", h):
+        return None
+    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+
+
+def _relative_luminance(rgb):
+    def chan(c):
+        c = c / 255.0
+        return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
+    r, g, b = (chan(c) for c in rgb)
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def _contrast_ratio(hex_a, hex_b):
+    """WCAG contrast ratio between two hex colors, or None if either isn't a
+    parseable literal hex value."""
+    rgb_a, rgb_b = _hex_to_rgb(hex_a), _hex_to_rgb(hex_b)
+    if rgb_a is None or rgb_b is None:
+        return None
+    la, lb = _relative_luminance(rgb_a), _relative_luminance(rgb_b)
+    lighter, darker = max(la, lb), min(la, lb)
+    return (lighter + 0.05) / (darker + 0.05)
+
+
+def _mode_value(token, mode):
+    """A leaf token's resolved hex value for one theme mode — themed tokens
+    store {light, dark}; an untethemed token stores a bare string used for
+    both modes."""
+    if not isinstance(token, dict):
+        return None
+    value = token.get("value")
+    if isinstance(value, dict):
+        return value.get(mode, value.get("light"))
+    return value if isinstance(value, str) else None
+
+
+def _check_contrast(tokens: dict, rel: str) -> list[Finding]:
+    """Deterministic pass of ui-engine/color-system.md's Contrast compliance
+    rule — the rule states every semantic triplet's foreground-on-background
+    pairing is checked in both light and dark theme; this is that check,
+    not a restatement of it. Two passes: (1) every declared {foreground,
+    background} triplet pair (color-system.md's own named contract), and
+    (2) color.semantic.text.{primary,muted} against the two most common
+    surfaces (background, surface) — the pairings almost every screen
+    actually uses, per token-audit.md's 'checked pairings are an explicit,
+    named contract' framing. A color combination outside these pairings
+    (e.g. text reused as a badge fill) is explicitly NOT certified by this
+    check, matching that same contract language — it is a fresh check for
+    whoever introduces it, not a gap in this function."""
+    findings: list[Finding] = []
+    color = tokens.get("color")
+    if not isinstance(color, dict):
+        return findings
+    semantic = color.get("semantic")
+    if not isinstance(semantic, dict):
+        return findings
+
+    modes = ("light", "dark")
+
+    def add(path: str, mode: str, ratio: float, threshold: float):
+        # Below even the lenient 3:1 large-text/UI-boundary bar: Major
+        # regardless of role. Above 3:1 but below the role's own threshold
+        # (only reachable for primary-weight text, held to 4.5:1): Minor —
+        # still a real defect, just not an unreadable one.
+        severity = "Major" if ratio < CONTRAST_MIN_LARGE else "Minor"
+        findings.append(Finding(
+            severity,
+            f"'{path}' ({mode} mode) has a {ratio:.2f}:1 contrast ratio, "
+            f"below the {threshold}:1 minimum (ui-engine/color-system.md's "
+            "Contrast compliance rule)",
+            rel, "contrast-failure",
+        ))
+
+    # Pass 1: every declared {foreground, background} triplet pair.
+    for key, entry in semantic.items():
+        if not isinstance(entry, dict):
+            continue
+        fg, bg = entry.get("foreground"), entry.get("background")
+        if not (isinstance(fg, dict) and isinstance(bg, dict)):
+            continue
+        for mode in modes:
+            fg_hex, bg_hex = _mode_value(fg, mode), _mode_value(bg, mode)
+            ratio = _contrast_ratio(fg_hex, bg_hex)
+            if ratio is not None and ratio < CONTRAST_MIN_NORMAL:
+                add(f"color.semantic.{key}.foreground on .background", mode,
+                    ratio, CONTRAST_MIN_NORMAL)
+
+    # Pass 2: text.primary / text.muted against background and surface.
+    text = semantic.get("text")
+    if isinstance(text, dict):
+        for text_key in ("primary", "muted"):
+            text_tok = text.get(text_key)
+            if not isinstance(text_tok, dict):
+                continue
+            threshold = CONTRAST_MIN_NORMAL if text_key == "primary" else CONTRAST_MIN_LARGE
+            for surf_name in ("background", "surface"):
+                surf_entry = semantic.get(surf_name)
+                if not isinstance(surf_entry, dict):
+                    continue
+                surf_bg = surf_entry.get("background")
+                if not isinstance(surf_bg, dict):
+                    continue
+                for mode in modes:
+                    text_hex = _mode_value(text_tok, mode)
+                    surf_hex = _mode_value(surf_bg, mode)
+                    ratio = _contrast_ratio(text_hex, surf_hex)
+                    if ratio is not None and ratio < threshold:
+                        add(f"color.semantic.text.{text_key} on "
+                            f".semantic.{surf_name}.background", mode,
+                            ratio, threshold)
+    return findings
+
+
+# WCAG 2.2 Target Size (Minimum) — 24 CSS px is the absolute floor for any
+# interactive target, per ux-engine/accessibility.md's WCAG 2.2-specific
+# rules. This is the general-web minimum, not the stricter touch-specific
+# 44px bar (responsive-system.md's Touch-target sizing rule) — that bar is
+# breakpoint-conditional (touch-relevant breakpoints only) and a token
+# value carries no breakpoint context, so it isn't checked here; 24px is
+# the one threshold every control-height token must clear unconditionally.
+TARGET_SIZE_MIN_PX = 24
+
+
+def _px_value(raw) -> float | None:
+    """Parse a '32px'-shaped token value into a float, or None if it isn't
+    a parseable px value (e.g. a percentage or a var() reference)."""
+    if not isinstance(raw, str):
+        return None
+    m = re.fullmatch(r"\s*(-?[\d.]+)\s*px\s*", raw)
+    return float(m.group(1)) if m else None
+
+
+def _check_target_size(tokens: dict, rel: str) -> list[Finding]:
+    """Every sizing.control* token (button/input/select outer height, per
+    design-system.md's Sizing scale) clears the 24px WCAG 2.2 Target Size
+    minimum — a real, calculable dimensional check rather than a visual
+    'looks tappable' assumption. Today's three control tokens (32/40/48px)
+    already clear it; this check is the safety net against a future
+    product-specific override or a master-scale edit shrinking one below
+    the floor, not a currently-expected finding."""
+    findings: list[Finding] = []
+    sizing = tokens.get("sizing")
+    if not isinstance(sizing, dict):
+        return findings
+    for key, token in sizing.items():
+        if not key.lower().startswith("control"):
+            continue  # avatar/other sizing tokens aren't interactive targets
+        if not isinstance(token, dict):
+            continue
+        px = _px_value(token.get("value"))
+        if px is not None and px < TARGET_SIZE_MIN_PX:
+            findings.append(Finding(
+                "Major",
+                f"'sizing.{key}' is {px:.0f}px, below the {TARGET_SIZE_MIN_PX}px "
+                "WCAG 2.2 Target Size (Minimum) — ux-engine/accessibility.md's "
+                "WCAG 2.2-specific rules",
+                rel, "target-size-failure",
+            ))
+    return findings
+
+
 # Categories excluded from the redundant-token check: typography's
 # sub-axes (family/weight/lineHeight) are *designed* to repeat the same
 # value across multiple size roles (e.g. h2/h3 intentionally sharing
@@ -296,6 +485,8 @@ def validate(product_builder_dir: Path) -> list[Finding]:
     findings += _check_semantic_tokens(tokens, rel)
     findings += _check_theme_completeness(tokens, rel)
     findings += _check_redundant_tokens(tokens, rel)
+    findings += _check_contrast(tokens, rel)
+    findings += _check_target_size(tokens, rel)
     findings += _scan_raw_values(product_builder_dir)
     return findings
 

@@ -77,7 +77,8 @@
   },
 
   "sizing": {
-    "controlSm": { "value": "32px" }, "controlMd": { "value": "40px" }, "controlLg": { "value": "48px" }
+    "controlSm": { "value": "32px" }, "controlMd": { "value": "40px" }, "controlLg": { "value": "48px" },
+    "avatarXs": { "value": "20px" }, "avatarSm": { "value": "28px" }, "avatarMd": { "value": "36px" }, "avatarLg": { "value": "64px" }
   },
 
   "breakpoint": {

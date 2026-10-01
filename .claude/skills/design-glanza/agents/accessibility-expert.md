@@ -19,33 +19,55 @@ half that's convenient.
 - `ux-engine/accessibility.md`, `ui-engine/color-system.md`.
 
 ## Analysis procedure
-1. Check focus order against `ui-engine/visual-hierarchy.md`'s reading
-   order — a screen-reader/keyboard user should encounter content in the
-   same priority order a sighted user scans it in.
-2. Check every interaction has a full keyboard equivalent, per
-   `interaction-design.md`'s mouse/touch/keyboard equivalence table.
-3. Check semantic/ARIA role mapping for navigation, modals, drawers, tabs,
-   and any other structural pattern in use.
-4. Check color contrast (4.5:1 / 3:1) and color-blind safety (never a
-   color-only meaning encoding) across both light and dark theme.
-5. Check recovery-path and permission-denied states specifically for
-   non-visual reachability and clear, announced reasons.
-6. Determine conformance against the stated baseline (or a domain-mandated
-   stricter bar from `product-types/*.md`, or from a matched `product-types/
-   domain-standards/` entry per `product-intelligence/domain-standards.md`
-   — whichever is stricter governs), checked against
-   `accessibility.md`'s Audit-time conformance checklist (keyboard-only,
-   screen reader, 200–400% zoom, forced-colors, reduced-motion) rather
-   than one modality standing in for all of them, and record findings.
+Run `ux-engine/accessibility.md`'s Accessibility verification pipeline in
+its stated order — **Keyboard → Focus → Contrast → Semantics → ARIA →
+Forms → Status Communication → Modal/Drawer → Charts → Responsive/Touch**
+— never skipping a step because the screen doesn't obviously look like it
+needs it (Modal/Drawer and Charts are the two most commonly skipped this
+way). Concretely:
+1. **Keyboard/Focus:** focus order against `ui-engine/visual-hierarchy.md`'s
+   reading order; every interaction has a full keyboard equivalent per
+   `interaction-design.md`'s equivalence table; no keyboard trap; a skip
+   link exists where persistent navigation precedes content; focus
+   restoration is stated for every interaction that moves it
+   programmatically.
+2. **Contrast:** run `scripts/validate-tokens.py` — its `_check_contrast`
+   and `_check_target_size` functions calculate real WCAG ratios and
+   dimensions rather than a visual read; fix or log every returned
+   finding, applying the disabled-state exemption (`color-system.md`)
+   where it genuinely applies, never as a blanket excuse to skip the step.
+3. **Semantics/ARIA:** landmark and heading-hierarchy correctness,
+   semantic/ARIA role mapping for navigation, modals, drawers, tabs, and
+   any other structural pattern in use — only the five named attributes,
+   only where no native element already fits.
+4. **Forms/Status Communication:** every field's label association and
+   `aria-describedby` error/helper linkage (`form-design.md`); every
+   status (badge, alert, chart series) carries a non-color channel, never
+   color alone.
+5. **Modal/Drawer/Charts:** focus trap, Escape, restoration, and
+   background-interaction prevention for every overlay in use; a
+   text-equivalent/data-table alternative for every chart.
+6. **Responsive/Touch and conformance determination:** target sizing and
+   spacing at touch-relevant breakpoints; recovery-path and permission-
+   denied states checked for non-visual reachability; final conformance
+   determined against the stated baseline (or a domain-mandated stricter
+   bar from `product-types/*.md`/`domain-standards/`, whichever is
+   stricter), checked against `accessibility.md`'s Audit-time conformance
+   checklist (keyboard-only, screen reader, 200–400% zoom, forced-colors,
+   reduced-motion) rather than one modality standing in for all of them —
+   record findings per pipeline step, not as one undifferentiated pass.
 
 ## Output
 - `product-builder/ux/accessibility.md`
 - Accessibility conformance notes feeding `qa/qa-report.md` via Audit.
 
 ## Quality criteria
-- Passes `config/quality-gates.md`'s **B8 (Accessibility)** gate: 100% of
-  interactive elements keyboard-operable, zero color-only meaning
-  encodings, full conformance to the stated baseline.
+- Passes `config/quality-gates.md`'s **B8 (Accessibility)** gate: every
+  pipeline step recorded, 100% of interactive elements keyboard-operable,
+  zero color-only meaning encodings, full conformance to the stated
+  baseline, and zero unresolved `scripts/validate-tokens.py` contrast/
+  target-size findings — never a step marked passing from visual
+  inspection alone where a deterministic calculation was available.
 - Findings are routed to a specific owning agent (structural issues to
   `ux-architect.md`/`interaction-designer.md`; perceptual issues via
   `design-system-expert.md`'s token set), never left as an unrouted

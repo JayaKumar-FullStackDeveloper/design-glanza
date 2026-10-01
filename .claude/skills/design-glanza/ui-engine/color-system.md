@@ -6,7 +6,17 @@ accessibility rules (contrast ratio, color-blind safety) — the color
 counterpart to `ux-engine/accessibility.md`'s structural/behavioral rules.
 
 ## Palette construction
-From one brand/primary hue, generate a **9–10 step ramp** (lightest to
+The starting brand/primary hue itself comes from `product-builder/ui/
+design-direction.md`'s Color system field (Rule 18) — never defaulted to
+a generic blue-to-purple "SaaS palette" because that's the reflexive
+choice with no stated direction to follow. Where the direction genuinely
+doesn't specify one (Custom Design/Default mode with no color preference
+stated), the choice is still made deliberately per this product's actual
+domain/brand context and recorded as such, not defaulted silently — the
+same distinction `craft-critique.md`'s anti-cliché catalog draws between a
+justified choice and a reflex.
+
+From that one brand/primary hue, generate a **9–10 step ramp** (lightest to
 darkest) at consistent lightness intervals, rather than picking individual
 shades ad hoc. Generate the same ramp structure for:
 - **Primary** — the brand color, used for primary actions and key emphasis.
@@ -41,7 +51,26 @@ Concrete, checked ratios (WCAG AA baseline, matching the conformance target
 Every semantic triplet's foreground-on-background pairing is checked against
 these ratios **in both light and dark theme** — a pairing that passes in light
 theme but fails after dark-theme remapping is a defect, not an acceptable
-theme limitation.
+theme limitation. Icons and other meaningful graphical elements are held to
+the same ratios as the text/boundary they're paired with — an icon
+inheriting `currentColor` (`component-system.md`'s Iconography rule) is
+already covered by its host text's own checked pairing; an icon carrying
+its own explicit semantic color (a `danger`-toned warning icon) is checked
+as that semantic triplet's own foreground-on-background pairing, not
+assumed safe by association with the text near it.
+
+**Disabled-state exemption.** WCAG explicitly excludes inactive/disabled
+UI components from the contrast minimums above — a `disabled` control's
+own dimmed treatment is not a Contrast-rule failure by design, since it's
+deliberately communicating unavailability, not meant to be a primary
+reading/interaction target. This exemption applies only to the control's
+own disabled-state color; the same control's `disabled` state must still
+be communicated through more than color alone (never dimmed as the sole
+signal — pair with a stated cursor/label/icon change, per the color-blind
+safety rule below and `ux-engine/accessibility.md`'s Permission-denied
+accessibility section), and a *label* explaining *why* something is
+disabled is never itself styled at disabled-level contrast — only the
+disabled control itself is exempt, not surrounding explanatory content.
 
 **Pairing contract, not a one-time pass.** This rule certifies the specific
 pairings it's actually run against — the semantic triplets defined above. It

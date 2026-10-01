@@ -41,7 +41,7 @@ of that framework, never a second, competing one.
 ## Reuse-first, per entry
 Before a Product Builder specifies a *new* component
 (`agents/design-system-expert.md`'s existing reuse-vs-new decision), it
-checks whether one of these ~24 entries (or a `composition-patterns.md`
+checks whether one of these ~29 entries (or a `composition-patterns.md`
 organism) already covers the need — per `registry-integration.md`'s
 registry-first rule. An entry's own "When NOT to use" field is itself part
 of that check: it names the *other* registry entry that should be reached

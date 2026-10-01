@@ -73,7 +73,30 @@ def _resolve_project_root(skill_root: Path) -> Path:
 
 
 PROJECT_ROOT = _resolve_project_root(SKILL_ROOT)       # host project root — see _resolve_project_root
-PRODUCTS_DIR = PROJECT_ROOT / "products"
+DEFAULT_WORKSPACE_ROOT = Path.home() / "Design-Glanza-Workspace"
+_workspace_override = os.environ.get("DESIGN_GLANZA_WORKSPACE_ROOT", "").strip()
+WORKSPACE_ROOT = Path(_workspace_override).resolve() if _workspace_override else DEFAULT_WORKSPACE_ROOT.resolve()
+PRODUCTS_DIR = WORKSPACE_ROOT / "products"
+
+
+def _assert_workspace_outside_repo(workspace_root: Path, repo_root: Path) -> None:
+    """Mandatory safety check: generated products must never land inside
+    this skill's own repository, regardless of how WORKSPACE_ROOT resolved."""
+    try:
+        workspace_root.relative_to(repo_root.resolve())
+    except ValueError:
+        return  # outside the repo — safe
+    raise RuntimeError(
+        f"Refusing to proceed: the resolved workspace ({workspace_root}) is "
+        f"inside the Design-Glanza repository ({repo_root}). Generated "
+        f"products/screens/BRDs/UX/UI/design systems/prototypes/implementation "
+        f"artifacts must live outside this repo. Set DESIGN_GLANZA_WORKSPACE_ROOT "
+        f"to a path outside it, or unset it to use the default "
+        f"({DEFAULT_WORKSPACE_ROOT})."
+    )
+
+
+_assert_workspace_outside_repo(WORKSPACE_ROOT, PROJECT_ROOT)
 PRODUCT_TYPES_DIR = SKILL_ROOT / "product-types"
 MASTER_CONFIG_PATH = SKILL_ROOT / "config" / "master-config.md"
 

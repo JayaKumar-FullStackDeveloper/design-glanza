@@ -241,9 +241,10 @@ product ever redefining a closed one. A raw value with no fitting token is
 logged as a system gap, never left silent — checked by
 `scripts/validate-tokens.py`, gates **B6**/**B18**. **Every component
 checks the master Component Registry before anything is invented** (added
-v1.0.13, Rule 24 — `component-registry/*`): ~24 pre-populated components
-(Button, Table, Modal, Form, …) and composition patterns (Data Table,
-Form, Record Detail View) each with when-to-use/when-not-to-use,
+v1.0.13, Rule 24 — `component-registry/*`): ~29 pre-populated components
+(Button, Table, Modal, Card, Badge, …) and composition patterns (Data
+Table, Form, Record Detail View, KPI/Stat Card) each with
+when-to-use/when-not-to-use,
 composition rules, and a named common-mistakes catalog — a component with
 no cited registry base (or a stated reason none fit) fails gate **B19**.
 Every

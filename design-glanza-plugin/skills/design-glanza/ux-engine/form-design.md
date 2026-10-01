@@ -56,7 +56,13 @@ shown at once, not one-at-a-time-on-resubmit — making the user resubmit
 repeatedly to discover each new error violates minimal-user-effort
 (`user-flow-engine.md` criterion 4). The message's own wording follows
 `ux-writing.md`'s error-message formula — this file governs *where and
-when* an error appears, not what it says.
+when* an error appears, not what it says. Every field's label, helper
+text, and validation error are programmatically associated with the field
+itself (`aria-describedby`, per `ux-engine/accessibility.md`'s ARIA
+section) — adjacent visual placement alone tells a sighted user which
+error belongs to which field, but says nothing to a screen-reader user
+navigating field-by-field, who needs that same association exposed in the
+markup, not just the layout.
 
 ## Required vs. optional and conditional fields
 Required/optional status comes directly from the Data-type requirement's own

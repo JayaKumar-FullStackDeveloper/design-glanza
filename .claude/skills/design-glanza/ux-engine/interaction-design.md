@@ -163,6 +163,16 @@ explicitly rather than left to be improvised per screen:
   that's the `empty` state (`state-design.md`), not a blank list
   indistinguishable from "still loading" or a bug.
 
+- **Chart drill-down.** Where clicking a data point/segment/bar reasonably
+  leads to a filtered detail view of what it represents (a monthly bar
+  leading to that month's transaction list), the affordance is real and
+  discoverable — a visible hover/focus state on the clickable mark, per
+  the Affordance-clarity rule above — never an undiscoverable click
+  handler with no visual cue it exists. Not every chart needs drill-down;
+  it's stated per chart (`ui-engine/component-system.md`'s Data
+  visualization section) as a deliberate choice, not assumed by default
+  just because the data underneath could theoretically support it.
+
 ## Motion and animation
 Motion is a behavior decision, not a decoration decision — specified here by
 *whether/why* it happens; the concrete duration/easing token used to execute

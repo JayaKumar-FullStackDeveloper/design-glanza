@@ -116,20 +116,50 @@ Each gate below states: what it measures, the pass criterion, and what checks it
 
 ### B8 — Accessibility
 - **Measures:** structural (`ux-engine/accessibility.md`) and perceptual
-  (`ui-engine/color-system.md`) conformance.
+  (`ui-engine/color-system.md`) conformance, run in that file's
+  Accessibility verification pipeline order: Keyboard → Focus → Contrast
+  → Semantics → ARIA → Forms → Status Communication → Modal/Drawer →
+  Charts → Responsive/Touch.
 - **Pass criterion:** checked twice — structurally at Prototype (focus order and
   keyboard-equivalence defined for every interaction; semantic roles mapped) and
   for full conformance at Audit (against the stated baseline, or a
   domain-mandated stricter bar from `product-types/*.md`; 0 color-only
-  meaning encodings; 100% of interactive elements keyboard-operable).
-- **Checked by:** `agents/accessibility-expert.md`.
+  meaning encodings; 100% of interactive elements keyboard-operable). Every
+  pipeline step is recorded, not just the ones an agent happened to check —
+  a screen that skips a step (most commonly Modal/Drawer or Charts, on a
+  screen that doesn't obviously look like it needs them) fails this gate
+  the same as one with no accessibility pass recorded at all. Where a step
+  has a deterministic, calculable form, it is calculated, not visually
+  assumed: `scripts/validate-tokens.py`'s `_check_contrast` (real WCAG
+  relative-luminance ratios, not an eyeballed "looks readable") and
+  `_check_target_size` (every `sizing.control*` token against the 24px
+  WCAG 2.2 minimum) both return 0 findings, or every returned finding is
+  fixed or logged as a Token gap. A production-ready accessibility score
+  based on visual inspection alone, where a deterministic check was
+  available and skipped, does not satisfy this gate.
+- **Checked by:** `agents/accessibility-expert.md`, the Contrast and
+  Target Size steps additionally enforced deterministically by
+  `scripts/validate-tokens.py`.
 
 ### B9 — Responsive Behavior
-- **Measures:** completeness of `ui-engine/responsive-system.md` application.
+- **Measures:** completeness of `ui-engine/responsive-system.md` application,
+  run in that file's Responsive verification pipeline order: Desktop
+  baseline → Tablet restructuring → Mobile transformation → Adaptation-
+  decision audit → Not-accepted defect scan.
 - **Pass criterion:** every screen has defined reflow behavior at every mandatory
-  breakpoint; priority content (per `ui-engine/visual-hierarchy.md`) remains
-  reachable at the smallest breakpoint; touch targets meet the minimum size rule
-  at touch-relevant breakpoints.
+  breakpoint, independently verified at each one (not assumed correct at
+  Tablet/Mobile because Desktop looked right); every element that changes
+  between breakpoints has one of the seven named adaptation decisions
+  recorded (stack/collapse/hide/move/become-scrollable/become-alternative-
+  component/remain-fixed) — an element that merely "got smaller" with no
+  stated decision fails this gate; priority content (per `ui-engine/
+  visual-hierarchy.md`) remains reachable at the smallest breakpoint; touch
+  targets meet the minimum size rule at touch-relevant breakpoints; zero
+  unresolved instances of `responsive-system.md`'s "Not accepted" defect
+  list (overflow, clipping, overlapping, accidental horizontal scroll,
+  broken alignment, unreadable text, compressed controls, inconsistent
+  card sizing, broken charts, inaccessible drawers, hidden critical
+  actions) at any supported breakpoint.
 - **Checked by:** `agents/ui-designer.md` review.
 
 ### B10 — Traceability
@@ -188,15 +218,53 @@ Each gate below states: what it measures, the pass criterion, and what checks it
 
 ### B15 — Visual Benchmark & Audit Cycle Completeness
 - **Measures:** whether the generated UI was actually checked against
-  `ui-engine/ui-audit-framework.md`'s 11 categories and
+  `ui-engine/ui-audit-framework.md`'s 11 categories, run in that file's
+  Pixel-level verification pipeline order, and
   `ui-engine/visual-benchmark.md`'s three-way (Reference/Design Direction/
   Generated UI) comparison, per `templates/visual-gap-analysis.md`.
 - **Pass criterion:** at least one full audit-and-refinement cycle is
-  recorded for every screen produced this pass — a first-pass audit, a gap
-  classification (or an explicit "no gaps found"), and a re-check after any
-  refinement (or an explicit re-confirmation when pass 1 was clean). A
-  screen with no recorded visual-gap-analysis instance fails this gate
-  regardless of how the screen actually looks.
+  recorded for every screen produced this pass — a first-pass audit
+  covering every pipeline step (Structure/Alignment/Spacing/Sizing/
+  Typography/Component/Responsive/Micro-polish), a gap classification (or
+  an explicit "no gaps found") **per step**, and a re-check after any
+  refinement (or an explicit re-confirmation when pass 1 was clean). Zero
+  unresolved instances of `ui-audit-framework.md`'s "not accepted" defect
+  list (approximate alignment, inconsistent spacing, arbitrary margins,
+  arbitrary component dimensions, misaligned icons, inconsistent
+  typography, inconsistent card heights, uneven grids, accidental
+  whitespace, overlapping elements, clipped content, broken responsive
+  layouts) — a screen with one of these still present fails this gate even
+  if every category was nominally "checked." The Final Visual QA step's
+  closing question ("does this look intentionally designed for this
+  product, or could it have been generated for any unrelated SaaS
+  product?") must also be answered and recorded — a `generic` verdict is
+  the **Generic/templated** gap type (`visual-benchmark.md`'s gap-type
+  table) and routes through the same refinement-and-re-check cycle as any
+  other gap; it is never passed silently because every pipeline step above
+  individually checked out. A modern-looking treatment does not answer
+  this question by itself — `visual-trends.md`'s Trend Adoption Gate still
+  applies underneath it. Any screen containing at least one chart
+  additionally runs `visual-benchmark.md`'s Chart verification pipeline
+  (Chart Purpose → Chart Type → Data Realism → Axis → Legend → Tooltip →
+  Filter → State → Accessibility → Responsive → Visual Storytelling) —
+  a chart that fails Visual Storytelling is rejected and redesigned, the
+  same non-negotiable treatment a Blocker/Major pixel-precision finding
+  already gets, never passed because it renders without error. A screen
+  with no recorded visual-gap-analysis instance, or one that skips a
+  pipeline step, the closing question, or (where a chart is present) the
+  chart pipeline, fails this gate regardless of how the screen actually
+  looks. Every finding recorded during this cycle additionally carries a
+  P0-P3 priority (`visual-benchmark.md`'s Priority classification,
+  reconciled onto this same Blocker/Major/Minor/Note scale) — a screen with
+  an unresolved P0, or an un-waived P1, fails this gate even if every
+  category was nominally checked, per that file's "When to stop" list. The
+  gate's instance in `templates/visual-gap-analysis.md` additionally
+  records an Initial Score and Final Score (evaluation-rubric.md dimension
+  21, assessed before and after the refinement cycle) — a cycle that
+  doesn't show the score actually holding or improving (or a genuine
+  "already clean" explanation) has not demonstrated the refinement did
+  anything, and a score adjusted to clear the bar rather than earned by an
+  actual fix fails this gate regardless of the number recorded.
 - **Checked by:** `agents/ui-designer.md` and
   `agents/design-system-expert.md`, per `ui-engine/visual-benchmark.md`'s
   mandatory-cycle procedure — no new dedicated agent.
@@ -275,7 +343,17 @@ Each gate below states: what it measures, the pass criterion, and what checks it
   a stated instance of a `composition-patterns.md` organism, or (c) is
   logged as a deliberate new component with a stated reason its purpose
   doesn't match anything in the registry (`registry-integration.md`'s
-  registry-first check) — 0 components with none of the three.
+  registry-first check) — 0 components with none of the three. Citing a
+  Registry base is necessary but not sufficient: `ui-engine/
+  component-system.md`'s Production-readiness pipeline (Component exists
+  → States identified → States designed → Interaction behavior defined →
+  Responsive behavior defined → Accessibility behavior defined → Visual
+  consistency verified) must be recorded complete for every component
+  instance, not just its first two steps — a component whose spec stops
+  at "cites Button as its base" with no states-designed/interaction/
+  responsive/accessibility record fails this gate the same as one citing
+  no base at all. A component is never marked complete because its
+  default/resting state alone looks correct.
 - **Checked by:** `agents/design-system-expert.md` — no new dedicated
   agent, the same agent that already owns B6 and B18.
 

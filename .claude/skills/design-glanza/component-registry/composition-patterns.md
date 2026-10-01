@@ -82,6 +82,38 @@ every domain pack (`product-types/*.md`) this engine targets:
 with only view permission; a related-records section with no link back
 to the related record's own detail view (a dead end).
 
+## KPI / Stat Card
+A fourth common organism — a Card composed specifically to surface one
+summary metric: **Card + a value + an optional trend indicator + an
+optional sparkline/mini-chart.**
+
+| Part | Registry entry | Fixed composition rule |
+|---|---|---|
+| Container | Card | Selected/disabled/loading/empty/error states per Card's own entry |
+| Value | — (typography, not a separate component) | Tabular figures (`typography.md`); the single largest, highest-contrast element in the card |
+| Trend | Badge or a small inline label | Semantic color (success/danger) plus a direction icon plus the actual percentage — never color/arrow alone |
+| Trend context | Chart (sparkline variant) | Optional; when present, passes `visual-benchmark.md`'s Chart verification pipeline like any other chart — a real endpoint and real underlying data, not a decorative squiggle |
+
+**Composition-level rule:** this pattern exists to name the *parts*, not
+to license reusing one templated anatomy identically across every metric
+on a screen — `craft-critique.md`'s anti-cliché catalog explicitly flags
+"a row of KPI cards using the identical icon-in-circle + big-number +
+trend-arrow formula with zero differentiation" as a genericness tell, and
+`visual-hierarchy.md`'s Parallel summary metrics section requires the
+single most business-critical metric in a row to be differentiated, not
+uniform. Composing this organism correctly means satisfying both: every
+KPI card shares the *same underlying parts* (for consistency), but their
+relative weight, and which parts are actually present (a trend, a
+sparkline, both, neither), varies by what's actually being measured for
+*this* product — a templated shell filled in identically four times is
+not a correct use of this pattern.
+
+**Common composition-level mistakes:** identical treatment across every
+card in the row regardless of which metric is actually most important
+(the specific failure the rule above names); a trend indicator with no
+stated comparison period ("+12%" — of what, versus when); a sparkline
+with no real data behind it (decorative only).
+
 ## Explicitly not here
 - Any individual component's own 13 fields → `components-*.md`.
 - Page-level (region) composition → `ui-engine/layout-system.md`.

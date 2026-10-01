@@ -26,12 +26,17 @@ a domain into its own core logic.
 
 ## Status
 
-**Fully implemented**, version **1.0.9**. Every folder in the architecture has real,
-load-bearing content; one full product (`products/projectflow`) has been generated
-through Prototype as a worked example; the skill has been extended repeatedly with
+**Fully implemented**, version **1.0.25** (26 Operating Rules, 21 quality gates,
+27 evaluation-rubric dimensions). Every folder in the architecture has real,
+load-bearing content; one full product (`projectflow`) has been generated through
+Prototype as a worked example — it lives in the external generated-product
+workspace (see **Generated product workspace** below), not in this repository;
+the skill has been extended repeatedly with
 external design knowledge, a Domain Standards Library, a Design Setup phase, a
-Preview & Run phase, and a mandatory design-research/visual-benchmark-and-audit
-system — see `config/master-config.md`'s changelog inside the skill for the
+Preview & Run phase, a mandatory design-research/visual-benchmark-and-audit
+system (formalized this version as an explicit critique-and-iteration loop),
+and this version's repository/workspace separation — see
+`config/master-config.md`'s changelog inside the skill for the
 complete version history.
 
 ## The 12-phase lifecycle
@@ -53,7 +58,7 @@ Design-Glanza/
 │   ├── CLAUDE.md                         # project-level instructions for Claude Code
 │   └── skills/design-glanza/             # the master orchestrator skill (project-local)
 │       ├── SKILL.md                      # entry point, 20 numbered topics
-│       ├── config/                       # 20 rules, 15 quality gates, output contract
+│       ├── config/                       # 26 rules, 21 quality gates, output contract
 │       ├── methodology/                  # the 5-phase design-thinking loop + design-judgment
 │       ├── product-intelligence/         # BRD/requirement analysis + domain classification/standards
 │       ├── ux-engine/ · ui-engine/       # UX and UI technique
@@ -64,11 +69,29 @@ Design-Glanza/
 │       ├── agents/ · workflows/ · templates/ · scripts/ · use-cases/ · evals/
 │       └── ...
 ├── design-glanza-plugin/                 # the same skill, packaged as a distributable Claude Code plugin
-├── products/                             # generated, product-specific Product Builder skills land here
 ├── docs/                                 # architecture, plugin, installation, workflow, design-reference docs
 ├── DESIGN-GLANZA-ARCHITECTURE-SPEC.html  # full visual architecture specification (open in a browser)
 └── README.md                             # this file
 ```
+
+Generated products never live in this repo — see **Generated product
+workspace** below.
+
+## Generated product workspace
+
+Every Product Builder Design-Glanza generates is written **outside** this
+repository, to a local workspace:
+
+- **Default:** `~/Design-Glanza-Workspace/products/<product-slug>/`
+- **Override:** set `DESIGN_GLANZA_WORKSPACE_ROOT` to any other path outside this repo.
+
+`scripts/_common.py` refuses to proceed (raises an error) if that path ever
+resolves inside this repository — a mandatory safety check, not just a
+convention. Design-Glanza never runs `git add`/`commit`/`push` for generated
+output, and never initializes a repository for one; if you want a generated
+product under version control, create and manage a separate repository for
+it yourself (see Rule 15, Product Isolation, in the skill's
+`config/operating-rules.md`).
 
 ## Documentation
 
@@ -114,8 +137,9 @@ Seven production-readiness phases wrap around them:
   three-way Reference/Direction/Generated-UI benchmark, with at least one
   refinement cycle recorded even when nothing was wrong.
 - The core reasoning engine must remain domain-agnostic; new domains are added by
-  authoring a new domain pack or generating new Product Builder skills under
-  `products/`, never by modifying Design-Glanza's core logic.
+  authoring a new domain pack or generating new Product Builder skills into the
+  external workspace (see **Generated product workspace** above), never by
+  modifying Design-Glanza's core logic.
 
 ## License
 

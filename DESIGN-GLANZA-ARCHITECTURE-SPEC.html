@@ -104,7 +104,7 @@
 <main>
 
 <header class="hero">
-  <span class="tag">Technical Specification · v1.0.9 baseline</span>
+  <span class="tag">Technical Specification · v1.0.9 baseline, partially annotated for v1.0.25</span>
   <h1>DESIGN-GLANZA</h1>
   <p class="sub">Complete Skill, Plugin &amp; Product Builder Architecture Specification</p>
   <div class="meta">
@@ -113,6 +113,10 @@
     <div><b>Scope:</b> read-only analysis; nothing in the analyzed system was modified to produce this document</div>
   </div>
 </header>
+
+<div class="callout warn">
+<b>Document currency notice.</b> This document's deep, section-by-section detail (file counts, diagram labels, the 37-action runbook, the B1–B15 gate table, §18's ProjectFlow walkthrough) was forensically verified against the live codebase at <b>v1.0.9</b> and has <b>not</b> been re-verified line-by-line for the sixteen passes since (v1.0.10 through the live <b>v1.0.25</b>) — that would be a re-authoring effort on the same scale as this document's original pass, not performed here. The live skill is now at <b>26 rules, 21 gates (B1–B21), 27 rubric dimensions (295 pts)</b>, not the 20/15/21(235pt) figures this document states throughout — see <code>config/master-config.md</code>'s changelog for the authoritative current count. The handful of facts below that were <b>actively wrong</b> rather than merely outdated — chiefly, generated products no longer living under <code>products/</code> in this repository — have been corrected explicitly, each marked <span class="badge">corrected v1.0.25</span>. Everything else should be read as a historically-accurate v1.0.9 snapshot, not current fact.
+</div>
 
 <section id="s1">
 <h2><span class="num">01</span>Purpose &amp; Vision</h2>
@@ -139,16 +143,16 @@
 <tr><td><b>1. Master Skill</b></td><td><code>.claude/skills/design-glanza/</code></td><td>Permanent, versioned (currently <b>1.0.9</b>)</td><td>The domain-agnostic reasoning engine: rules, gates, methodology, UX/UI technique, design-reference technique, agents, workflows, templates, scripts, evals</td></tr>
 <tr><td><b>2. Domain Overlays</b></td><td><code>product-types/*.md</code> + <code>product-types/domain-standards/</code></td><td>Permanent, extended over time</td><td>12 authored domain packs (Domain Pack Contract) <i>and</i> a 122-entry externally-sourced UI/UX standards registry — two independent, composable domain-matching systems</td></tr>
 <tr><td><b>3. Portable Plugin</b></td><td><code>design-glanza-plugin/</code></td><td>Snapshot, manually synced</td><td>A Claude Code plugin-packaged mirror of the master skill, for distribution outside this one project — brought to full 1.0.9 parity in this pass (<a href="#s19">§19</a>)</td></tr>
-<tr><td><b>4. Generated Product Builders</b></td><td><code>products/&lt;slug&gt;/</code></td><td>One per real product, grows over that product's life</td><td>Product-specific requirements, UX, UI, QA artifacts — references the master engine by relative path, never copies it</td></tr>
+<tr><td><b>4. Generated Product Builders</b></td><td><code>~/Design-Glanza-Workspace/products/&lt;slug&gt;/</code> <span class="badge">corrected v1.0.25</span> — external, never in this repository (was <code>products/&lt;slug&gt;/</code> in-repo through v1.0.24)</td><td>One per real product, grows over that product's life</td><td>Product-specific requirements, UX, UI, QA artifacts — references the master engine by relative path, never copies it</td></tr>
 </table>
 <h3>The central architectural invariant</h3>
 <div class="callout good">A generated Product Builder's own <code>SKILL.md</code> literally states: <i>"Contains product-specific knowledge only; references the master skill... for all reusable methodology."</i> Every technique file is <b>cited by relative link</b>, never duplicated. This is verified in the actual generated file (<a href="#s18">§18</a>) — it is not just an aspiration.</div>
 <h3>Governance mechanisms that keep the architecture from eroding</h3>
 <table>
 <tr><th>Mechanism</th><th>Enforces</th></tr>
-<tr><td>20 Operating Rules (<code>config/operating-rules.md</code>)</td><td>The constitution — every phase/agent/domain is bound by the same 20 rules, each stating what/why/which-file-executes-it</td></tr>
-<tr><td>15 Quality Gates B1–B15 + 12 phase-transition gates (<code>config/quality-gates.md</code>)</td><td>Binary pass/fail checkpoints between phases — including B13 (Design Direction Completeness), B14 (Preview &amp; Run Verification), and B15 (Visual Benchmark &amp; Audit Cycle Completeness), all added since the v1.0.6 baseline</td></tr>
-<tr><td>21-dimension weighted Evaluation Rubric (<code>evals/evaluation-rubric.md</code>)</td><td>Graded quality, weighted so visual polish alone cannot mathematically pass (capped &lt;5% of the 235-point total)</td></tr>
+<tr><td>20 Operating Rules (<code>config/operating-rules.md</code>)</td><td>The constitution — every phase/agent/domain is bound by the same 20 rules, each stating what/why/which-file-executes-it <span class="badge">now 26 rules as of live v1.0.25 — see document currency notice above</span></td></tr>
+<tr><td>15 Quality Gates B1–B15 + 12 phase-transition gates (<code>config/quality-gates.md</code>)</td><td>Binary pass/fail checkpoints between phases — including B13 (Design Direction Completeness), B14 (Preview &amp; Run Verification), and B15 (Visual Benchmark &amp; Audit Cycle Completeness), all added since the v1.0.6 baseline <span class="badge">now 21 gates, B1–B21, as of live v1.0.25</span></td></tr>
+<tr><td>21-dimension weighted Evaluation Rubric (<code>evals/evaluation-rubric.md</code>)</td><td>Graded quality, weighted so visual polish alone cannot mathematically pass (capped &lt;5% of the 235-point total) <span class="badge">now 27 dimensions, 295 pts, as of live v1.0.25</span></td></tr>
 <tr><td>Deterministic validator scripts (<code>scripts/validate-*.py</code>)</td><td>Structural checks only — never fabricate a subjective/reasoning-based verdict</td></tr>
 <tr><td>Agent "must not do" boundaries (all 9 <code>agents/*.md</code>)</td><td>No specialist can redesign another's scope; problems are routed, not silently fixed in place</td></tr>
 </table>
@@ -253,8 +257,11 @@
 │                                           SKILL.md's dual invocation phrasing, scripts/_common.py's
 │                                           _resolve_project_root() (see §9)
 │
+   (no products/ folder — corrected v1.0.25: generated products now live in
+    the external ~/Design-Glanza-Workspace/, never in this repository)
+
+~/Design-Glanza-Workspace/                 ── EXTERNAL, NOT PART OF THIS REPO ──
 └── products/                              ── GENERATED PRODUCT BUILDERS ──
-    ├── README.md
     └── projectflow/                       the one real generated product (see §18) — untouched by
                                             every version bump since it was generated (Rule 15)
         ├── product.json                   10-field manifest — master_skill_version: "1.0.2" (now
@@ -684,7 +691,7 @@ graph TB
 
 <section id="s18">
 <h2><span class="num">18</span>Example End-to-End Execution: ProjectFlow</h2>
-<p>The one real product generated through this system so far — <code>products/projectflow/</code>. All figures below are read directly from its actual generated files, not illustrative.</p>
+<p>The one real product generated through this system so far — originally <code>products/projectflow/</code> in this repository through v1.0.24; <span class="badge">corrected v1.0.25</span> it now lives at <code>~/Design-Glanza-Workspace/products/projectflow/</code>, migrated out and untracked as part of the repository/workspace separation pass (content verified byte-identical and re-validated clean before the move). All figures below are read directly from its actual generated files, not illustrative.</p>
 <div class="grid2">
 <div class="card"><h4>Identity (<code>product.json</code>)</h4>
 <code>product_type: saas</code><br/><code>domain: Project Management</code><br/><code>platform: web</code><br/><code>status: scaffolded</code><br/><code>master_skill_version: 1.0.2</code> <span class="badge risk">stale — live is 1.0.9 (7 versions behind)</span>
@@ -723,6 +730,7 @@ Intake → Empathize → Define → Ideate → Architect → Prototype (UX+UI). 
 <h3>Resolved since the previous baseline of this document</h3>
 <div class="card" style="border-color:#1e3a2f"><span class="badge strength">Resolved</span> <b>No git repository</b> → the project is now a git repository, published publicly at <code>github.com/JayaKumar-FullStackDeveloper/design-glanza</code> (MIT-licensed), with real commit history. Diffing, branching, reverting, and CI are all now possible — none has been exercised yet beyond plain commits (see remaining risks below).</div>
 <div class="card" style="border-color:#1e3a2f; margin-top:10px"><span class="badge strength">Resolved</span> <b>Root <code>README.md</code> was stale and misleading</b> → it now accurately states the current version and capability set, and is itself under version control so it can't silently re-drift unnoticed the same way.</div>
+<div class="card" style="border-color:#1e3a2f; margin-top:10px"><span class="badge strength">Resolved, v1.0.25</span> <b>This repository had conflated the plugin/source with every product it generates.</b> <code>products/projectflow/</code> had been git-tracked in this repo since v1.0.8. Fixed at the mechanism, not just the symptom: <code>scripts/_common.py</code> now resolves generated output to an external workspace (<code>~/Design-Glanza-Workspace/</code> default, <code>DESIGN_GLANZA_WORKSPACE_ROOT</code> override) with a mandatory safety check that refuses to proceed if that path ever resolves inside this repository; ProjectFlow was migrated out (content verified identical, re-validated clean), then untracked with git history preserved; Rule 15 extended to state the boundary explicitly.</div>
 <div class="card" style="border-color:#1e3a2f; margin-top:10px"><span class="badge strength">Resolved this pass</span> <b>Plugin had drifted materially from the master skill</b> → fully bulk-resynced to 230/230 markdown files and 7/7 scripts, including the entire <code>domain-standards/</code> folder it was previously missing entirely, plus the two documented path/invocation adaptations reapplied correctly and <code>plugin.json</code>'s version and description text brought current. <b>This is a point-in-time fix, not a structural one</b> — see the still-open risk below.</div>
 
 <h3>Gaps &amp; Risks — verified, not speculative</h3>
@@ -735,6 +743,8 @@ Intake → Empathize → Define → Ideate → Architect → Prototype (UX+UI). 
 <div class="card" style="border-color:#4a1f28; margin-top:10px"><span class="badge risk">Risk</span> <b>Git exists now, but nothing uses it yet beyond commits.</b> A brand-new gap this baseline can name that the previous one couldn't: there is still no <code>.github/workflows/*.yml</code> — no CI runs <code>validate-product.py</code>, no automated plugin-sync check, nothing gates a push. The blocker (no git repo) named at the last baseline is gone; the opportunity it was blocking hasn't been taken yet.</div>
 <div class="card" style="border-color:#4a1f28; margin-top:10px"><span class="badge risk">Risk (small, newly found this pass)</span> <b><code>design-samples/README.md</code>'s own "Current status" section is now stale.</b> It states <i>"Every folder currently holds a placeholder README.md only — no curated reference assets have been populated yet"</i> — but 7 of the library's 13 folders (<code>fintech</code>, <code>healthcare</code>, <code>hrms</code>, <code>crm</code>, <code>logistics</code>, <code>ecommerce</code>, <code>common</code>) now hold real curated reference files, confirmed by direct directory listing. Low-impact (the per-folder READMEs are individually accurate; only the top-level summary is behind), but the same category of drift as the once-stale root <code>README.md</code> — worth fixing directly since it's a one-file, low-risk correction.</div>
 <div class="card" style="border-color:#4a1f28; margin-top:10px"><span class="badge risk">Risk</span> <b>A few historical changelog entries carry deliberately-uncorrected stale references</b> (e.g., some 1.0.1-and-earlier changelog text still says "12 mandatory states" after the count became 13) — individually low-risk and explicitly disclosed at the time, but worth knowing before trusting a changelog entry's exact numbers over the live file.</div>
+
+<div class="card" style="border-color:#4a1f28; margin-top:10px"><span class="badge risk">Risk (newly disclosed, v1.0.25)</span> <b>This specification document itself is now stale.</b> Its deep per-section detail (file counts, diagram labels, the B1–B15 gate table, rule/dimension counts) was forensically verified at v1.0.9 and has not been re-verified for the sixteen passes since — see the document currency notice at the top of this page. The handful of facts that were <i>actively wrong</i> (chiefly, the products/ repository-location claim) have been corrected in place; everything else is an accurate v1.0.9 snapshot, not current fact. A full re-verification pass, at the same rigor as this document's original authoring, is its own undertaking and has not been done here.</div>
 
 <h3>Improvement opportunities (summary — detailed in §20)</h3>
 <ul>
@@ -755,6 +765,11 @@ Intake → Empathize → Define → Ideate → Architect → Prototype (UX+UI). 
 <ol>
 <li><s><b>Initialize version control.</b></s> Done — git repository, public GitHub remote, real commit history.</li>
 <li><s><b>Refresh <code>README.md</code></b></s> Done — matches actual current capability, and versioned going forward so it can be diffed if it drifts again.</li>
+<li><s><b>Separate the plugin/source repository from generated product output.</b></s> Done, v1.0.25 — see §19's "Resolved, v1.0.25" entry. Generated products now live in an external workspace with a mandatory safety check backing the boundary.</li>
+</ol>
+<h3>Newly recommended, v1.0.25</h3>
+<ol>
+<li><b>A full re-verification pass of this specification document itself</b>, at the same rigor as its original v1.0.9 authoring, covering the sixteen versions since (v1.0.10–v1.0.25: Component Registry, Visual Regression, Product Memory, the research/evidence engine, UX Scenario Testing, Token Intelligence, the pixel/anti-generic/component/chart/accessibility/responsive quality passes, the critique-and-iteration loop formalization, and this repository/workspace separation). This document's own §19 now discloses this as a known gap rather than leaving it silently stale.</li>
 </ol>
 <h3>Near-term (low effort, high value)</h3>
 <ol>

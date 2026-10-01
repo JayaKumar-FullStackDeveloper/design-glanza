@@ -72,12 +72,20 @@ one-off value.
 7. Once a screen's composition is done, self-critique it against
    `ui-engine/craft-critique.md`'s checks before handing off — this is Rule
    12 applied at the visual layer, not a separate approval step.
-8. Run the mandatory visual-benchmark-and-audit cycle (Rule 20): audit the
-   screen against `ui-audit-framework.md`'s 11 A–K categories, compare it
-   Reference/Design-Direction/Generated-UI via `visual-benchmark.md`,
-   classify any gap, apply the refinement, and re-check — recorded in
-   `templates/visual-gap-analysis.md`. Runs for every screen, even one
-   with no gaps found; the first generated pass is never the final one.
+8. Run the mandatory critique-and-iteration loop (Rule 20) — GENERATE →
+   CRITIQUE → IDENTIFY DEFECTS → PRIORITIZE DEFECTS → FIX → RECHECK →
+   FINALIZE: audit the screen against `ui-audit-framework.md`'s 11 A–K
+   categories, in that file's Pixel-level verification pipeline order
+   (Structure → Alignment → Spacing → Sizing → Typography → Component →
+   Responsive → Micro-polish → Final Visual QA) — actively checking for the
+   pipeline's "not accepted" defect list rather than assuming the first
+   draft avoided it — then compare it Reference/Design-Direction/
+   Generated-UI via `visual-benchmark.md`, classify every gap by type and
+   by P0-P3 priority, fix every P0 and un-waived P1 before moving on, and
+   re-check only what the fix actually touched — recorded in
+   `templates/visual-gap-analysis.md`, including this screen's Initial and
+   Final score. Runs for every screen, even one with no gaps found; the
+   first generated pass is never the final one.
 9. Where a register/pattern choice meets `product-memory/
    auto-recording.md`'s significance threshold, record it as a new
    `ADR-NNN` in `product-builder/memory/decision-records.md` (Rule 26).
