@@ -7,7 +7,50 @@ everywhere, it belongs here.
 
 ## Skill identity & version
 - **Name:** design-glanza
-- **Version:** 1.0.28 — the **major visual QA engine upgrade**: real
+- **Version:** 1.0.29 — a **render-engine correctness pass** (0 new files,
+  3 existing files fixed: `scripts/capture-render.py`, `scripts/
+  validate-rendered-layout.py`, `scripts/_common.py`), found and fixed
+  while actually using 1.0.28's new rendering capability to validate a
+  real generated screen (OneZae Admin Panel's Operations Dashboard) for
+  the first time outside its own test fixtures — exactly the kind of
+  real-world exercise that surfaces a tool's own bugs:
+  **(A) Sibling-set path collisions.** `capture-render.py`'s `cssPath()`
+  gave two unrelated DOM elements sharing the same tag+class with no
+  `id` (e.g. two separate `.row-2col` layout rows on the same screen)
+  the *identical* path string, so `validate-rendered-layout.py`'s
+  sibling-grouping silently merged their unrelated children into one
+  fabricated "set" — producing nonsensical findings (an "alignment
+  drift" between two cards that were never actually siblings, including
+  physically impossible negative gap values). Fixed by adding an
+  `:nth(n)` disambiguator to any same-tag sibling with no `id`, verified
+  against both a hand-built regression fixture (two intentionally
+  separate repeating rows, confirmed no longer cross-contaminating) and
+  the real screen (62 fabricated Major findings collapsed to 0 once
+  correctly scoped).
+  **(B) Windows console encoding crash.** Any Finding whose message
+  quoted a generated screen's own text (an arrow, an em dash) crashed
+  `validate-rendered-layout.py` with `UnicodeEncodeError` before the
+  user ever saw the result, because a Windows console's default stdout
+  encoding (cp1252) can't represent it. Fixed with a `sys.stdout.
+  reconfigure(encoding="utf-8", errors="replace")` guard, added once in
+  `_common.py` (every importing script gets it for free) and duplicated
+  in `capture-render.py` (the one script that doesn't import `_common`
+  by design).
+  **(C) CLI usability.** `validate-rendered-layout.py`'s `--manifest`
+  flag required a `manifest_dir` positional anyway, contradicting its
+  own help text. Made the positional optional with an explicit
+  either/or check.
+  Two further items are **disclosed, not fixed**, as known limitations
+  of the generic sibling-grouping heuristic (not screen defects): it
+  cannot distinguish an intentionally-scattered visualization (a map's
+  driver pins) from a misaligned repeating card, and it compares a
+  multi-row wrapped grid's items as if they shared one single baseline
+  row. Both produce occasional false-positive Major findings that a
+  human/agent reader currently has to recognize and dismiss by eye — a
+  candidate for a future, explicitly-scoped upgrade, not retrofitted
+  here. No new Rule, no new Gate, no regression to 1.0.28's capability
+  — still 26 rules, 21 gates, 12 phases.
+- **Previously, 1.0.28** — the **major visual QA engine upgrade**: real
   render-based visual validation, added as a complementary layer to the
   existing source-level engine, never a replacement for it (3 new files —
   `scripts/capture-render.py`, `scripts/validate-rendered-layout.py`,

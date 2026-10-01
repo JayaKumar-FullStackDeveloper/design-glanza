@@ -23,8 +23,24 @@ from __future__ import annotations
 import importlib.util
 import os
 import re
+import sys
 from dataclasses import dataclass
 from pathlib import Path
+
+# A generated screen's own text (an arrow "→", an em dash, a checkmark) can
+# end up in a Finding's message (e.g. quoting an element's rendered text
+# excerpt). On Windows, a script's stdout/stderr default to the console's
+# legacy code page (cp1252) rather than UTF-8, so printing such a Finding
+# crashes with UnicodeEncodeError before the user ever sees the result —
+# the validator failing on its own output, not on anything it validated.
+# Every script that imports this module gets the safe behavior for free;
+# `errors="replace"` degrades an unencodable character to "?" rather than
+# crashing, which is the right tradeoff for a diagnostic message.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass  # a redirected/non-standard stream without reconfigure() — leave it alone
 
 # ---------------------------------------------------------------------------
 # Path resolution — supports two deployment modes, since this skill can be

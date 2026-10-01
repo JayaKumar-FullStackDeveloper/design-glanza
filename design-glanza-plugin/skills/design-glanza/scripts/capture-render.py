@@ -67,6 +67,16 @@ import re
 import sys
 from pathlib import Path
 
+# See _common.py's identical guard for why: a generated screen's own text
+# can contain a non-ASCII character that crashes a Windows console's
+# default cp1252 stdout. This script doesn't import _common (deliberately
+# dependency-light), so it carries its own copy of the same fix.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
 try:
     from playwright.sync_api import sync_playwright
 except ImportError:  # pragma: no cover - environment without the optional dependency
@@ -98,6 +108,19 @@ DOM_DUMP_JS = r"""
       if (el.id) { sel += '#' + el.id; parts.unshift(sel); break; }
       if (el.className && typeof el.className === 'string' && el.className.trim()) {
         sel += '.' + el.className.trim().split(/\s+/).slice(0, 2).join('.');
+      }
+      // Disambiguate same-tag siblings with no id (e.g. two unrelated
+      // ".row-2col" container instances at the same nesting level) so
+      // their descendants don't collapse onto one identical path string
+      // and get falsely grouped as one sibling set by
+      // validate-rendered-layout.py's _sibling_sets().
+      if (el.parentElement) {
+        var sameTagSiblings = Array.prototype.filter.call(
+          el.parentElement.children, function(c) { return c.tagName === el.tagName; }
+        );
+        if (sameTagSiblings.length > 1) {
+          sel += ':nth(' + (sameTagSiblings.indexOf(el) + 1) + ')';
+        }
       }
       parts.unshift(sel);
       el = el.parentElement;

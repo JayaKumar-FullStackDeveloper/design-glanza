@@ -285,9 +285,12 @@ def validate(manifest_paths: list[Path]) -> list[Finding]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("manifest_dir", help="Directory of *.json manifests written by capture-render.py (or pass --manifest for one file).")
+    parser.add_argument("manifest_dir", nargs="?", default=None, help="Directory of *.json manifests written by capture-render.py. Omit when passing one or more --manifest instead.")
     parser.add_argument("--manifest", action="append", help="A specific manifest JSON file; may be repeated. Overrides manifest_dir scanning if given.")
     args = parser.parse_args(argv)
+
+    if not args.manifest and not args.manifest_dir:
+        parser.error("either manifest_dir or at least one --manifest is required")
 
     if args.manifest:
         paths = [Path(m) for m in args.manifest]
