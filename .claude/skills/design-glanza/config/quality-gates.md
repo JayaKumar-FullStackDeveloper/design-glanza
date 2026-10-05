@@ -330,7 +330,18 @@ Each gate below states: what it measures, the pass criterion, and what checks it
   typography, inconsistent card heights, uneven grids, accidental
   whitespace, overlapping elements, clipped content, broken responsive
   layouts) — a screen with one of these still present fails this gate even
-  if every category was nominally "checked." The Final Visual QA step's
+  if every category was nominally "checked." **Where a Figma Design
+  Context exists (added v1.0.33):** the Structure and Component steps of
+  that pipeline additionally require `ui-audit-framework.md` Category A/G's
+  `composedFrom`/`recurrence` check (every Figma-derived region/component
+  this screen's composition requires is present, or its absence is an
+  explicit recorded reason) — a screen missing one with no recorded reason
+  fails this gate the same as any other item on the "not accepted" list,
+  regardless of whether this same gate's rendered-evidence angle 11
+  (Figma-spec conformance / Level B, below) passed — a Level B pass checks
+  token *values* only and is never by itself evidence this structural
+  check was satisfied (`visual-benchmark.md`'s Level B section). The
+  Final Visual QA step's
   closing question ("does this look intentionally designed for this
   product, or could it have been generated for any unrelated SaaS
   product?") must also be answered and recorded — a `generic` verdict is

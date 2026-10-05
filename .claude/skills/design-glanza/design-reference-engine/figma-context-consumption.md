@@ -80,12 +80,107 @@ exists today.
 | Visual hierarchy | `visualRules` | `ui-engine/visual-hierarchy.md` |
 | Responsive behavior | `responsive` | `ui-engine/responsive-system.md` |
 | Interaction patterns | `interactions` | `ux-engine/interaction-design.md` |
+| Cross-screen composition reuse | `screens[].composedFrom` | `ui-engine/layout-system.md` (which region/composition pattern this screen is built from) |
+| Component cross-screen recurrence | `components.components[].recurrence` | `ui-engine/ui-audit-framework.md` Category A/G, `ui-engine/visual-benchmark.md`'s gap analysis |
 
 A row with no matching entry in `figma-context.json` (the Figma file simply
 has nothing to say about, e.g., a screen-specific empty state it never
 depicted) falls through to step 2 of the precedence rule above — existing
 Design-Glanza technique, kept consistent with whatever Figma language was
 extracted elsewhere on the same screen.
+
+## Visual asset fidelity rule (strengthened, added v1.0.33)
+A real benchmark run (the PerkyPet root-cause audit) found this contract's
+existing "soft preference" language for an asset that can't be reused
+directly — "a close equivalent" — had been read as permission to *omit*
+the asset's visual meaning rather than approximate it. That reading is
+wrong, and this section exists so it is never available again:
+
+**When a Figma visual asset cannot be reused directly:**
+- **Do** create a visually faithful equivalent.
+- **Do** preserve its visual character, visual weight, and role.
+- **Do** preserve its approximate silhouette, placement, and scale.
+- **Do** preserve its style (illustration stays illustration, icon stays
+  icon — never swap registers).
+- **Do not** omit the asset.
+- **Do not** replace it with emoji.
+- **Do not** replace it with a generic, content-free gradient or shape.
+- **Do not** replace it with an unrelated icon.
+- **Do not** replace it with a bare placeholder.
+- **Do not** treat "a close/licensed-safe equivalent" as permission to
+  remove the visual meaning the asset was carrying — the exact pixels can
+  legitimately differ (this isn't a license to re-host someone else's
+  artwork), but a viewer should still recognize *what the asset is
+  depicting*, not just that "something decorative is present."
+
+This governs every asset the Figma context's `imagery`/`iconography`
+fields describe, and every micro-element `figma-reference.md`'s Structure
+extraction step now captures (progress markers, decorative dots, icon
+backgrounds). It does not change *who* applies it (`agents/ui-designer.md`,
+same as every other row in the influence table above) — it changes what
+counts as satisfying the existing precedence rule's step 1 when the exact
+asset genuinely cannot be reused.
+
+## Pre-generation checklist (per screen, added v1.0.33)
+Before generating each screen (rows 28-31 of `workflows/execute-product-
+builder.md` — this is additional discipline *inside* those existing
+actions, not a new one), the owning agent works through:
+
+1. Read the BRD screen requirement (WHAT).
+2. Read the relevant `figma-context.json` entries for this screen (HOW).
+3. Identify the screen's actual Figma composition — is it self-contained,
+   or does `composedFrom` show it extends another screen's region?
+4. Identify every component this screen's Figma composition includes,
+   cross-referencing `recurrence` for which of them are expected here.
+5. Identify the visual assets (illustrations/icons/decorative elements)
+   this composition actually uses.
+6. Identify each component's required states (`components.states`).
+7. Identify recurring micro-elements (progress markers, status
+   indicators) that belong on this screen per step 4's components.
+8. Identify the density/proportion relationship `figma-reference.md`'s
+   Density extraction recorded for this composition.
+9. Identify responsive behavior, where the context has it (`responsive`),
+   or note that it must be derived from `ui-engine/responsive-system.md`
+   where the Figma file has no breakpoint frame.
+10. Generate the screen using the existing Design-Glanza UI-generation
+    pipeline (unchanged) — this checklist feeds that pipeline's existing
+    steps a complete input, it does not add a step of its own.
+
+## Completion verification (added v1.0.33)
+Before a screen is declared complete (feeding into row 32's mandatory
+critique-and-iteration cycle, `ui-engine/visual-benchmark.md`), verify:
+
+```
+Figma composition (screens[].composedFrom + every recurrence-tagged
+component expected on this screen's name)
+        ↓
+Generated composition (the actual produced screen)
+```
+
+Every critical Figma-derived section or `recurrence`-tagged component must
+either **exist** in the generated screen, or have an **explicit, recorded
+reason** for being changed or removed (a design-direction decision, a BRD
+conflict, a genuine accessibility fix — recorded the same way any other
+departure from the extracted language already must be, per this file's
+precedence rule). Silently absent is never an acceptable third option —
+including across a product's own alternate-state/secondary HTML files: a
+component `recurrence`-tagged for a screen does not become optional just
+because this is the second or third variant of that screen being
+generated. This is the concrete, checkable form of
+`ui-engine/ui-audit-framework.md`'s Category A/G, applied at the point a
+screen is finished, not only later at Audit.
+
+## Responsive fidelity (added v1.0.33)
+Responsive adaptation (`ui-engine/responsive-system.md`'s seven named
+decisions — stack/collapse/hide/move/become-scrollable/become-alternative-
+component/remain-fixed) may relayout a Figma-derived section. **It must
+never silently delete one.** Before a responsive pass is considered
+complete, re-run this file's Completion verification above at each
+mandatory breakpoint (desktop/tablet/mobile) — a section/component/
+illustration that exists at desktop and has simply vanished at mobile,
+with no adaptation decision recorded for it, is the same "silently
+absent" failure as never having generated it at all, now hiding behind a
+media query instead of behind a second HTML file.
 
 ## Non-negotiable output rule
 The result of applying this contract is always a **new** screen serving
@@ -116,7 +211,12 @@ needed only a richer, better-cited input, which this file supplies the
 rule for. No new generation agent was introduced, and none should be —
 reaching that conclusion required tracing this contract through to row 34
 (Implement) and confirming no step in between needs a Figma-specific
-branch of its own, not merely assuming it.
+branch of its own, not merely assuming it. The v1.0.33 pre-generation
+checklist and completion verification above are additional discipline
+`agents/ui-designer.md` and `agents/design-system-expert.md` already apply
+inside their existing rows (28-32) — not a new review step owned by a new
+agent, and not a new gate: both route through the same existing B15
+critique-and-iteration cycle `ui-engine/visual-benchmark.md` already runs.
 
 ## Explicitly not here
 - How a Figma reference is detected and normalized into `figma-

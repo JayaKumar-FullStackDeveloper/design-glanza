@@ -72,6 +72,11 @@
             "type": "string",
             "description": "What this frame is for, e.g. 'closest existing analogue to the new screen requirement' — used by visual-benchmark.md to pick the Reference-column asset."
           },
+          "composedFrom": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Added v1.0.33. Names of components/sections this screen's composition reuses from elsewhere in the Figma file (e.g. an 'Invite Friends' screen that is actually the same Rewards Hero region shown on the dashboard, with invite cards appended below it) — read directly from the inspected structure, never invented. Prevents a screen from being treated as an isolated page when Figma actually shows it extending another screen's region (figma-reference.md's Structure extraction step). Omitted when the screen is genuinely self-contained."
+          },
           "confidence": { "$ref": "#/$defs/confidence" }
         }
       }
@@ -102,6 +107,11 @@
               "matchedRegistryEntry": {
                 "type": "string",
                 "description": "component-registry/* entry name this maps to, per figma-reference.md's mapping table, or null if genuinely no match (Rule 24 still applies — logged, never silent)."
+              },
+              "recurrence": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Added v1.0.33. Names of the screens[].frameName entries where this component is actually observed appearing in the Figma file — read directly from inspecting each screen, never assumed from where it 'should' logically appear. A component observed on 2+ screens should have this populated; a genuinely one-off element can omit it. This is what makes a generated product variant that silently drops the component on one of those named screens a checkable structural mismatch (figma-context-consumption.md's completion verification), not just something a reviewer might happen to notice."
               }
             }
           }

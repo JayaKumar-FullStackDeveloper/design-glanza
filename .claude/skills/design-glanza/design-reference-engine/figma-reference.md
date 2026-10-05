@@ -72,6 +72,85 @@ once.
 | Photography vs. illustration use | `imagery` | `ui-engine/visual-trends.md` |
 | Consistent emphasis signal across frames; layer/component naming pattern | `visualRules.hierarchySignals` / `.namingConventions` | `ui-engine/visual-hierarchy.md` |
 | A frame matching the new screen's role closely enough to serve as the comparison target | `screens[]` (`role` field) | `ui-engine/visual-benchmark.md`'s Reference column |
+| A screen whose composition is actually another screen's region, extended (not independently designed) | `screens[].composedFrom` | `ui-engine/layout-system.md`'s composition patterns |
+| A component observed appearing on more than one inspected screen | `components.components[].recurrence` | `ui-engine/ui-audit-framework.md` Category A/G (Structure/Component completeness) |
+
+## Structural and compositional extraction (added v1.0.33)
+A real benchmark run (the PerkyPet root-cause audit) found that extraction
+had been stopping at the token/component-*existence* level and never
+systematically capturing *composition* — which regions a screen actually
+has, which components recur across which named screens, and the small
+visual elements that don't rise to "a named Figma component" but are still
+load-bearing for fidelity. This section makes that extraction explicit and
+mandatory, not left to be noticed incidentally while extracting tokens.
+
+**Structure.** For every inspected screen, record its actual region order
+(e.g. "Sidebar + Header, then Hero, then 3-step explainer, then Badge
+Grid" — not just "it has a hero and a badge grid" with no order) and
+whether it's self-contained or extends another screen's region
+(`screens[].composedFrom`, populated only from what inspection actually
+shows — e.g. an "Invite Friends" frame whose top portion is pixel-identical
+to the Rewards Dashboard's hero region is composed from that hero, and this
+field exists specifically so that fact survives into generation instead of
+the new screen being built as an isolated page from a one-line `role`
+string). Never infer `composedFrom` from a screen's *name* alone ("Invite
+Friends" sounding like a distinct destination) — only from actually
+inspecting whether its content literally reuses another screen's region.
+
+**Components — recurrence, not just existence.** When a component
+(`components.components[]`) is observed on more than one inspected screen,
+populate `recurrence` with every screen name it was actually seen on — this
+is what turns "the Reward Journey exists" into a checkable fact ("the
+Reward Journey exists AND is expected on these 3 named screens"), which is
+exactly the fact a later generation pass needs to avoid silently dropping
+the component on a second or third screen variant. A component inspected
+on only one screen simply omits `recurrence` — this is not a universal
+requirement, only a record of what was actually observed.
+
+**Visual assets.** Beyond `imagery.treatment`'s single classification,
+name what the asset actually *is* in enough detail that "a close
+equivalent" (`figma-context-consumption.md`'s fidelity rule) has something
+real to aim for: the illustration's actual subject (e.g. "an orange tabby
+cat character with raised paws, surrounded by small decorative stars," not
+just "a pet illustration"), its approximate silhouette/scale relative to
+its container, and where decorative treatments (background washes,
+overlays, scrims) appear and at what strength. Record this as a
+`components[]` entry (purpose field) or, where it's purely decorative and
+not a reusable component, as a `visualRules` note — no new schema
+structure is needed for this, the existing free-text fields already carry
+it; what changes is that this level of detail is now mandatory to capture,
+not optional color.
+
+**Micro-elements — do not assume small means unimportant.** Explicitly
+check for, and capture as `components[]` entries (with `recurrence` where
+applicable) just like any named component: progress markers and decorative
+dots (e.g. a small circular marker riding a progress bar's leading edge —
+exactly the kind of element a real benchmark run found present in the raw
+Figma structure but never carried into a prior context), badges, small
+status indicators, dividers, icon backgrounds, repeated markers, and other
+visual affordances. The test is never "is this a named Figma
+component/instance" — a plain, unnamed frame positioned at a progress
+bar's edge is still worth capturing if it recurs across every instance of
+that bar. Skipping these because they "aren't components" is exactly the
+extraction gap a real audit traced a visible fidelity loss back to.
+
+**Density.** Record the actual content-to-whitespace relationship per
+recurring container (e.g. "badge card: icon + title + description + chip +
+progress bar are all grouped tightly, total card height is content-driven,
+not a fixed generous height with empty space below") as a `visualRules`
+note — `tokens.spacing`'s base-unit/step values alone do not capture this;
+a card can use the exact right spacing *tokens* between elements and still
+end up far taller or sparser than the reference if the overall
+content-to-container ratio was never recorded and compared.
+
+**Responsive.** Where the Figma file actually contains distinct
+breakpoint/device frames for a screen, populate `responsive[]` per the
+existing schema — which sections stack, collapse, hide, or resize, per
+`ui-engine/responsive-system.md`'s seven named adaptation decisions. Where
+no such frame exists in the file (the common case — most reference files
+only show a desktop composition), this is recorded as absent, not guessed;
+`figma-context-consumption.md`'s responsive-fidelity rule governs what
+happens downstream in that case.
 
 ## Confidence rules
 - **Explicit** — read directly from Figma's own structured data: a bound

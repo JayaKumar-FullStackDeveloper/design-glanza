@@ -36,6 +36,21 @@ home in an unrelated product with only the logo swapped — the same test
 `craft-critique.md` check 6 already applies to visual composition, applied
 here to the screen's *substance*.
 
+**Where a Figma Design Context exists (added v1.0.33):** this category
+additionally checks **structural completeness against that context** — a
+real benchmark run (the PerkyPet root-cause audit) found a screen can pass
+every other check in this framework while a whole Figma-derived section
+(a hero, a composed-from region, a 3-step explainer) is simply absent, and
+nothing had caught it. Concretely: for the screen being audited, walk
+`figma-context.json`'s `screens[].composedFrom` for this screen's entry —
+every named region it composes from must actually appear in the generated
+screen, or `figma-context-consumption.md`'s Completion verification must
+show an explicit, recorded reason it was changed or removed. **Fails
+when:** a `composedFrom`-named region is silently absent, with no recorded
+reason — this is a Blocker-severity "Missing pattern" gap
+(`visual-benchmark.md`'s gap-type table), not a lesser finding, regardless
+of how well every other category scores.
+
 ### B. Reference Match
 Where `product-builder/ui/design-direction.md` classifies as
 Reference-Driven or Guideline-Driven, does the generated screen actually
@@ -81,6 +96,27 @@ specified, correct sizing per context, clear interactive affordance (never
 a false or missing affordance). **Checked by:**
 `ui-engine/component-system.md`'s 8-point framework,
 `ux-engine/interaction-design.md`'s Affordance clarity section.
+
+**Where a Figma Design Context exists (added v1.0.33):** this category
+additionally checks **cross-screen recurrence** — walk every
+`figma-context.json` component carrying a `recurrence` list, and for each
+screen named in it, confirm the component (or its state-appropriate
+variant) is actually present in that screen's generated output. This is
+specifically the check that catches a component correctly built for one
+state/variant of a screen (e.g. an active-progress dashboard) but silently
+dropped when a second variant is generated (e.g. its empty-state or
+completed-state sibling) — a real, confirmed failure mode from the
+PerkyPet root-cause audit, where a recurring badge-icon and a recurring
+3-step explainer were present on one dashboard variant and absent on
+others with no recorded reason. Also check **visual-asset fidelity**: a
+component whose Figma source names a specific illustration or icon
+treatment (`figma-context.json`'s `imagery`/`iconography` fields) must be
+rendered as a faithful equivalent per `figma-context-consumption.md`'s
+visual asset fidelity rule — not emoji, not a generic gradient, not an
+unrelated icon standing in for it. **Fails when:** a `recurrence`-named
+screen is missing the component with no recorded reason, or a named
+illustration/icon is replaced with something that doesn't preserve its
+visual character per that rule.
 
 ### H. Interaction
 Two things, checked together because a state with no feedback is really an
@@ -170,7 +206,7 @@ COMPONENT → RESPONSIVE → MICRO-POLISH → FINAL VISUAL QA
 
 | Step | Runs | What specifically gets checked |
 |---|---|---|
-| **Structure** | Category A + D's composition half | The composition pattern (`layout-system.md`'s five patterns) is correctly selected, the region map is complete, the 12-column/gutter/margin grid is actually applied — checked before anything below, since it's meaningless to check alignment on the wrong skeleton. |
+| **Structure** | Category A + D's composition half | The composition pattern (`layout-system.md`'s five patterns) is correctly selected, the region map is complete, the 12-column/gutter/margin grid is actually applied, and — where a Figma Design Context exists — every `composedFrom`/`recurrence`-expected region and component is actually present (Category A/G's v1.0.33 addition) — checked before anything below, since it's meaningless to check alignment on the wrong, or an incomplete, skeleton. |
 | **Alignment** | Category D's alignment half | `layout-system.md`'s Shared alignment edges rule, per region: header, sidebar, cards, tables, forms, icon/text baseline, buttons, charts — each a real shared edge, not an approximately-close one. |
 | **Spacing** | Category D's spacing half | Spacing-scale adherence, the three-tier usage convention, vertical rhythm, internal-padding-vs-external-gap (`craft-critique.md` check 4), and a scan for accidental gaps (`layout-system.md`'s Vertical rhythm rule). |
 | **Sizing** | Category G's dimension half | Every control height, card dimension, icon/avatar size, table row height, chart proportion, sidebar width, and header height resolves to a named token in `design-system.md`'s closed scales — zero arbitrary pixel values. |

@@ -7,7 +7,42 @@ everywhere, it belongs here.
 
 ## Skill identity & version
 - **Name:** design-glanza
-- **Version:** 1.0.32 — **fixes for the 5 improvements a real 3-case
+- **Version:** 1.0.33 — **Figma visual-fidelity upgrade**, from a
+  root-cause audit of the real PerkyPet product: Level A/Level B both
+  reported PASS while the generated screens visibly dropped whole
+  Figma-derived sections (a 3-step explainer, a hero region), components
+  (badge icons on one state variant), and visual-asset fidelity (a pet
+  illustration reduced to a gradient, flat icons replaced with emoji) —
+  because Level B only ever checked token *values* and Level A's coarse
+  histogram can't distinguish "legitimately new composition" from "a
+  section is missing." **0 new phases/agents/gates/pipeline rows** — the
+  existing 41-row table, 26 rules, 21 gates are unchanged in count and
+  order (re-confirmed by direct re-parse); 2 new schema fields
+  (`screens[].composedFrom`, `components[].recurrence`, both optional,
+  backward compatible), and 6 existing files strengthened:
+  `figma-reference.md` (a new Structural and compositional extraction
+  section — structure/recurrence/visual-asset detail/micro-elements/
+  density/responsive, closing the exact extraction gap that let a real
+  progress-bar marker go uncaptured despite being visible in the raw
+  Figma metadata the whole time); `figma-context-consumption.md` (a
+  strengthened visual-asset fidelity DO/DON'T list — "a close equivalent"
+  now explicitly cannot mean omission, emoji, or a generic gradient — plus
+  a new pre-generation checklist and a mandatory completion-verification
+  step, both routed through the *existing* B15 cycle, no new review step
+  or agent); `ui-engine/ui-audit-framework.md` (Category A and Category G
+  now explicitly check `composedFrom`/`recurrence` structural completeness
+  where a Figma context exists); `ui-engine/visual-benchmark.md` (the
+  v1.0.32 composition-intent Note is now a *mandatory* trigger for a
+  real side-by-side + structural re-check, never a self-resolving
+  explanation; an explicit statement that a Level B PASS never implies
+  structural/compositional fidelity PASS); `config/quality-gates.md`
+  (B15's pass criterion now names the same structural check explicitly,
+  still inside the existing gate, no B22). The PerkyPet product's own
+  affected screens were regenerated (not hand-patched) through this
+  strengthened pipeline and re-verified against the real Figma file —
+  see the implementation report for the full before/after evidence and
+  release verdict.
+- **Previously, 1.0.32** — **fixes for the 5 improvements a real 3-case
   Figma benchmark identified**, plus 3 further real bugs this same pass
   found while actually testing each fix against live data (the identical
   "exercise it for real, fix what's found" pattern as every version since
