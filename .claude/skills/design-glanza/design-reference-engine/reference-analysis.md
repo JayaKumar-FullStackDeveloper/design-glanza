@@ -22,6 +22,14 @@ A reference doesn't need to be all of these at once — a single screenshot
 is enough to run this technique; more references simply mean more to
 reconcile (see Reconciling multiple references, below).
 
+**Figma designs specifically** often have a stronger extraction path than
+this file's generic, image-only technique — where the file's own structure
+is actually inspectable (not only viewable as pixels), `figma-reference.md`
+is the technique that applies instead, at Explicit rather than Inferred
+confidence. This file's generic technique below still applies unchanged
+whenever only a flat Figma export/screenshot is available, or structural
+inspection genuinely fails (`figma-reference.md`'s recorded fallback).
+
 ## What gets extracted, per reference
 
 | Extract | What to look for |
@@ -97,6 +105,9 @@ description alone) — carried forward into
 be.
 
 ## Explicitly not here
+- Structured extraction from a Figma file whose structure is actually
+  inspectable (variables, components, variants, auto-layout), and the
+  mandatory tool-invocation procedure that requires → `figma-reference.md`.
 - Extracting business logic/requirements from the same input →
   `product-intelligence/brd-analysis.md`.
 - What's conventional for this domain in general, independent of any one

@@ -7,7 +7,146 @@ everywhere, it belongs here.
 
 ## Skill identity & version
 - **Name:** design-glanza
-- **Version:** 1.0.29 — a **render-engine correctness pass** (0 new files,
+- **Version:** 1.0.32 — **fixes for the 5 improvements a real 3-case
+  Figma benchmark identified**, plus 3 further real bugs this same pass
+  found while actually testing each fix against live data (the identical
+  "exercise it for real, fix what's found" pattern as every version since
+  v1.0.28). 2 new files
+  (`scripts/validate-figma-conformance.py`,
+  `component-registry/composition-patterns.md`'s new Inline Control Row
+  entry is additive content, not a new file), 7 existing files given a
+  targeted addition: `scripts/{capture-render,compare-reference-visual}.py`,
+  `design-tokens/token-schema.md`, `ui-engine/visual-benchmark.md`,
+  `component-registry/registry-integration.md`. The 5 fixes:
+  **(1) Automated Level B.** New `scripts/validate-figma-conformance.py`
+  — deterministic traceability (does a token citing a Figma source
+  actually trace to a real `figma-context.json` entry?) and realization
+  (was that value ever actually rendered?) checks, replacing what was
+  previously a manual, agent-by-hand comparison every single time.
+  **(2) Composition-intent interpretation.** `compare-reference-
+  visual.py` gained a `COMPOSITION_INTENT_ADVISORY_FLOOR` — a
+  non-blocking `Note:` flag when `layout_similarity` sits above the hard
+  floor but well below a near-identical score, pointing at
+  `visual-benchmark.md`'s existing Direction-vs-Generated principle
+  instead of leaving a legitimately-different-composition score
+  unexplained.
+  **(3) Inline Control Row pattern.** `component-registry/
+  composition-patterns.md` gained a fifth named organism — a fixed
+  `become-stack` responsive default for any row of peer inline controls
+  — after the same responsive defect (inline controls not stacking)
+  recurred independently across unrelated screens in the benchmark.
+  **(4) Concrete new-component ADR example.** `component-registry/
+  registry-integration.md`'s existing "record a registry-first decision"
+  rule now includes an actual filled `ADR-NNN` shape for the specific
+  "no registry match" case, closing a gap where the mechanism was stated
+  but never shown instantiated.
+  **(5) Figma-token traceability.** Folded into the same new script as
+  (1) — one mechanism, two related checks, matching how
+  `validate-tokens.py` already bundles multiple related checks in one
+  file.
+  **3 further bugs found and fixed while testing the above against real
+  data, not hypothetically:** `scripts/capture-render.py` never captured
+  `borderColor`, `padding`, or `gap` at all (added, alongside the v1.0.30
+  `backgroundColor`/`color`/`borderRadius`/`fontFamily`/`fontSize`
+  fields) — without them, a border-color or spacing token could never be
+  verified as rendered, not a corner case but true for every single such
+  token, every time; the citation-detection regex's first draft matched
+  any bare mention of the word "Figma" anywhere in a token's
+  `description`, producing both a false positive (a description
+  explaining that NO Figma source existed still contains the word) and
+  a would-be false negative (a citation phrased as "aliased to Figma X"
+  doesn't start with the word) — fixed by specifying a precise,
+  documented citation marker (`design-tokens/token-schema.md`:
+  `"Figma source: <path>"`, matched literally, not inferred); a
+  CSS-quoted font-family value ('"Inter", sans-serif') didn't match its
+  unquoted citation source ('Inter, sans-serif') — fixed with a
+  quote-stripping normalizer applied consistently on both comparison
+  paths (one of the two paths was missed on the first pass and caught by
+  actually re-running the check against real data, not by code review
+  alone). **0 new lifecycle phases, 0 new gates, 0 new rule numbers, 0
+  new agents, 0 new Product Builders, 0 rows added/removed/reordered in
+  `execute-product-builder.md`'s 41-row table** (re-confirmed by direct
+  inspection: still 41 rows, 21 gates, 26 rules).
+- **Previously, 1.0.31** — a **strict implementation-validation pass** over
+  v1.0.30's Figma capability, exercised for the first time against a real
+  (synthetic test) product end to end — same pattern as v1.0.28→v1.0.29.
+  Found and fixed **one real gap**: `scripts/capture-render.py`'s
+  per-element capture recorded only geometry (position/size/overflow) —
+  `ui-engine/visual-benchmark.md`'s Level B (Figma-spec conformance) had
+  nothing to measure color/radius/typography against. Fixed by adding 5
+  computed-style fields (`backgroundColor`, `color`, `borderRadius`,
+  `fontFamily`, `fontSize`) to the same per-element object the script
+  already builds — no new script, no new capture pass, same
+  `getComputedStyle()` call already being made. Verified against a real
+  test product (`figma-validation-demo`): Level A (`compare-reference-
+  visual.py`) returned `color_similarity: 0.977`, `layout_similarity:
+  0.987`, `meaningful_mismatch: false`; Level B's measured
+  `backgroundColor: rgb(26, 115, 232)` / `borderRadius: 8px` matched the
+  test fixture's Figma-sourced tokens (`#1a73e8` / `8px`) exactly.
+  `scripts/validate-product.py`'s own full run on that same product also
+  caught a genuine, unrelated mobile-breakpoint horizontal-overflow
+  Blocker in the newly generated screen — fixed (table wrapped in a
+  `become-scrollable` adaptation, `ui-engine/responsive-system.md`) and
+  re-rendered per Rule 20's "a fix is only verified after re-rendering"
+  rule, confirmed resolved (20 findings → 18, the 2 overflow Blockers
+  gone, remaining findings are pre-existing scaffold-incompleteness in
+  the deliberately minimal test fixture, unrelated to Figma integration).
+  0 new files, 0 new gates, 0 new rules, 0 new phases — one existing
+  script's capture scope widened to match what its own consumer
+  (`visual-benchmark.md`) already documented needing.
+- **Previously, 1.0.30** — **existing Figma designs as a high-fidelity
+  design reference/input**, added alongside — never in place of —
+  sample images, written guidelines, and Design-Glanza's own default
+  standards. 4 new files (`design-reference-engine/{figma-reference,
+  figma-context-consumption}.md`,
+  `design-reference-engine/figma-context.schema.json`,
+  `scripts/validate-figma-context.py`), 1 new worked use case
+  (`use-cases/figma-reference-product.md`), 17 existing files given a
+  small, targeted addition (never a rewrite): `SKILL.md` (one scoped
+  `allowed-tools` exception for read-only Figma inspection, two
+  progressive-disclosure/Do-not additions), `config/{operating-rules,
+  quality-gates}.md`, `product-intelligence/brd-analysis.md`,
+  `design-reference-engine/{reference-analysis,reference-selection,
+  design-direction}.md`, `workflows/{design-setup,
+  execute-product-builder}.md`, `agents/design-setup-specialist.md`,
+  `ui-engine/{design-system,visual-benchmark}.md`,
+  `design-tokens/token-schema.md`,
+  `component-registry/registry-integration.md`,
+  `templates/design-direction.md`, `visual-regression/baseline-model.md`.
+  **0 new lifecycle phases, 0 new gates (B15 gained an 11th
+  rendered-evidence angle and the gap-type table gained one new row —
+  "Figma-spec conformance"/"Figma-spec deviation" — inside the existing
+  B15/B20, never a new gate number), 0 new rule numbers (Rule 18's prose
+  gained one sentence), 0 new generation agents, 0 new Product Builders,
+  0 rows added/removed/reordered in `execute-product-builder.md`'s
+  41-row table** (confirmed by direct inspection before and after: still
+  41 rows, Order 1-41 unchanged — only rows 15, 17, 18's Master-technique
+  cells gained a citation). The governing design: a Figma reference whose
+  structure is actually inspectable is the strongest instance of the
+  existing Reference-Driven mode (`reference-selection.md`), never a 5th
+  mode; its extraction (`figma-reference.md`, using the `figma-use`/
+  `figma-design-to-code` skills' `use_figma`/`get_design_context` tools,
+  always read-only, with an explicit, recorded fallback to the existing
+  image-only technique when structural inspection is unavailable) feeds
+  one new precedence contract
+  (`figma-context-consumption.md`: prefer a genuine Figma-matched token/
+  component/pattern, else the existing Design-Glanza default kept
+  consistent with the extracted Figma language) that resolves entirely
+  inside the existing Design Setup phase, before `ui/design-direction.md`
+  is written — every row from Prototype onward consumes an
+  already-enriched artifact and needed no Figma-specific branch of its
+  own. BRD remains the sole source of WHAT (IA/flows/screen purpose);
+  Figma is only ever a source of HOW. Two new deterministic checks:
+  `scripts/validate-figma-context.py` (schema-shaped structural
+  validation of `figma-context.json`, genuinely optional — degrades to a
+  single disclosed Note when no Figma reference exists for a product,
+  verified to have zero coupling into `validate-product.py`'s
+  aggregation) and `ui-engine/visual-benchmark.md`'s new Level B
+  (rendered values vs. `figma-context.json`'s ground-truth tokens,
+  logged as a **Figma-spec deviation** gap, same Blocker/Major/Minor/Note
+  handling as every other finding, same FIX→RECHECK loop). No existing
+  validator, gate, or script was weakened to make room for this.
+- **Previously, 1.0.29** — a **render-engine correctness pass** (0 new files,
   3 existing files fixed: `scripts/capture-render.py`, `scripts/
   validate-rendered-layout.py`, `scripts/_common.py`), found and fixed
   while actually using 1.0.28's new rendering capability to validate a

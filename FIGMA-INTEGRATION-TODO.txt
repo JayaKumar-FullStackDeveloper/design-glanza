@@ -1,0 +1,1106 @@
+DESIGN-GLANZA + FIGMA INTEGRATION - IMPLEMENTATION TODO PLAN (v2)
+(Planning only - nothing implemented yet. Ordered by implementation
+dependency. Supersedes the v1 plan of the same name - no TODO from v1 was
+silently dropped; items were renumbered/expanded/merged where the
+corrections required it.)
+
+================================================================================
+AUTHORITATIVE ACTION COUNT (resolved per correction #2)
+================================================================================
+Inspected live: workflows/execute-product-builder.md
+Header states explicitly: "41 total rows in the table below."
+This is the current, confirmed count (grew from an original 24 across
+v1.0.9-v1.0.11 - neither "37" nor any other number is used going forward).
+Per instruction, this document refers to it as the
+"existing UI-generation action pipeline" everywhere except this one
+confirmation line, and does NOT add, remove, reorder, or restructure any
+of its 41 rows.
+
+
+================================================================================
+COMPLETE WORKFLOW (Figma -> New Screen -> QA -> Iterate)
+================================================================================
+
+  Figma (existing product/design, supplied by the user)
+          |
+          v
+  Figma Skill prerequisite loaded  (figma-use, and figma-design-to-code
+  where a live node/file needs get_design_context)         [MANDATORY -
+                                                              never call the
+                                                              inspection tool
+                                                              without this]
+          |
+          v
+  Figma Inspection Tools  (use_figma / get_design_context)  [READ-ONLY -
+                                                               inspect only,
+                                                               never create/
+                                                               edit a node]
+          |
+          v
+  Figma Analysis  (design-reference-engine/figma-reference.md technique)
+    - Structured extraction wherever the file's own structure is
+      inspectable (named layers, variables, components, variants,
+      auto-layout) - PREFERRED over screenshots whenever available.
+    - Image-only fallback (same posture as reference-analysis.md) where
+      structure is NOT inspectable or the tool/skill is unavailable -
+      explicitly recorded as a fallback, never silently substituted.
+          |
+          v
+  Figma Design Context  (figma-context.json + BRD/figma/screens/*.png)
+    - Every field distinguishes Explicit/Observed vs Inferred/Assumed,
+      same three-tier confidence vocabulary used everywhere else in the
+      engine (Rule 10's discipline, applied here).
+          |
+          v
+  Existing Design Setup phase  (workflows/design-setup.md,
+  agents/design-setup-specialist.md - NO NEW AGENT, NO NEW PHASE)
+    - Step 1: Detect references -> Figma reference detected
+    - Step 2: Analyze references -> figma-reference.md branch runs
+    - Step 3: Design questionnaire (unchanged, fills any gap the Figma
+      context doesn't answer)
+    - Step 4: Classify -> Reference-Driven (Figma = its highest-fidelity
+      instance, still not a 5th mode)
+    - Figma Context -> Existing UI-Generation Contract applied here
+      (new design-reference-engine/figma-context-consumption.md)
+    - Step 5: design-direction.md written, citing figma-context.json
+      entries directly, and gated on approval (B13 + B16, unchanged)
+          |
+          v
+  Existing UI-generation action pipeline
+  (workflows/execute-product-builder.md - all 41 rows, UNCHANGED order,
+  UNCHANGED count - only specific rows gain a citation to the Figma
+  context as an additional input source)
+    - Build design system / design-tokens.json
+        -> Figma token (color/type/spacing/radius/elevation/sizing)
+           PREFERRED where one matches
+    - Build component architecture
+        -> Figma component/variant PREFERRED where one matches the need
+    - Build visual hierarchy / UI rules, responsive rules
+        -> Figma layout/grid/responsive signal preferred where present
+    - Mandatory critique-and-iteration (visual-benchmark-and-audit) cycle
+          |
+          v
+  New Screen Generation  (Implement - existing mechanism, unchanged)
+    New Screen Requirement + Figma Design Context + Design-Glanza
+    Standards -> existing UI-generation actions -> new screen
+    - Figma pattern preferred when a genuine match exists.
+    - Design-Glanza standard used, kept consistent with the extracted
+      Figma design language, when no match exists.
+    - Result is always a NEW screen - never a literal copy of any
+      existing Figma frame (reference-analysis.md's "extract the
+      language, not the screen" rule, strengthened for this source).
+          |
+          v
+  Render  (Preview & Run - scripts/capture-render.py, unchanged mechanism)
+          |
+          v
+  Visual QA  (ui-engine/visual-benchmark.md - two levels, same gates)
+    A. Visual reference comparison
+         generated screen vs. the matching Figma export
+         (scripts/compare-reference-visual.py - unchanged script)
+    B. Figma design-system conformance   [NEW gap-type, same gates]
+         generated screen vs. figma-context.json ground truth -
+         measurable deviation in typography/color/spacing/radius/
+         sizing/layout
+          |
+          v
+  Iterate  (methodology/design-thinking.md feedback-routing - unchanged)
+
+
+================================================================================
+PHASE 0 - FOUNDATIONAL ARTIFACTS
+================================================================================
+
+--------------------------------------------------------------------------------
+TODO-1
+Classification: ADD
+File/module: design-reference-engine/figma-context.schema.json
+Dependencies: none (first item)
+Purpose: Machine-checkable schema for the normalized Figma Design Context,
+         so every downstream consumer reads one agreed shape instead of a
+         prose description.
+Implementation details:
+  - Mirrors the existing precedent of design-tokens/design-tokens.
+    schema.json and design-research/research.schema.json - every other
+    structured artifact in this engine has a schema sibling.
+  - Encodes the strengthened tree from correction #4 (see TODO-5 for the
+    full field list) including a per-field confidence marker
+    (explicit | inferred | assumed) so the schema itself enforces that
+    the Explicit/Inferred/Assumed distinction is never dropped.
+Validation requirements:
+  - Schema itself has no runtime validator yet (see TODO-18, Phase 7,
+    explicitly optional) - at this stage it only needs to be reviewable
+    and internally consistent with TODO-5's field list.
+--------------------------------------------------------------------------------
+TODO-2
+Classification: ADD
+File/module: design-reference-engine/figma-reference.md
+Dependencies: TODO-1
+Purpose: The core new extraction technique file - sibling to
+         reference-analysis.md, never a replacement for it.
+Implementation details:
+  - Figma -> Design-Glanza mapping table: variable collection/mode ->
+    token category; component + variant -> component-registry entry;
+    auto-layout -> ui-engine/layout-system.md grid vocabulary; frame ->
+    reference asset (visual-benchmark.md); interaction/state variant ->
+    ux-engine state vocabulary.
+  - Confidence rules: Explicit when backed by actually-inspected Figma
+    structure; Inferred/Assumed fallback when only a flat image is
+    available (sharpens brd-analysis.md's existing Figma row, see
+    TODO-6).
+  - Strengthened anti-literal-copy rule: exact structured data is EASIER
+    to clone verbatim than a screenshot - state "extract the language,
+    never the screen" more firmly here than in reference-analysis.md,
+    never more loosely.
+  - Cites TODO-1's schema for the exact context shape it produces, and
+    TODO-7 (the consumption contract) for how that context is used once
+    produced.
+Validation requirements:
+  - Read against reference-analysis.md side by side to confirm no
+    duplicated technique and no contradiction in confidence-tagging
+    rules.
+
+
+================================================================================
+PHASE 1 - FIGMA TOOL INTEGRATION POINT (mandatory skill usage)
+================================================================================
+
+--------------------------------------------------------------------------------
+TODO-3
+Classification: MODIFY
+File/module: SKILL.md (frontmatter: allowed-tools)
+Dependencies: TODO-2 (target technique must exist before the tool
+              exception is wired to it)
+Purpose: Grant the one narrowly-scoped tool exception this capability
+         actually requires, without loosening Design-Glanza's existing
+         "minimal tool surface, no network tools" posture anywhere else.
+Implementation details:
+  - Add an allowlist entry permitting invocation of the `figma-use`
+    skill and its `use_figma` tool (and figma-design-to-code's
+    get_design_context where a live file/node is addressable).
+  - Gate this EXPLICITLY to Design Setup Step 1-2 only, and only when a
+    Figma reference is actually detected - not a general-purpose grant.
+  - Add a frontmatter comment explaining the one exception, matching the
+    existing comment style already used for the
+    Bash(python */scripts/...) allowlist entries.
+Validation requirements:
+  - Re-read the "POC invocation & safety" section of SKILL.md afterward
+    and confirm the "no network tools" sentence is updated to name this
+    as the sole, scoped exception rather than left contradicting it.
+--------------------------------------------------------------------------------
+TODO-4
+Classification: MODIFY (same file as TODO-2, sequenced after TODO-3
+                exists)
+File/module: design-reference-engine/figma-reference.md
+Dependencies: TODO-3
+Purpose: Make the MANDATORY tool-usage rule from correction #3 concrete
+         and procedural, not aspirational prose.
+Implementation details:
+  - Step order, stated explicitly:
+      1. Load the figma-use skill FIRST - its own mandatory-prerequisite
+         rule ("never call use_figma directly without it") is binding
+         here too.
+      2. Call it READ-ONLY (inspect only - never create/edit/write a
+         Figma node, never trigger a Figma-side mutation).
+      3. Prefer structured inspection (named layers, bound variables,
+         component/variant data, auto-layout) over a flat image export
+         whenever the file's structure is actually inspectable.
+      4. On any auth/availability/permission failure, degrade to
+         image-only extraction via reference-analysis.md's existing
+         technique and RECORD that fallback explicitly in
+         figma-context.json's source field (never silently substitute
+         one for the other) - same degrade-with-a-disclosed-Note posture
+         scripts/capture-render.py already uses when Playwright isn't
+         installed.
+Validation requirements:
+  - Walk both branches on paper: (a) full structural access available,
+    (b) tool unavailable/auth fails - confirm each produces a valid,
+    clearly-labeled figma-context.json (full-confidence vs.
+    fallback-labeled) rather than one branch silently failing.
+
+
+================================================================================
+PHASE 2 - EXTRACTION FLOW AND STRENGTHENED CONTEXT SHAPE
+================================================================================
+
+--------------------------------------------------------------------------------
+TODO-5
+Classification: DESIGN (documented inside TODO-2's file + TODO-1's
+                schema)
+File/module: design-reference-engine/figma-reference.md,
+             design-reference-engine/figma-context.schema.json
+Dependencies: TODO-1, TODO-2, TODO-4
+Purpose: Define the STRENGTHENED Figma Design Context shape per
+         correction #4 - enough information to create new screens that
+         genuinely belong to the existing Figma product, not just enough
+         to pass a schema check.
+Implementation details - the full normalized shape:
+
+  figma-context.json
+  |-- source            { fileKey, nodeIds[], fetchedAt,
+                           inspectionMode: "structured" | "image-fallback" }
+  |-- pages             [{ pageName, pageId, frameIds[] }]
+  |-- screens           [{ frameName, frameId, exportedImagePath, role,
+                            confidence }]
+  |-- tokens
+  |     |-- colors      { semantic + raw swatches, by collection + mode
+                           (light/dark), confidence per value }
+  |     |-- typography  { family, scale steps, weights, line-height,
+                           pairing, confidence per value }
+  |     |-- spacing     { base unit, step scale, confidence per value }
+  |     |-- radius      { scale, per-component-type mapping if present }
+  |     |-- elevation   { shadow steps, usage mapping }
+  |     `-- sizing      { control sizes, icon sizes, breakpoint widths }
+  |-- components
+  |     |-- components  [{ name, purpose/role, nodeId }]
+  |     |-- variants    [{ componentName, variantAxis, values[] }]
+  |     |-- properties  [{ componentName, propName, propType, default }]
+  |     `-- states      [{ componentName, variantName -> mapped
+                            Design-Glanza state (initial/loading/success/
+                            empty/error/disabled/etc.) }]
+  |-- patterns          [{ name, composedOf[] - e.g. a recurring
+                            "filter bar + table" combination }]
+  |-- layouts           [{ frameName, autoLayout{ direction, gap,
+                            padding, alignment }, gridHint }]
+  |-- responsive        [{ frameName, breakpointVariant, adaptation
+                            decision if inferable }]
+  |-- interactions       [{ trigger, componentOrFrame, behavior if
+                            stated/inferable (hover/press/transition) }]
+  |-- iconography        { stroke vs fill convention, size consistency }
+  |-- imagery            { photography vs illustration use, treatment }
+  `-- visual-rules       { hierarchy signals, naming conventions
+                            observed in layer/component names, any
+                            do/don't pattern implied by consistent
+                            vs. inconsistent usage }
+
+  - EVERY leaf value carries a confidence tag: "explicit" (directly
+    read from Figma's own structured data - a bound variable, a named
+    variant, an auto-layout property), "inferred" (a reasonable reading
+    from visual inspection, e.g. "looks like an 8px base unit"), or
+    "assumed" (no signal at all, Design-Glanza default used) - the same
+    Explicit/Inferred/Assumed vocabulary used everywhere else in this
+    engine (Rule 10), never a new tagging scheme.
+  - Interactions/states/patterns sections are allowed to be partially
+    populated - Figma does not always encode behavior; what can't be
+    read structurally is marked inferred/assumed or left as a stated gap,
+    never fabricated.
+Validation requirements:
+  - Confirm every field in this tree has a corresponding schema entry in
+    TODO-1.
+  - Confirm every field maps to at least one concrete consumer named in
+    TODO-7 (the contract) - a field with no downstream consumer is
+    scope creep and should be trimmed before implementation.
+--------------------------------------------------------------------------------
+TODO-6
+Classification: MODIFY
+File/module: product-intelligence/brd-analysis.md
+Dependencies: TODO-5
+Purpose: Resolve the ambiguity that file's own Figma row already
+         half-describes ("if the file's own structure is actually
+         inspectable...") into a concrete, checkable condition.
+Implementation details:
+  - Sharpen the existing Figma input-recognition row: presence of
+    BRD/figma/figma-context.json with inspectionMode: "structured" ->
+    Explicit/Medium-High confidence for structural facts; absence, or
+    inspectionMode: "image-fallback" -> Medium confidence, same posture
+    as a plain screenshot.
+Validation requirements:
+  - Re-read this row next to figma-reference.md's confidence rules
+    (TODO-2/TODO-4) and confirm they state the same threshold, not two
+    slightly different ones.
+
+
+================================================================================
+PHASE 3 - FIGMA CONTEXT -> EXISTING UI-GENERATION CONTRACT
+(the most important addition - correction #5)
+================================================================================
+
+--------------------------------------------------------------------------------
+TODO-7
+Classification: ADD
+File/module: design-reference-engine/figma-context-consumption.md
+Dependencies: TODO-5
+Purpose: Define, as its own explicit technique file (same pattern as
+         reference-selection.md and design-direction.md already being
+         split out from reference-analysis.md), EXACTLY how:
+
+           New Screen Requirement + Figma Design Context +
+           Existing Design-Glanza Standards
+
+         flows through the existing UI-generation action pipeline to
+         produce a new screen. This is the file that stops Figma
+         integration from being "just another input that's vaguely
+         richer" and makes it a concrete, checkable consumption
+         contract.
+Implementation details:
+  - States the governing precedence rule, explicitly, once:
+      1. If a genuine Figma pattern/component/token exists for this
+         need, PREFER it (cite the specific figma-context.json entry).
+      2. If no matching Figma pattern exists, use the existing
+         Design-Glanza standard (design-tokens/*, component-registry/*,
+         ui-engine/*) WHILE maintaining consistency with the extracted
+         Figma design language (same density/register/radius-and-
+         elevation feel, even where the specific value is Design-
+         Glanza's own default) - never a value that visibly clashes with
+         the Figma language just because it technically "passed" the
+         Design-Glanza default.
+  - A field-by-field influence table, one row per item in correction
+    #5's list, each citing the specific figma-context.json section and
+    the specific existing consumer file that already owns that
+    decision:
+
+      | Influenced area      | figma-context.json source | Existing consumer (unchanged) |
+      |-----------------------|---------------------------|--------------------------------|
+      | Typography             | tokens.typography          | ui-engine/typography.md, design-tokens/token-schema.md |
+      | Colors                 | tokens.colors               | ui-engine/color-system.md, design-tokens/semantic-tokens.md |
+      | Spacing                | tokens.spacing              | ui-engine/layout-system.md, design-tokens/token-schema.md |
+      | Radius / elevation     | tokens.radius/elevation     | design-tokens/token-schema.md |
+      | Sizing                 | tokens.sizing               | design-tokens/token-schema.md |
+      | Layout / grid          | layouts                     | ui-engine/layout-system.md |
+      | Components             | components.components       | component-registry/* |
+      | Variants               | components.variants          | component-registry/registry-schema.md |
+      | States                 | components.states            | ux-engine/state-design.md |
+      | Visual hierarchy       | visual-rules                 | ui-engine/visual-hierarchy.md |
+      | Responsive behavior    | responsive                   | ui-engine/responsive-system.md |
+      | Interaction patterns   | interactions                 | ux-engine/interaction-design.md |
+
+  - States explicitly, once, the non-negotiable output rule: the result
+    is always a NEW screen serving the new screen requirement - never a
+    literal reproduction of an existing Figma frame, even when that
+    frame is an extremely close match to the new requirement. This
+    restates (does not replace) reference-analysis.md's and Rule 18's
+    existing anti-literal-copy discipline, scoped specifically to this
+    contract so it cannot be read as implied permission to "just reuse
+    the closest frame."
+  - Explicitly states what this file is NOT: not a new generation
+    mechanism, not a new agent, not a bypass of the existing 41-row
+    pipeline - it is the lookup/precedence rule those existing rows
+    already need, now written down in one place instead of implied.
+Validation requirements:
+  - Every row of the influence table must cite a file that already
+    exists today (no new consumer file introduced here) - if a row has
+    no existing consumer, that's a sign the item belongs in Phase 4's
+    annotations instead, not a new mechanism.
+  - Confirm this file is referenced (not duplicated) from every TODO in
+    Phase 4 below.
+--------------------------------------------------------------------------------
+TODO-8
+Classification: MODIFY
+File/module: workflows/design-setup.md (Step 1-2)
+Dependencies: TODO-7
+Purpose: Wire the contract into the actual Design Setup procedure, so it
+         runs as part of the existing phase rather than needing a
+         separate invocation.
+Implementation details:
+  - Branch: if a Figma reference is detected, run Phase 1-2's tool/
+    extraction flow to produce figma-context.json, then hand it to
+    figma-reference.md's technique (TODO-2/4) instead of - or alongside,
+    if only a flat export exists - reference-analysis.md's generic one.
+  - Immediately after analysis, apply figma-context-consumption.md's
+    (TODO-7) precedence rule before writing design-direction.md, so the
+    direction document itself already reflects "Figma preferred where
+    matched, Design-Glanza standard + consistency elsewhere" rather than
+    that reconciliation happening ad hoc later in Prototype.
+Validation requirements:
+  - Confirm Step order still matches agents/design-setup-specialist.md's
+    own numbered procedure after this edit (no drift between the two
+    descriptions of the same step sequence).
+--------------------------------------------------------------------------------
+TODO-9
+Classification: MODIFY
+File/module: agents/design-setup-specialist.md
+Dependencies: TODO-7, TODO-8
+Purpose: Keep the one agent that already owns reference detection/
+         analysis as the sole owner of this capability too - the
+         concrete proof that correction #1's "no new generation agent
+         unless proven necessary" is satisfied.
+Implementation details:
+  - Input section: point "Figma links/files" at the concrete BRD/figma/
+    location and the new Step 1-2 branch.
+  - "Things it must not do" section: add - must not call a Figma write/
+    mutation tool (inspection only, per TODO-4); must not skip the
+    anti-literal-copy check just because the source data is exact; must
+    not apply figma-context-consumption.md's precedence rule
+    inconsistently across sessions (a prior ADR in product-memory/*
+    takes precedence over re-deriving the same precedence decision, same
+    as Rule 26 already requires elsewhere).
+Validation requirements:
+  - Confirm no new "Role" section is needed - this agent's existing
+    Role/Responsibility language already covers "detect and analyze any
+    design references the user provided" without edit; only Input and
+    Must-not-do need the addition.
+--------------------------------------------------------------------------------
+TODO-10
+Classification: MODIFY
+File/module: design-reference-engine/reference-analysis.md,
+             design-reference-engine/reference-selection.md
+Dependencies: TODO-7
+Purpose: Keep the existing four-mode classification exactly as-is while
+         making Figma's place inside it explicit.
+Implementation details:
+  - One-line pointer in each: when a Figma context exists, confidence is
+    Explicit (not Inferred) per figma-reference.md; precedence inside
+    Reference-Driven mode follows figma-context-consumption.md.
+  - Explicitly restate: no change to the four-mode priority order -
+    Figma remains the strongest instance of Reference-Driven, never a
+    5th mode.
+Validation requirements:
+  - Confirm reference-selection.md's "four modes, in priority order"
+    section still reads correctly with no renumbering.
+
+
+================================================================================
+PHASE 4 - WIRING INTO THE EXISTING UI-GENERATION ACTION PIPELINE
+(no row added, removed, reordered, or restructured - annotation only)
+================================================================================
+
+--------------------------------------------------------------------------------
+TODO-11
+Classification: MODIFY
+File/module: workflows/execute-product-builder.md
+Dependencies: TODO-7, TODO-8, TODO-9, TODO-10
+Purpose: Make the existing action pipeline's Design Setup rows (#15-18 in
+         the live Order column) cite the Figma technique as an additional
+         master-technique input, with zero structural change to the
+         table.
+Implementation details:
+  - Rows for "Detect and analyze design references, if any", "Run the
+    design questionnaire", "Classify the design-reference decision",
+    and "Write the complete Design Direction document" each get a
+    one-line annotation citing figma-reference.md and
+    figma-context-consumption.md alongside reference-analysis.md /
+    reference-selection.md / design-direction.md.
+  - NO row added. NO row removed. NO row reordered. NO Order-column
+    renumbering. This satisfies correction #2's explicit instruction not
+    to add/remove/reorder/restructure the existing pipeline.
+Validation requirements:
+  - Diff the table's row count before/after this edit - must still read
+    "41 total rows" with the exact same Order values 1-41.
+--------------------------------------------------------------------------------
+TODO-12
+Classification: MODIFY
+File/module: ui-engine/design-system.md, design-tokens/token-schema.md
+Dependencies: TODO-7, TODO-11
+Purpose: Let the "Build design system" action (the existing row that
+         already establishes design-tokens.json) prefer a matched Figma
+         token per the contract, without changing what that action
+         produces or how it's gated (B6/B18 unchanged).
+Implementation details:
+  - Short "Figma token mapping" note: when figma-context.json.tokens
+    exists, agents/design-system-expert.md establishes design-
+    tokens.json by mapping those variables onto the 14-category schema
+    directly (citing the source Figma variable name per token, same
+    citation discipline reference-analysis.md already requires) rather
+    than inferring values from pixels alone.
+  - Explicitly states the fallback: a token category with no Figma match
+    still uses the existing Design-Glanza default/master scale,
+    unchanged.
+Validation requirements:
+  - Confirm scripts/validate-tokens.py's existing checks (contrast,
+    target size, no-raw-value) still apply unmodified to a
+    Figma-sourced token value - this is a sourcing change, not a
+    validation-rule change.
+--------------------------------------------------------------------------------
+TODO-13
+Classification: MODIFY
+File/module: component-registry/registry-integration.md
+Dependencies: TODO-7, TODO-11
+Purpose: Let the "Build component architecture" action prefer a matched
+         Figma component/variant per the contract, without changing
+         Rule 24's registry-first discipline.
+Implementation details:
+  - Short matching note: a Figma component
+    (figma-context.json.components.components[]) is matched against the
+    ~29 registry entries by name/purpose BEFORE anything is accepted as
+    new - Rule 24 unchanged, same "logged, never silent" treatment for a
+    genuinely new component.
+  - Figma variants map onto the registry entry's own variant axis where
+    the shape matches; a Figma variant with no registry equivalent is
+    logged the same way an undocumented raw token value is (TODO-12),
+    never silently dropped.
+Validation requirements:
+  - Walk one concrete example end to end on paper (e.g. a Figma "Badge"
+    component with a "status" variant axis) and confirm it resolves to
+    an existing registry entry rather than a new one, before this is
+    implemented for real.
+--------------------------------------------------------------------------------
+TODO-14
+Classification: MODIFY
+File/module: templates/design-direction.md,
+             design-reference-engine/design-direction.md
+Dependencies: TODO-7
+Purpose: Let design-direction.md's existing fields carry Figma-sourced
+         citations without adding a single new field.
+Implementation details:
+  - No new fields. Existing fields ("From a reference, cite which") can
+    now cite figma-context.json's specific entries (exact hex/px/
+    component name) instead of an inferred approximation.
+Validation requirements:
+  - Confirm templates/design-direction.md's required-field list is
+    identical in count before/after this edit - this is a citation
+    richness change, not a schema change.
+
+
+================================================================================
+PHASE 5 - UI GENERATION CONSUMING THE ENRICHED ARTIFACTS
+(verification phase - proves correction #1's "no new generation
+pipeline, no new agent" requirement is actually met, not just claimed)
+================================================================================
+
+--------------------------------------------------------------------------------
+TODO-15
+Classification: VERIFY ONLY (decision record, no file content change
+                expected beyond a short note where the decision is
+                recorded)
+File/module: Rows for "Build visual hierarchy / UI rules", "Build
+             responsive rules", and "Implement the product" in
+             workflows/execute-product-builder.md; agents/
+             design-system-expert.md; agents/ui-designer.md
+Dependencies: TODO-7 through TODO-14
+Purpose: Explicitly confirm - and record the confirmation, since
+         correction #1 requires proving this rather than assuming it -
+         that no new generation agent and no second pipeline is needed.
+Implementation details:
+  - Confirm these existing actions already consume only
+    design-direction.md + design-tokens.json + components.md as their
+    inputs, and need no Figma-specific branch of their own: by the time
+    execution reaches them, the Figma preference has already been
+    resolved into those three artifacts by Phase 3/4's contract.
+  - Record this as a short decision note (e.g. a paragraph in
+    figma-context-consumption.md itself, under an "Explicitly not here"
+    section matching this engine's existing file convention): "No new
+    agent was introduced; design-system-expert.md and ui-designer.md
+    needed no new capability because the contract resolves Figma
+    preference upstream of their existing inputs."
+  - A new screen's requirement (from Intake/Define) combines with the
+    Figma-enriched direction/tokens/registry exactly the way any
+    Reference-Driven product's new screen already does today - this row
+    is the proof, not a new mechanism.
+Validation requirements:
+  - This TODO's own completion criterion IS the validation: if
+    implementing Phase 3/4 turns out to require touching
+    design-system-expert.md's or ui-designer.md's own reasoning
+    procedure (not just citing a richer input), that is a signal this
+    plan under-scoped Phase 3 and it should be revisited before
+    declaring Phase 5 done - do not silently patch a new agent in here
+    without surfacing that back to the user first.
+
+
+================================================================================
+PHASE 6 - VISUAL QA (two levels, per correction #7)
+================================================================================
+
+--------------------------------------------------------------------------------
+TODO-16
+Classification: MODIFY
+File/module: ui-engine/visual-benchmark.md
+Dependencies: TODO-5 (screens[] section), TODO-7
+Purpose: Add both required QA levels without creating a new gate -
+         correction #7's explicit constraint.
+Implementation details:
+  Level A - Visual reference comparison (mostly already supported,
+  confirm + make explicit):
+    - When figma-context.json.screens[] names a matching exported frame
+      for this new screen's role, that PNG is the Reference asset fed to
+      scripts/compare-reference-visual.py - same script, same mechanism
+      as any other reference image. Add one line making this explicitly
+      supported rather than merely inferable.
+  Level B - Figma design-system conformance (new):
+    - New gap-type table row: "Figma-spec deviation" - a generated
+      screen's rendered spacing/color/radius/sizing/typography value
+      measurably disagrees with figma-context.json.tokens' ground-truth
+      value. Distinct from the existing "Rendered-layout defect" row
+      (which only checks the generated screen's OWN internal
+      self-consistency, not against an external ground truth).
+    - This is new EVIDENCE feeding the SAME existing mechanism - same
+      B15/B20 gates, same Blocker/Major/Minor/Note severity handling,
+      same FIX -> RECHECK loop already defined in this file. No new gate
+      is created.
+    - Only applies when a Figma context exists; otherwise this row is
+      simply inapplicable, the same way the Chart pipeline is
+      inapplicable to a chart-free screen.
+Validation requirements:
+  - Confirm the gap-type table's existing columns/shape are unchanged -
+    this is one new row, not a new table structure.
+--------------------------------------------------------------------------------
+TODO-17
+Classification: MODIFY
+File/module: config/quality-gates.md (B15's "Rendered-evidence
+             evaluation angles" list)
+Dependencies: TODO-16
+Purpose: Register Figma-spec conformance as additional evidence inside
+         the existing B15 gate - no new gate number, per correction #7.
+Implementation details:
+  - Add an 11th angle (Figma-spec conformance) to the existing 10,
+    worded the same way the other 10 are (cites the specific script/
+    comparison that backs it, same as angles 1-10 each cite
+    capture-render.py/validate-rendered-layout.py).
+Validation requirements:
+  - Re-read B15's full pass criterion afterward and confirm it still
+    reads as "0 unresolved Rendered-layout defect gaps, and 0 unresolved
+    Figma-spec deviation gaps where a Figma context exists" rather than
+    silently making this evidence type optional/unenforced.
+
+
+================================================================================
+PHASE 7 - VALIDATION, REGRESSION, AND END-TO-END TEST
+================================================================================
+
+--------------------------------------------------------------------------------
+TODO-18
+Classification: ADD - LOWER PRIORITY / EXPLICITLY OPTIONAL FOR V1
+File/module: scripts/validate-figma-context.py
+Dependencies: TODO-1, TODO-5
+Purpose: Deterministic schema check that figma-context.json is
+         well-formed before Design Setup proceeds.
+Implementation details:
+  - Validate against TODO-1's schema; same pattern as validate-
+    tokens.py/validate-states.py.
+  - Genuinely optional at first cut - no other reference form
+    (screenshots, website references) has a deterministic validator
+    either. Flag clearly as deferrable, not blocking, in the
+    implementation PR.
+Validation requirements:
+  - If deferred, record the deferral explicitly (same "logged, never
+    silent" discipline this engine applies to every other gap) rather
+    than letting it quietly disappear from scope.
+--------------------------------------------------------------------------------
+TODO-19
+Classification: MODIFY
+File/module: visual-regression/baseline-model.md
+Dependencies: TODO-16
+Purpose: Let a screen's regression baseline also carry its Figma
+         provenance, so later passes can re-check conformance, not just
+         re-check internal consistency.
+Implementation details:
+  - One line: a screen's captured baseline may additionally reference
+    its originating figma-context.json entry, so a later Iterate pass
+    re-diffing against baseline can also re-check Figma-spec conformance
+    (TODO-16), not just its own prior render.
+Validation requirements:
+  - Confirm visual-regression/diff-detection.md's 9 existing categories
+    don't need a 10th category for this - it should fold into the
+    existing "component inconsistencies"/"token" category, not require a
+    new one (same "no new category unless proven necessary" discipline
+    as correction #1 applies to agents, applied here to categories too).
+--------------------------------------------------------------------------------
+TODO-20
+Classification: VERIFY ONLY - no change expected
+File/module: scripts/validate-product.py
+Dependencies: TODO-16, TODO-17
+Purpose: Prove the new capability is additive and never required - the
+         explicit regression check correction #1's "preserve all
+         existing workflows and gates" demands.
+Implementation details:
+  - Confirm this script's aggregation still returns all-pass, or
+    degrades with a single disclosed Note, when figma-context.json is
+    absent (no Figma reference supplied) - exactly the same posture it
+    already has for an unavailable Playwright install.
+Validation requirements:
+  - Run (on paper, at planning stage; literally at implementation stage)
+    the existing script's current test fixtures with no Figma input
+    present and confirm the result is byte-for-byte identical to
+    pre-change behavior.
+--------------------------------------------------------------------------------
+TODO-21
+Classification: ADD
+File/module: use-cases/figma-reference-product.md
+Dependencies: TODO-1 through TODO-20 (this is the capstone end-to-end
+              test, per correction #8 - it exercises every prior item)
+Purpose: A dedicated, worked end-to-end test proving the generated
+         screen visually BELONGS to the existing Figma product - not
+         merely that figma-context.json was created. This uses the
+         engine's own existing extension point (use-cases/*.md already
+         exists specifically for "a worked, end-to-end example for this
+         kind of request" per SKILL.md's progressive-disclosure table),
+         so no new test mechanism is introduced.
+Implementation details - the exact scenario to script and run:
+
+    Existing Figma product/design (a real or representative test file
+    with a non-trivial design system: multiple color tokens, at least
+    one multi-variant component, auto-layout frames)
+            +
+    New screen requirement (a screen that does NOT already exist in
+    that Figma file, so the test cannot be satisfied by copying)
+            |
+            v
+    Figma Skill inspection (TODO-3/4)
+            |
+            v
+    Figma Design Context produced (TODO-5)
+            |
+            v
+    Existing Design Setup (TODO-8/9/10, contract applied per TODO-7)
+            |
+            v
+    Existing UI-generation action pipeline (TODO-11-14, all 41 rows,
+    unchanged order)
+            |
+            v
+    New screen generated (Implement)
+            |
+            v
+    Render (Preview & Run, unchanged mechanism)
+            |
+            v
+    Visual comparison - Level A (TODO-16, vs. the closest Figma export)
+            |
+            v
+    Figma-spec conformance - Level B (TODO-16/17, vs. figma-context.json
+    ground truth)
+            |
+            v
+    Fix / Iterate (unchanged feedback-routing)
+
+  - Explicit pass criteria (not just "it ran without error"):
+      1. The new screen uses the SAME color/type/spacing tokens the
+         Figma file actually defines, cited by name, not Design-Glanza
+         defaults that happen to look similar.
+      2. At least one multi-variant component from the Figma file is
+         reused via its registry match (TODO-13), with the correct
+         variant selected for the new screen's actual need.
+      3. The new screen is NOT a copy of any single existing Figma
+         frame - a reviewer comparing it to the Figma file should
+         recognize "this belongs to the same product" without finding
+         it identical to any one existing screen.
+      4. Visual-benchmark Level A and Level B (TODO-16) both run and
+         both report a result (pass, or a resolved gap) - "we didn't
+         check" is itself a test failure, same as everywhere else in
+         this engine.
+      5. The existing 41-row pipeline's gates (B6, B13, B15, B16, B18,
+         B19, B20 at minimum) all still pass, proving the new capability
+         didn't quietly weaken anything it touches.
+  - Second, negative-path run of the same scenario with Figma tool
+    access deliberately unavailable (auth failure simulated): confirm
+    the fallback (TODO-4) engages, is recorded, and the pipeline still
+    completes using image-only extraction - this is the regression
+    proof that the feature degrades gracefully rather than blocking the
+    whole pipeline when Figma access fails.
+Validation requirements:
+  - This use-case document itself IS the validation artifact - per this
+    engine's existing convention, a use-case is a worked example that
+    can be re-run, not just read. At implementation time, this should
+    actually be executed against a real or representative Figma file,
+    not left as a hypothetical walkthrough.
+
+
+================================================================================
+PHASE 8 - RULE/DOC CLOSURE
+================================================================================
+
+--------------------------------------------------------------------------------
+TODO-22
+Classification: MODIFY
+File/module: config/operating-rules.md (Rule 18)
+Dependencies: TODO-7 (the contract this rule addition protects)
+Purpose: Record the strengthened anti-literal-copy principle at the
+         constitutional (Rule) level, not only inside the technique
+         file, since Rule 18 is what every other anti-generic-copy
+         statement in this engine already traces back to.
+Implementation details:
+  - Add one sentence: never treat an exact Figma reference as a literal
+    clone target just because it's easy to copy 1:1. No new rule
+    number - folds into Rule 18's existing scope.
+Validation requirements:
+  - Confirm Rule 18's "Enforced by" / "Executed via" cross-references
+    still resolve correctly after the addition (point at
+    figma-reference.md and figma-context-consumption.md alongside the
+    files already listed).
+--------------------------------------------------------------------------------
+TODO-23
+Classification: MODIFY
+File/module: SKILL.md
+Dependencies: TODO-2, TODO-7
+Purpose: Make the new capability discoverable through the existing
+         progressive-disclosure mechanism, without restating its
+         mechanics (this file's own stated rule: "never restates what's
+         inside those - it only says what each is for and when to reach
+         for it").
+Implementation details:
+  - One progressive-disclosure table row pointing at figma-reference.md
+    + figma-context-consumption.md + figma-context.schema.json, filed
+    under the existing "Establishing/confirming the visual and
+    interaction direction" row (extend it, don't add a parallel row).
+  - One line in Section 8 (Design Setup) noting Figma is the
+    highest-fidelity Reference-Driven source when its structure is
+    actually inspectable.
+  - Confirm the "Do not" list at the end of SKILL.md gets one line
+    consistent with Rule 18's new sentence (TODO-22) - "Do not treat an
+    exact Figma reference as a literal clone target."
+Validation requirements:
+  - Confirm no existing progressive-disclosure row or "Do not" bullet
+    was duplicated or contradicted by the addition.
+--------------------------------------------------------------------------------
+TODO-24
+Classification: MODIFY
+File/module: config/master-config.md
+Dependencies: everything above (this is the closing item)
+Purpose: Record the change at the version/changelog level, per this
+         project's own established practice for every prior version.
+Implementation details:
+  - Version bump: confirm the next sequential version number live at
+    implementation time (do not assume one in advance here).
+  - Changelog entry in the project's established detailed style: exact
+    files added (TODO-1, TODO-2, TODO-7, TODO-18 if not deferred,
+    TODO-21) and modified (all MODIFY-classified TODOs above), an
+    explicit "0 new lifecycle phases / 0 new gates / 0 new rule numbers
+    / 0 new generation agents / 0 new Product Builders" statement
+    (directly answering correction #1), and the one scoped
+    allowed-tools exception (TODO-3) with its rationale.
+Validation requirements:
+  - Cross-check the changelog's own file list against this TODO plan's
+    Phase 0-7 items - every ADD/MODIFY classification above should
+    appear exactly once in the changelog, none missing, none invented.
+
+
+================================================================================
+EXPLICITLY UNCHANGED (confirmed by this plan - correction #1 and #6)
+================================================================================
+- 12-phase lifecycle - no new phase.
+- The existing UI-generation action pipeline's row count (41) and order -
+  no row added, removed, reordered, or restructured.
+- 26 rules (only Rule 18's prose grows, same rule number).
+- 21 gates (only B15's evidence-angle list grows, same gate number - no
+  new gate).
+- Four-mode reference classification (Reference-Driven / Guideline-
+  Driven / Custom Design / Default Design-Glanza) - Figma is the
+  strongest instance of mode 1, never a 5th mode.
+- Product Builder generation mechanism (scripts/create-product-
+  builder.py) - untouched.
+- No new generation agent - design-setup-specialist.md, design-system-
+  expert.md, and ui-designer.md remain the sole owners (TODO-15's
+  verification).
+- No separate Figma-specific generation pipeline - the complete workflow
+  diagram above shows one pipeline, enriched at specific points, never a
+  parallel one.
+- design-samples/, Guideline-Driven mode, Custom Design mode - entirely
+  untouched.
+
+
+================================================================================
+SUGGESTED IMPLEMENTATION ORDER (if split into reviewable chunks)
+================================================================================
+Chunk A: Phases 0-3   (extraction + the consumption contract itself -
+                        review this before anything downstream touches
+                        the existing pipeline)
+Chunk B: Phases 4-5   (wiring into the existing 41 rows + the
+                        no-new-agent verification)
+Chunk C: Phases 6-8   (visual QA, validation, the end-to-end test, and
+                        version/changelog closure)
+
+Review Chunk A's actual figma-context.json output AND
+figma-context-consumption.md's precedence rule on one real example
+before Chunk B starts citing it from inside the existing pipeline.
+
+
+================================================================================
+GOVERNING STATEMENT (added per explicit instruction - binding on every
+TODO above, restated here as one place to check it against)
+================================================================================
+  BRD   = requirements / functionality / screen purpose  (source of truth
+          for WHAT needs to be designed - unchanged, never overridden by
+          Figma)
+  Figma = existing product's visual/design-system language (source of
+          truth for HOW the new screen should look - never for WHAT it
+          contains or does)
+  Design-Glanza = the complete, unmodified UX/UI methodology and
+          generation process (remains fully responsible for all design
+          reasoning and execution - Figma is an additional input to that
+          process, never a substitute for any part of it)
+
+This is already structurally enforced, not newly invented here:
+  - reference-analysis.md's existing boundary rule already separates
+    "design direction" facts from "business requirement" facts extracted
+    from the same reference.
+  - reference-selection.md already states, for Reference-Driven mode
+    generally (Figma included): "this product's actual IA/flows/content
+    still come from ux-engine/*, not from the reference's own structure."
+  - TODO-7's contract and TODO-22's Rule 18 addition make the
+    not-a-literal-copy discipline explicit specifically for Figma's
+    higher-fidelity data.
+This section exists so the statement is checkable in one place rather
+than only implied across several files.
+
+
+================================================================================
+CORRECTED FULL FLOW (verified against live architecture - one ordering
+correction from the requested diagram, explained below the diagram)
+================================================================================
+
+  BRD / New Screen Requirement
+          |
+          v
+  Existing INTAKE  (brd-analysis.md, requirement-engine.md,
+  business-logic.md, user-roles.md, dependency-analysis.md,
+  edge-case-engine.md - rows 1-7, UNCHANGED)
+          |
+          v
+  Existing EMPATHIZE / DEFINE / IDEATE / ARCHITECT
+  (rows 8-11, UNCHANGED)
+          |
+          v
+  Existing DESIGN SETUP begins
+  (Research Brief / evidence / insight - rows 12-14, UNCHANGED)
+          |
+          v
+  Figma Skill -> read and analyze existing Figma design   [INJECTION
+  POINT 1 - row 15, "Detect and analyze design references"]
+          |
+          v
+  Figma Design Context produced (figma-context.json)
+          |
+          v
+  Design Setup continues: questionnaire -> classify (Reference-Driven,
+  Figma = highest-fidelity instance) -> write design-direction.md
+  [INJECTION POINT 2 - row 18 - figma-context-consumption.md's
+  precedence rule applied HERE] -> approval gate (rows 16-19, mechanism
+  UNCHANGED, content now Figma-enriched)
+          |
+          v
+  Existing PROTOTYPE (UX) - user flows, IA, navigation, screen
+  architecture, interaction architecture, state matrix, accessibility,
+  UX scenarios (rows 20-27, UNCHANGED)
+    *** CORRECTION vs. the requested diagram: this runs AFTER Design
+    Setup, not before it (see note below) - and it runs ENTIRELY from
+    BRD/REQ-NNN/FLOW-NNN, never from Figma's own structure, per
+    reference-selection.md's existing rule quoted above. A Figma
+    reference never supplies IA, flows, or screen purpose - only visual
+    language, applied starting at the next stage. ***
+          |
+          v
+  Existing Design-Glanza Design System / UI Engine
+  (rows 28-31: design system/tokens, component architecture, visual
+  hierarchy/UI rules, responsive rules - UNCHANGED mechanism, Figma
+  preference applied per TODO-12/13 where a match exists, Design-Glanza
+  standard used + kept consistent with Figma language where none exists)
+          |
+          v
+  Existing UI-generation action pipeline continues: mandatory
+  critique-and-iteration / visual-benchmark-and-audit cycle (row 32,
+  UNCHANGED mechanism, now also running Level A + Level B Figma QA per
+  TODO-16/17)
+          |
+          v
+  Generate NEW screen - BRD requirement + extracted Figma design
+  language + existing Design-Glanza standards (Implement, row 34,
+  UNCHANGED mechanism - see TODO-15's verification that no new agent or
+  step was needed here)
+          |
+          v
+  Existing Preview & Run (rows 35-36, UNCHANGED)
+          |
+          v
+  Existing Test / Audit (rows 37-39, UNCHANGED)
+          |
+          v
+  Existing Iterate / Fix loop (rows 40-41, UNCHANGED - a Figma-spec
+  deviation gap is fixed and revalidated through this same loop, no
+  separate loop)
+          |
+          v
+  Final screen - satisfies the BRD, reads as belonging to the existing
+  Figma product, is not a literal copy of any existing Figma screen
+
+  Ordering note: the requested diagram listed "UX/IA/Interaction
+  analysis" before "Design Setup." The live architecture runs Design
+  Setup BEFORE Prototype's UX pass (SKILL.md Section 8; "ARCHITECT ->
+  DESIGN SETUP -> PROTOTYPE" in the master lifecycle). This is corrected
+  here rather than reordering the real pipeline to match the diagram -
+  reordering it would itself violate "do not modify or bypass existing
+  skill execution." The practical effect is the same intent you asked
+  for: by the time UX/IA work runs, the Figma-enriched design-direction.md
+  already exists as its input, and UX/IA still derives IA/flows/screen
+  purpose from BRD/REQ-NNN only, never from Figma.
+
+
+================================================================================
+PHASE 9 - FULL-FLOW TRACEABILITY VALIDATION (new - explicit instruction:
+"during implementation, explicitly verify... document exactly" the 5
+numbered items below)
+================================================================================
+
+--------------------------------------------------------------------------------
+TODO-25
+Classification: ADD (validation artifact, produced once Phase 0-8 are
+                implemented and run at least once per TODO-21's
+                end-to-end test)
+File/module: use-cases/figma-reference-product.md (same file as TODO-21
+             - this is that file's required traceability appendix, not a
+             separate document)
+Dependencies: TODO-1 through TODO-24 (this is the closing verification,
+              run against a real implementation, not a paper exercise)
+Purpose: Produce the explicit, checkable proof the instruction demands -
+         that a Figma-based new-screen generation executes the SAME
+         existing Design-Glanza workflow as a normal generation, with
+         Figma Design Context added as an input, never a substitute for
+         any step.
+Implementation details - document exactly these 5 items, against one
+real run of TODO-21's test scenario:
+
+  1. WHICH EXISTING SKILLS/ACTIONS EXECUTE
+     Record the full 41-row list from workflows/execute-product-
+     builder.md with a checkmark per row confirming it ran exactly as it
+     does for a non-Figma product - no row skipped, no row's owning
+     agent bypassed. Rows 1-14, 19-27, 33, 35-41 should show ZERO
+     Figma-specific change in HOW they executed (their inputs may read
+     richer citations, their procedure does not change). Rows 15, 18,
+     28-32 are the only rows with any Figma-specific annotation (see
+     item 2).
+
+  2. WHERE FIGMA ANALYSIS IS INJECTED
+     Exactly two injection points, both inside the existing Design Setup
+     phase, no others:
+       - Row 15 ("Detect and analyze design references, if any") - the
+         Figma Skill is invoked here (TODO-3/4), producing
+         figma-context.json.
+       - Row 18 ("Write the complete Design Direction document") -
+         figma-context-consumption.md's precedence rule (TODO-7) is
+         applied here, folding the context into design-direction.md.
+     Everything from row 28 onward CONSUMES design-direction.md/
+     design-tokens.json/components.md as already-enriched artifacts - it
+     does not re-read Figma itself. This is the concrete answer to "do
+     not generate the screen immediately after reading Figma": at least
+     13 more gated actions (rows 19-31) run between Figma analysis (row
+     15) and any screen generation (row 34).
+
+  3. HOW BRD REQUIREMENTS FLOW THROUGH THE PIPELINE
+     Confirm rows 1-7 (Intake) and rows 20-27 (Prototype UX) produce
+     REQ-NNN/FLOW-NNN/SCREEN-NNN/SCENARIO-NNN artifacts sourced ONLY
+     from the BRD and its own extraction techniques
+     (requirement-engine.md, user-flow-engine.md, information-
+     architecture.md, etc.) - confirm, by inspecting the actual
+     artifacts produced in the test run, that no field in
+     ux/user-flows.md, ux/sitemap.md, or ux/screen-architecture.md cites
+     figma-context.json as its source. A Figma citation appearing in any
+     of these three files is itself a FAILURE of this traceability check
+     (it would mean Figma leaked into WHAT, not HOW).
+
+  4. HOW FIGMA CONTEXT INFLUENCES UI DECISIONS
+     Confirm, by inspecting ui/design-system.md, ui/design-tokens.json,
+     ui/components.md, ui/ui-rules.md, and ui/responsive-rules.md from
+     the actual test run, that each Figma-matched value/component/
+     pattern cites its source figma-context.json entry by name (per
+     TODO-12/13's citation discipline), and each non-matched value cites
+     the existing Design-Glanza default it fell back to, per TODO-7's
+     precedence rule - zero silent/uncited values either way.
+
+  5. HOW THE FINAL SCREEN REACHES QA/AUDIT/VISUAL BENCHMARK/ITERATE
+     Confirm ui/visual-gap-analysis.md and
+     ui/benchmark-reports/<SCREEN-NNN>.md from the test run show BOTH
+     Level A (visual reference comparison) and Level B (Figma-spec
+     conformance) results per TODO-16, that qa/qa-report.md's Audit
+     section aggregates any Figma-spec deviation gap through the same
+     Blocker/Major/Minor/Note handling as every other finding (no
+     separate report), and that any such gap found is actually fixed and
+     revalidated through rows 40-41 (Iterate), not left open while the
+     screen is still declared complete.
+Validation requirements:
+  - This TODO is itself the validation step - it has no further
+    validator. It is only complete once run against a REAL
+    implementation (per TODO-21), with the 5 items above filled in with
+    actual file citations and actual row-by-row confirmation, not a
+    hypothetical walkthrough repeated from this plan.
+  - If any of the 5 checks fails (a BRD-stage artifact cites Figma, a
+    row's procedure visibly changed, a gap wasn't revalidated), that is
+    a signal this plan under-specified something in Phases 0-8 - fix the
+    root cause there, do not patch around it only in this test.

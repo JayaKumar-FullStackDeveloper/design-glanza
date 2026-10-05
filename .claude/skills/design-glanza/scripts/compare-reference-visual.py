@@ -83,6 +83,17 @@ COLOR_BUCKETS_PER_CHANNEL = 4  # 4^3 = 64-bin coarse histogram
 # this only catches a gross register change, not a refined palette swap
 # within the same family.
 COLOR_SIMILARITY_FLOOR = 0.35
+# A real benchmark run found layout_similarity can legitimately sit well
+# above LAYOUT_SIMILARITY_FLOOR (never a meaningful_mismatch) yet still
+# have dropped sharply from a near-identical-composition score with no
+# explanation attached — e.g. a genuinely new screen's composition
+# differing on purpose from its reference frame. This soft, non-blocking
+# floor flags that zone with an advisory Note (never counted toward
+# meaningful_mismatch, same "Note:"-prefixed convention as the
+# aspect-ratio note below) pointing at the judgment call that already
+# exists for this (`ui-engine/visual-benchmark.md`'s Direction-vs-
+# Generated principle) rather than inventing a new one here.
+COMPOSITION_INTENT_ADVISORY_FLOOR = 0.75
 
 # Mean-grid luminance correlation floor, same reasoning as above applied
 # to layout/density rhythm instead of color.
@@ -159,6 +170,21 @@ def compare(reference_path: Path, generated_path: Path) -> dict:
         flags.append(
             f"Layout/density rhythm differs meaningfully from reference "
             f"(luminance-grid correlation {layout_sim:.2f} < floor {LAYOUT_SIMILARITY_FLOOR})"
+        )
+    elif layout_sim < COMPOSITION_INTENT_ADVISORY_FLOOR:
+        flags.append(
+            f"Note: layout_similarity ({layout_sim:.2f}) is above the "
+            f"meaningful-mismatch floor ({LAYOUT_SIMILARITY_FLOOR}) but well "
+            f"below a near-identical composition — this is expected and "
+            f"correct for a genuinely new screen whose composition "
+            f"legitimately differs from its reference frame (a different "
+            f"content shape, not a defect); it is also what a real gap "
+            f"would look like before it got bad enough to cross the floor. "
+            f"Resolve by checking Direction-vs-Generated, not "
+            f"Reference-vs-Generated (`ui-engine/visual-benchmark.md`'s "
+            f"existing principle) — never treat this Note alone as "
+            f"evidence of a gap, and never suppress it without that check "
+            f"having actually been made."
         )
     if ratio_diff > ASPECT_RATIO_NOTE_THRESHOLD:
         flags.append(

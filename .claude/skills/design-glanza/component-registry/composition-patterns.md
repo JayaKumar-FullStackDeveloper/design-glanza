@@ -114,6 +114,38 @@ card in the row regardless of which metric is actually most important
 stated comparison period ("+12%" — of what, versus when); a sparkline
 with no real data behind it (decorative only).
 
+## Inline Control Row
+A fifth common organism, added v1.0.32 after a real benchmark run found
+the same responsive defect recurring independently across unrelated
+screens: **two or more inline, peer-level controls (an Input, a Select, a
+Button) sharing one row** — an invite-row (field + role picker + remove),
+a filter bar (date range + status + apply), a search-with-action row.
+Named here specifically so its responsive behavior is decided once, up
+front, rather than independently rediscovered per screen after a render
+catches the overflow.
+
+| Part | Registry entry | Fixed composition rule |
+|---|---|---|
+| Primary control(s) | Input/Select/Date Picker (1 or more, peer) | Each keeps its own Validation rules field independently — this pattern doesn't change how any one control validates |
+| Secondary action | Button or an icon-only action (remove/delete) | Never the row's only keyboard-reachable control — the primary control(s) must remain tab-reachable before it |
+| Responsive adaptation | **`become-stack`**, below the row's own content-fit breakpoint (`ui-engine/responsive-system.md`'s named adaptation decisions) | **Fixed, stated up front, not discovered after rendering**: once the row's combined minimum width (every control's own minimum width + inter-control gaps) exceeds the viewport at a mandatory breakpoint, the row becomes a vertical stack (`flex-direction: column`, each control full-width) — this is the default for this pattern, not a case-by-case judgment call each time it's composed |
+
+**Composition-level rule:** this pattern's responsive adaptation is decided
+at composition time, alongside the other parts — not deferred to
+`ui-engine/responsive-system.md`'s own per-screen pass and not discovered
+only once `scripts/validate-rendered-layout.py` reports an overflow. A
+screen composing this organism without a stated stack breakpoint has not
+finished composing it, the same way a Data Table missing bulk-action
+Confirmation hasn't finished composing that organism (above) even if every
+individual control looks correct in isolation.
+
+**Common composition-level mistakes:** the row's controls given no stated
+minimum width, so the stack-vs-overflow decision can't even be computed;
+a stack breakpoint chosen after the fact to match whatever broke in one
+specific render rather than the row's own actual combined minimum width;
+the secondary action left reachable only by mouse once the row stacks
+(an icon-only remove button with no stated keyboard equivalent).
+
 ## Explicitly not here
 - Any individual component's own 13 fields → `components-*.md`.
 - Page-level (region) composition → `ui-engine/layout-system.md`.

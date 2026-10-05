@@ -24,6 +24,10 @@ and `agents/ui-designer.md` then execute against.
   reference images, UI screenshots, existing-product screenshots, Figma
   links/files, website references, design-system files, brand guidelines,
   or written design guidelines present alongside the requirement material.
+  A Figma reference's concrete artifact location is `products/<slug>/
+  BRD/figma/figma-context.json` (plus `BRD/figma/screens/*.png`) once
+  `design-reference-engine/figma-reference.md`'s extraction has run —
+  produced by this agent at step 1/2 below, not supplied pre-made.
 - Product Architect's confirmed domain classification and any matched
   `product-types/domain-standards/` entry — used to select the right
   default sample when no user-supplied direction exists.
@@ -67,9 +71,15 @@ and `agents/ui-designer.md` then execute against.
    components, layout structure/grid, typography, color, visual hierarchy,
    border treatment, radius, shadows/elevation, iconography, navigation,
    tabs, tables, filters, forms, cards, status indicators, spacing/density,
-   and responsive behavior. Treat every extracted fact as **design
-   direction**, never as a business requirement — a requirement implied by
-   a screenshot is `brd-analysis.md`'s concern (Intake), already handled or
+   and responsive behavior. **Where the reference is a Figma file**, apply
+   `figma-reference.md`'s technique instead: load the `figma-use` skill
+   (and `figma-design-to-code` where `get_design_context` is needed) before
+   any inspection tool call, inspect **read-only**, prefer structured
+   extraction over a flat image wherever the file's structure is actually
+   inspectable, and record an explicit fallback (never a silent one) if it
+   isn't. Treat every extracted fact as **design direction**, never as a
+   business requirement — a requirement implied by a screenshot or Figma
+   file is `brd-analysis.md`'s concern (Intake), already handled or
    explicitly flagged as a gap there; this step never re-derives or
    overrides that.
 3. **Run the design questionnaire** (Step 2): apply
@@ -95,7 +105,11 @@ and `agents/ui-designer.md` then execute against.
    patterns, responsive rules, accessibility rules, motion guidelines,
    do/don't rules, reference assets, and the design-system decisions that
    follow from all of the above — into
-   `product-builder/ui/design-direction.md`.
+   `product-builder/ui/design-direction.md`. Where step 2 produced a
+   `figma-context.json`, apply `figma-context-consumption.md`'s precedence
+   rule here: a genuine Figma-matched value is preferred and cited by its
+   source entry; where none matches, the existing Design-Glanza standard is
+   used, kept consistent with the extracted Figma language.
 6. **Present for approval** (Step 5): summarize the direction concisely and
    ask, where a real user is present to answer, *"Does this design
    direction match your expectations?"* A requested change routes back to
@@ -137,7 +151,19 @@ and `agents/ui-designer.md` then execute against.
   input.
 - Must not copy a reference design verbatim (colors, layout, copy) —
   extract the underlying visual language and adapt it to this product's
-  own requirements, never reproduce someone else's screen.
+  own requirements, never reproduce someone else's screen. For a Figma
+  reference specifically, this risk is higher, not lower, than for a
+  screenshot — exact structural data is easier to clone pixel-for-pixel —
+  so the same discipline applies with no relaxation (`figma-reference.md`,
+  `figma-context-consumption.md`'s non-negotiable output rule).
+- Must not call a Figma write/mutation tool — Figma inspection is
+  read-only, always; this agent never creates, edits, or otherwise changes
+  a Figma node.
+- Must not apply `figma-context-consumption.md`'s precedence rule
+  inconsistently across sessions on the same product — a prior `ADR-NNN`
+  in `product-memory/*` recording how a given need was resolved takes
+  precedence over re-deriving the same decision differently next time
+  (Rule 26).
 - Must not choose a default sample from `design-samples/` when the user has
   provided sufficient direction of their own (Reference-Driven,
   Guideline-Driven, or Custom Design all take priority over Default).

@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "design-glanza/figma-context.schema.json",
+  "title": "Figma Design Context",
+  "description": "Canonical shape for products/<slug>/BRD/figma/figma-context.json — the normalized output of design-reference-engine/figma-reference.md's extraction technique. A raw Figma MCP tool response is never stored as-is; it is always normalized into this shape first. Every leaf value under tokens/components/layouts/responsive/interactions/visual-rules carries its own confidence tag — this is not a convention left to prose, it is structurally required below.",
+  "type": "object",
+  "required": ["source", "screens"],
+  "additionalProperties": false,
+  "$defs": {
+    "confidence": {
+      "type": "string",
+      "enum": ["explicit", "inferred", "assumed"],
+      "description": "explicit = read directly from Figma's own structured data (a bound variable, a named variant, an auto-layout property). inferred = a reasonable reading from visual inspection with no bound structural data behind it. assumed = no signal at all; a Design-Glanza default was used. Matches the Explicit/Inferred/Assumed vocabulary used everywhere else in this engine (Rule 10) — no new tagging scheme."
+    },
+    "valueWithConfidence": {
+      "type": "object",
+      "required": ["value", "confidence"],
+      "properties": {
+        "value": {},
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "sourceRef": {
+          "type": "string",
+          "description": "Figma node/variable/style id or name this value was read from, when confidence is explicit or inferred. Omitted when confidence is assumed (there is no Figma source to cite)."
+        }
+      }
+    }
+  },
+  "properties": {
+    "source": {
+      "type": "object",
+      "required": ["fileKey", "fetchedAt", "inspectionMode"],
+      "properties": {
+        "fileKey": { "type": "string" },
+        "nodeIds": { "type": "array", "items": { "type": "string" } },
+        "fetchedAt": { "type": "string", "format": "date-time" },
+        "inspectionMode": {
+          "type": "string",
+          "enum": ["structured", "image-fallback"],
+          "description": "structured = the Figma Skill's inspection tool returned real structural data (layers/variables/components/auto-layout). image-fallback = structural inspection was unavailable or failed; extraction fell back to reference-analysis.md's image-only technique (figma-reference.md's TODO-4 procedure). This field is the single switch product-intelligence/brd-analysis.md's confidence rule checks."
+        },
+        "fallbackReason": {
+          "type": "string",
+          "description": "Required when inspectionMode is image-fallback — why structured inspection was unavailable (auth failure, tool unavailable, permission denied, file structure not inspectable). Never left blank when inspectionMode is image-fallback — a fallback is always recorded, never silent."
+        }
+      }
+    },
+    "pages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["pageName", "pageId"],
+        "properties": {
+          "pageName": { "type": "string" },
+          "pageId": { "type": "string" },
+          "frameIds": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "screens": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["frameName", "frameId", "confidence"],
+        "properties": {
+          "frameName": { "type": "string" },
+          "frameId": { "type": "string" },
+          "exportedImagePath": {
+            "type": "string",
+            "description": "Relative path under BRD/figma/screens/, e.g. screens/dashboard.png. Omitted if inspectionMode is structured-only with no export performed."
+          },
+          "role": {
+            "type": "string",
+            "description": "What this frame is for, e.g. 'closest existing analogue to the new screen requirement' — used by visual-benchmark.md to pick the Reference-column asset."
+          },
+          "confidence": { "$ref": "#/$defs/confidence" }
+        }
+      }
+    },
+    "tokens": {
+      "type": "object",
+      "properties": {
+        "colors": { "type": "object", "description": "Semantic + raw swatches, by Figma variable collection + mode (light/dark). Each leaf is a valueWithConfidence." },
+        "typography": { "type": "object", "description": "Family, scale steps, weights, line-height, pairing. Each leaf is a valueWithConfidence." },
+        "spacing": { "type": "object", "description": "Base unit and step scale. Each leaf is a valueWithConfidence." },
+        "radius": { "type": "object", "description": "Radius scale, per-component-type mapping if present. Each leaf is a valueWithConfidence." },
+        "elevation": { "type": "object", "description": "Shadow steps and usage mapping. Each leaf is a valueWithConfidence." },
+        "sizing": { "type": "object", "description": "Control sizes, icon sizes, breakpoint widths. Each leaf is a valueWithConfidence." }
+      }
+    },
+    "components": {
+      "type": "object",
+      "properties": {
+        "components": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "nodeId"],
+            "properties": {
+              "name": { "type": "string" },
+              "nodeId": { "type": "string" },
+              "purpose": { "type": "string" },
+              "matchedRegistryEntry": {
+                "type": "string",
+                "description": "component-registry/* entry name this maps to, per figma-reference.md's mapping table, or null if genuinely no match (Rule 24 still applies — logged, never silent)."
+              }
+            }
+          }
+        },
+        "variants": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["componentName", "variantAxis", "values"],
+            "properties": {
+              "componentName": { "type": "string" },
+              "variantAxis": { "type": "string" },
+              "values": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["componentName", "propName", "propType"],
+            "properties": {
+              "componentName": { "type": "string" },
+              "propName": { "type": "string" },
+              "propType": { "type": "string" },
+              "default": {}
+            }
+          }
+        },
+        "states": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["componentOrFrame", "variantName"],
+            "properties": {
+              "componentOrFrame": { "type": "string" },
+              "variantName": { "type": "string" },
+              "mappedState": {
+                "type": "string",
+                "description": "The ux-engine/state-design.md mandatory-state name this variant maps to (initial/loading/success/empty/validation error/system error/permission denied/processing/completed/cancelled/conflict/timeout/offline), where mappable."
+              }
+            }
+          }
+        }
+      }
+    },
+    "patterns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "composedOf"],
+        "properties": {
+          "name": { "type": "string" },
+          "composedOf": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "layouts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["frameName"],
+        "properties": {
+          "frameName": { "type": "string" },
+          "autoLayout": {
+            "type": "object",
+            "properties": {
+              "direction": { "type": "string" },
+              "gap": { "$ref": "#/$defs/valueWithConfidence" },
+              "padding": { "$ref": "#/$defs/valueWithConfidence" },
+              "alignment": { "type": "string" }
+            }
+          },
+          "gridHint": { "type": "string" }
+        }
+      }
+    },
+    "responsive": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "frameName": { "type": "string" },
+          "breakpointVariant": { "type": "string" },
+          "adaptationDecision": {
+            "type": "string",
+            "description": "One of ui-engine/responsive-system.md's seven named adaptation decisions, where inferable from a distinct breakpoint frame actually present in the Figma file."
+          }
+        }
+      }
+    },
+    "interactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "trigger": { "type": "string" },
+          "componentOrFrame": { "type": "string" },
+          "behavior": { "type": "string" },
+          "confidence": { "$ref": "#/$defs/confidence" }
+        }
+      }
+    },
+    "iconography": {
+      "type": "object",
+      "properties": {
+        "convention": { "type": "string", "enum": ["stroke", "fill", "mixed"] },
+        "sizeConsistency": { "type": "string" }
+      }
+    },
+    "imagery": {
+      "type": "object",
+      "properties": {
+        "treatment": { "type": "string", "enum": ["photography", "illustration", "mixed", "none-observed"] }
+      }
+    },
+    "visualRules": {
+      "type": "object",
+      "properties": {
+        "hierarchySignals": { "type": "array", "items": { "type": "string" } },
+        "namingConventions": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

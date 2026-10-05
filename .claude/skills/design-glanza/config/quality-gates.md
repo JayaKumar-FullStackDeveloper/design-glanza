@@ -390,7 +390,7 @@ Each gate below states: what it measures, the pass criterion, and what checks it
   run found 100%-scored screens with real, measurable UI defects that a
   source-code-only read had missed. Wherever Playwright is installed in
   the current environment, this gate's audit-and-refinement cycle
-  additionally covers these 10 angles, each backed by a real render, not
+  additionally covers these 11 angles, each backed by a real render, not
   an agent's reading of the markup:
   1. **Rendered layout** — the screen's actual DOM geometry after
      rendering (`scripts/capture-render.py`'s manifest), not its source
@@ -429,12 +429,25 @@ Each gate below states: what it measures, the pass criterion, and what checks it
       optional rendered baseline (below), so a later pass can diff
       against *this* pass's real rendered evidence, not only its
       structural baseline.
+  11. **Figma-spec conformance** (new, requires rendering AND a Figma
+      Design Context — only where both hold) —
+      `scripts/validate-rendered-layout.py`'s measured spacing/color/
+      radius/sizing/typography values compared against
+      `figma-context.json`'s ground-truth token values
+      (`ui-engine/visual-benchmark.md`'s Level B), feeding the
+      **Figma-spec deviation** gap type. Not applicable, not simply
+      absent, when no Figma Design Context exists for this product even
+      if rendering is available — the same stated-inapplicability
+      treatment the Chart pipeline already gets for a chart-free screen.
 
-  Wherever rendering isn't available, these 10 angles are disclosed as
+  Wherever rendering isn't available, all 11 angles are disclosed as
   not run (the single Note `scripts/validate-product.py` emits) and the
   gate still requires everything else above in full — an unavailable
   optional capability never lowers this gate's bar, and its absence is
-  never silently treated as these 10 angles having passed.
+  never silently treated as these angles having passed. Angle 11 carries
+  one additional applicability condition on top of rendering availability
+  (a Figma Design Context must also exist) — the other 10 have no such
+  second condition.
 - **Checked by:** `agents/ui-designer.md` and
   `agents/design-system-expert.md`, per `ui-engine/visual-benchmark.md`'s
   mandatory-cycle procedure — no new dedicated agent; Cross-Artifact Data

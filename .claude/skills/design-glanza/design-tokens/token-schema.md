@@ -57,6 +57,22 @@ specific theme genuinely needs a different value") — `themeable` is
 applies (e.g. an elevation shadow needing a different value against a dark
 background).
 
+**Citing a Figma source (added v1.0.32, a precise format, not a loose
+convention).** Where a token's value was established from a Figma Design
+Context (`design-reference-engine/figma-context-consumption.md`), its
+`description` states so using exactly this literal, machine-matchable
+phrase: `Figma source: <figma-context.json tokens.* path>` — e.g.
+`"Figma source: tokens.colors.primary"`. This exact phrase, not a looser
+mention, is what `scripts/validate-figma-conformance.py` matches to find
+Figma-cited tokens; a description that merely *mentions* Figma in passing
+(e.g. explaining that no Figma source existed for this token, or that a
+value was aliased from a Figma-sourced one) must **not** contain this
+literal phrase — a real benchmark run found a free-text "mentions Figma
+somewhere" heuristic produces both false positives (a description
+explaining the *absence* of a Figma source still contains the word) and
+false negatives (a citation phrased as "aliased to Figma X" doesn't start
+with the word) — the fix is a precise marker, not a smarter heuristic.
+
 ## Consuming a token
 A component spec (`templates/component-spec.md`) or generated code
 references a token by its path, never by re-typing its raw value — the
@@ -66,6 +82,10 @@ addressable. `token-audit.md` defines what happens when a raw value
 appears instead.
 
 ## Explicitly not here
+- How a value is sourced from an inspected Figma Design Context, where one
+  exists, before falling back to a plain default → `ui-engine/
+  design-system.md`'s Figma token mapping section,
+  `design-reference-engine/figma-context-consumption.md`.
 - Any category's actual values → the owning `ui-engine/*` file (table
   above).
 - The semantic color-token names → `semantic-tokens.md`.

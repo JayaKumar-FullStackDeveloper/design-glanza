@@ -10,6 +10,19 @@ assembles them alongside typography/color/spacing (owned by their own files)
 into one theming-ready system. The blank deliverable this reasoning fills is
 `templates/design-system.md`.
 
+## Figma token mapping (where a Figma Design Context exists)
+Where `product-builder/BRD/figma/figma-context.json` exists
+(`design-reference-engine/figma-reference.md`), establish each token
+category below by mapping that context's `tokens.*` entries onto the
+category's own scale directly — citing the source Figma variable by name
+per token — rather than inferring values from pixels, per
+`design-reference-engine/figma-context-consumption.md`'s precedence rule.
+A category with no matching Figma entry still uses this file's own default
+scale below, unchanged, kept consistent with whatever Figma language was
+extracted for the rest of the product. This does not add a second
+token-establishment mechanism — it is the existing establishment procedure
+below, given a richer, better-cited input where one is available.
+
 ## Token taxonomy
 
 ### Spacing & grid

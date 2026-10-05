@@ -58,7 +58,36 @@ docstrings), this comparison runs against real evidence, not prose:
    `design-samples/` entries informed the direction instead), run this
    against the closest-matching sample and record which one; where
    Custom Design truly has no visual reference at all, this step is
-   marked not-applicable, not silently skipped without a reason.
+   marked not-applicable, not silently skipped without a reason. **Level A
+   — visual reference comparison, Figma case:** where `figma-context.json`
+   (`design-reference-engine/figma-reference.md`) names a matching
+   exported frame for this screen's role (`screens[].role`), that export
+   is the Reference asset fed to this script — same script, same
+   mechanism as any other supplied reference image, nothing new to wire
+   up. **Composition-intent interpretation (added v1.0.32):** a low
+   `layout_similarity` from this script is not automatically a gap — a
+   genuinely new screen's composition can legitimately differ from its
+   closest-matching reference frame's (a dense data list vs. a near-empty
+   panel, say). `compare-reference-visual.py` now emits an advisory
+   `Note:`-prefixed flag (never counted toward `meaningful_mismatch`)
+   whenever `layout_similarity` sits above the hard floor but well below
+   a near-identical score — read it as a prompt to actually check
+   Direction-vs-Generated (this file's own existing principle, directly
+   above the three-way comparison table), never as evidence of a
+   **Reference mismatch** gap by itself.
+3b. **Level B — Figma design-system conformance (new, only where a Figma
+    Design Context exists).** Independently of Level A's image-similarity
+    check above, compare the Generated UI's *measured* values — from
+    step 2's rendered manifest — directly against `figma-context.json`'s
+    `tokens.*` ground truth (spacing, color, radius, sizing, typography):
+    a rendered spacing/color/radius/sizing/typography value that
+    measurably disagrees with the Figma-sourced token value it was
+    supposed to use is logged as a **Figma-spec deviation** gap (below) —
+    distinct from Level A, which only checks overall image similarity,
+    and distinct from the existing **Rendered-layout defect** gap, which
+    only checks the screen's own internal self-consistency against
+    itself, never against an external ground truth. Not applicable when
+    no Figma Design Context exists for this product.
 4. **Reconcile with Step 1's qualitative audit.** Render-and-measure
    evidence does not replace `ui-audit-framework.md`'s A-K audit or this
    file's existing gap classification — it is additional, objective
@@ -99,6 +128,7 @@ knows what kind of fix is needed:
 | **Data inconsistency** | `scripts/validate-data-consistency.py` (below, Cross-Artifact Data Realism) found a declared relationship between two displayed numbers that doesn't actually hold — a KPI disagreeing with its own chart's latest point, a supporting metric contradicting the KPIs it's computed from, a labeled peak that isn't the series' real maximum, a table total disagreeing with the KPI it restates. Distinct from the Chart pipeline's existing Data Realism step (a value's own plausibility in isolation) — this is two-or-more displayed values disagreeing with each other. |
 | **Rendered-layout defect** | `scripts/validate-rendered-layout.py` (above, Render-and-measure evidence) found a real, measured overflow, misalignment, inconsistent spacing/sizing, or overlap in the actually-rendered screen — carries the specific measured number (e.g. "scrollWidth 405 vs clientWidth 80") rather than a qualitative description. Distinct from `ui-audit-framework.md`'s Alignment/Spacing/Sizing/Overflow categories (those are the qualitative audit pass); this gap type is that same defect class, but with rendering evidence behind it where rendering was available. |
 | **Reference mismatch** | `scripts/compare-reference-visual.py` reported `meaningful_mismatch: true` against the stated reference with no recorded, deliberate design-direction reason for the departure — a generated screen whose color/tonal register or layout/density rhythm drifted from what the reference established, not merely "didn't copy it pixel-for-pixel" (a reference is design language, not a pixel target; see `design-samples/*/README.md`). |
+| **Figma-spec deviation** | Level B (above): a rendered spacing/color/radius/sizing/typography value measurably disagrees with `figma-context.json`'s ground-truth token value for that same need — distinct from **Rendered-layout defect** (internal self-consistency only) and from **Reference mismatch** (overall image similarity only). Only applies when a Figma Design Context exists for this product; otherwise this row is simply inapplicable, the same way the Chart pipeline is inapplicable to a chart-free screen. |
 
 A gap is recorded even when it's minor — the point of this file is to make
 "looks fine to me" checkable against something concrete, not to filter

@@ -15,7 +15,25 @@ viewports and color schemes, and for each combination:
   dimensions (the raw signal `validate-rendered-layout.py` uses to detect
   overflow), computed `overflow-x`/`overflow-y`, tag name, class list, a
   short text excerpt, whether the element carries direct (non-descendant)
-  text, and a structural path for identifying it in a report.
+  text, and a structural path for identifying it in a report. Also
+  records a small set of computed STYLE values per element (added
+  v1.0.30, extended v1.0.32 with `borderColor` after a real benchmark
+  run found color-token conformance checks had no way to see a border's
+  color at all — alongside the existing geometry fields, for no cost
+  beyond reading properties already available on the same
+  `getComputedStyle()` call this script already makes): `backgroundColor`,
+  `color`, `borderColor` (read from `borderTopColor` — the single value
+  most elements' own authored `border` shorthand sets identically on all
+  four sides), `borderRadius`, `fontFamily`, `fontSize`, `padding` (the
+  resolved shorthand string), and `gap` (read from `rowGap` — the value a
+  browser's `getComputedStyle()` normalizes a flex/grid `gap` shorthand
+  into) — the measured values `ui-engine/visual-benchmark.md`'s Level B
+  (Figma-spec conformance) compares against a Figma Design Context's
+  `tokens.*` ground truth, spacing values included. This
+  does not turn this script into a style-judgment tool — it still only
+  **captures**; comparing a captured value against anything is always a
+  downstream script's or agent's job, same boundary as the geometry
+  fields above.
 
 This script only **captures** — it does not judge alignment, spacing,
 overflow, or overlap itself. That analysis (grouping, tolerances, Finding
@@ -150,7 +168,11 @@ DOM_DUMP_JS = r"""
       scrollHeight: e.scrollHeight, clientHeight: e.clientHeight,
       overflowX: cs.overflowX, overflowY: cs.overflowY,
       hasDirectText: hasDirectText,
-      parentPath: e.parentElement ? cssPath(e.parentElement) : null
+      parentPath: e.parentElement ? cssPath(e.parentElement) : null,
+      backgroundColor: cs.backgroundColor, color: cs.color,
+      borderColor: cs.borderTopColor, borderRadius: cs.borderRadius,
+      fontFamily: cs.fontFamily, fontSize: cs.fontSize,
+      padding: cs.padding, gap: cs.rowGap
     });
   }
   return out;

@@ -13,6 +13,15 @@ allowed-tools:
   - Bash(python3 */scripts/validate-*.py *)
   - Bash(python */scripts/generate-report.py *)
   - Bash(python3 */scripts/generate-report.py *)
+  # One narrowly scoped exception (v1.0.30): read-only Figma inspection,
+  # used only inside Design Setup, only when a Figma reference is
+  # detected (design-reference-engine/figma-reference.md). Never a
+  # general-purpose grant — no other network/MCP tool is added here, and
+  # this one is never used to create/edit/mutate a Figma node.
+  - Skill(figma-use)
+  - Skill(figma-design-to-code)
+  - use_figma
+  - get_design_context
 ---
 
 # Design-Glanza
@@ -31,8 +40,12 @@ builders — and it stays domain-agnostic while doing it.
 - **Minimal tool surface.** Only `Read`/`Write`/`Edit`/`Glob`/`Grep` and a
   narrowly scoped `Bash` limited to this skill's own
   `scripts/{create-product-builder,validate-*,generate-report}.py` — no
-  general shell access, no network tools, nothing beyond what the pipeline
-  itself needs.
+  general shell access, nothing beyond what the pipeline itself needs. One
+  deliberate, narrowly scoped exception (v1.0.30): the `figma-use`/
+  `figma-design-to-code` skills and their `use_figma`/`get_design_context`
+  tools, used only inside Design Setup, only when a Figma reference is
+  detected, read-only — see `design-reference-engine/figma-reference.md`.
+  No other network/MCP tool is granted.
 - **No destructive automation by default.** Before any irreversible or
   large-scale action — regenerating/overwriting an existing Product Builder
   outside `--update`, running Implement across many screens/files at once,
@@ -99,7 +112,7 @@ only when you're actually at that step.
 | Deriving requirements, rules, roles, dependencies, edge cases | `product-intelligence/{requirement-engine,business-logic,user-roles,dependency-analysis,edge-case-engine}.md` |
 | Empathize / Define / Ideate reasoning | `methodology/{empathize,define,ideate}.md` |
 | Running the full Design Research Engine — evidence, insight, competitor/pattern analysis that must actively shape UX/UI decisions, not just document them | `design-research/*` (entry point cited from Design Setup's Step 0: `design-reference-engine/design-research.md`) |
-| Establishing/confirming the visual and interaction direction before any screen exists | `design-reference-engine/*`, `design-samples/`, `workflows/design-setup.md` |
+| Establishing/confirming the visual and interaction direction before any screen exists | `design-reference-engine/*` — including `figma-reference.md` (extraction) and `figma-context-consumption.md` (the precedence rule once extracted) for a Figma reference specifically — `design-samples/`, `workflows/design-setup.md` |
 | Structuring flows, IA, navigation, states | `ux-engine/*` |
 | Deriving scenarios from flows, checking for missing screens/transitions/actions/validations/feedback, auditing navigation continuity across a scenario's real screen sequence, building the UX Coverage Matrix | `ux-scenario-testing/*` |
 | Launching and verifying the built output locally, after Implement | `workflows/preview-run.md`, `templates/preview-report.md` |
@@ -202,8 +215,13 @@ citing every Critical/High research finding's design principle —
 confirmed with the user where one is available, never assumed from
 generic defaults when real direction exists, and never fabricated from
 nothing when it doesn't (Rule 18). Screens and tokens are never built
-before this exists. Owner: `agents/design-setup-specialist.md`. Detail:
-`design-research/*`, `design-reference-engine/*`, `design-samples/`,
+before this exists. A Figma reference whose structure is actually
+inspectable (added v1.0.30, `design-reference-engine/figma-reference.md`)
+is the highest-fidelity Reference-Driven instance — Explicit rather than
+Inferred confidence, never a 5th mode — read via the Figma Skill's
+read-only inspection tools, never by image inference alone where
+structural data is available. Owner: `agents/design-setup-specialist.md`.
+Detail: `design-research/*`, `design-reference-engine/*`, `design-samples/`,
 `workflows/design-setup.md`.
 
 ## How Design-Glanza designs the product
@@ -388,6 +406,11 @@ silently. Gate: **B21**. Detail: `product-memory/*`.
 - Do not let Prototype's UI pass begin before Design Setup's approved
   `ui/design-direction.md` exists (8) — never generate UI from generic
   assumption when the user has provided real design direction (Rule 18).
+- Do not treat an exact Figma reference as a literal clone target just
+  because its data is precise and easy to copy 1:1 — extract the
+  underlying design language and generate a new screen, never reproduce
+  an existing Figma frame (8, Rule 18, `design-reference-engine/
+  figma-context-consumption.md`'s non-negotiable output rule).
 - Do not declare Implement complete, or proceed to Test, before the built
   output has actually been launched locally and previewed (13) — a build
   that "should work" is not the same as one that was run (Rule 19).

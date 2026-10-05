@@ -54,8 +54,13 @@ agent instead of each one improvising a direction independently.
   ran but wasn't consulted.
 - **Reference analysis** — per reference provided: what it is, what was
   extracted from it, and its confidence tag (Explicit/Inferred/Assumed),
-  per `reference-analysis.md`. Empty/not-applicable if no references were
-  provided (Custom Design or Default mode).
+  per `reference-analysis.md`. For a Figma reference with an inspected
+  `figma-context.json`, cite the specific entry (exact hex/px value,
+  component/variant name) rather than an inferred approximation — same
+  field, no new structure, just a more specific citation where the source
+  supports one (`design-reference-engine/figma-reference.md`). Empty/
+  not-applicable if no references were provided (Custom Design or Default
+  mode).
 - **Design inspiration** — the named starting point (a cited reference, a
   cited guideline, or the selected `design-samples/` entry) this direction
   builds from.
