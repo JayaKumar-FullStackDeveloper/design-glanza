@@ -30,6 +30,37 @@ confidence. This file's generic technique below still applies unchanged
 whenever only a flat Figma export/screenshot is available, or structural
 inspection genuinely fails (`figma-reference.md`'s recorded fallback).
 
+## Extracting from local reference code (no Figma, no browser)
+Where the reference is an existing product's own source — a local HTML/
+CSS file, a repo already on disk, or code the user pasted in — rather
+than an image or a Figma file, the extraction is exact-value reading via
+`Read`/`Grep`, not visual inference, and takes priority in this order:
+1. **CSS custom properties** (`:root { --primary: #hex; }`) — the most
+   reliable source, since these represent intentional, already-named
+   design tokens rather than incidental values.
+2. **A Tailwind (or equivalent) config block** — a `theme`/`@theme`
+   definition is a complete, structured token set in one place.
+3. **Google Fonts `<link>`/`@import` declarations** — exact family and
+   weight, more reliable than inferring a typeface from rendered text.
+4. **Inline utility classes** (`bg-slate-900`, `text-gray-600`) — usable,
+   but each needs a semantic-role interpretation (is this a `background`
+   or a `surface`? Is this `text-muted` or `border`?), not a literal
+   restatement of the class name as a token name.
+5. **Inline `style=` attributes** — last resort among code sources, since
+   they're often one-off rather than systemic.
+
+This file's output is still the same table above (visual patterns,
+color, typography, spacing, etc.) — reading exact values from code only
+changes *how confidently* each row is filled, not what gets extracted.
+An exact hex read from a CSS variable is **Explicit** confidence; a role
+interpreted from a utility class name is **Inferred**; nothing here is
+ever **Assumed**, since code, unlike a screenshot, has no genuinely
+invisible values to guess at. This path needs no browser/network tool —
+it is plain file reading, consistent with Design-Glanza's own restricted
+tool surface — and is the right path whenever the "existing application
+UI" or "website references" reference form (above) is handed to
+Design-Glanza as local code rather than a live URL or a screenshot.
+
 ## What gets extracted, per reference
 
 | Extract | What to look for |
@@ -103,6 +134,16 @@ Every extracted pattern carries the same three-level confidence
 description alone) — carried forward into
 `product-builder/ui/design-direction.md` exactly as an assumption tag would
 be.
+
+**Optional Gemini second opinion (GC-2, `ui-engine/
+gemini-capability.md`):** where the reference is screenshot/image-only
+(no inspectable Figma structure) and a material field would otherwise sit
+at Inferred/Assumed confidence, an independent Gemini multimodal read may
+narrow that uncertainty — never by itself upgrading the tag to Explicit
+(a second model's read of an ambiguous image is still a read of an
+ambiguous image, not structural ground truth the way an inspected Figma
+file is). Unavailable or skipped (already-sufficient confidence) falls
+back to this file's own direct-reading technique above, unchanged.
 
 ## Explicitly not here
 - Structured extraction from a Figma file whose structure is actually

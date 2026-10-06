@@ -239,7 +239,12 @@ real user is present to ask, confirmed.
   `product-builder/ui/design-direction.md`, is mandatory input to
   `agents/ui-designer.md` and `agents/design-system-expert.md` from that
   point forward — the approved direction, not fresh preference, governs the
-  visual system.
+  visual system. **Never treat an exact Figma reference as a literal clone
+  target just because its data is precise and easy to copy 1:1** (added
+  v1.0.30) — a Figma file's structural exactness makes the opposite of
+  Rule 18's intent easier to reach for, not harder; `design-reference-
+  engine/{figma-reference,figma-context-consumption}.md` apply this same
+  rule with no relaxation for that source.
 
 ### RULE 19 — Preview & Run
 Implementation is not complete because the code was written — it is

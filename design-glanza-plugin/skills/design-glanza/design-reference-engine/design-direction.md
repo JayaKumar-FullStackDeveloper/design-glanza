@@ -13,7 +13,10 @@ this file owns how those fields get filled and confirmed, not their shape.
 Every field traces to one of three sources, and the document states which,
 field by field — the same discipline `product-intelligence/brd-analysis.md`
 applies to Explicit/Inferred/Assumed facts, applied here to design fields:
-- **From a reference** (`reference-analysis.md`) — cite which reference.
+- **From a reference** (`reference-analysis.md`, or `figma-reference.md`
+  for an inspected Figma source) — cite which reference, and for Figma,
+  the specific `figma-context.json` entry by name/path
+  (`figma-context-consumption.md`'s citation discipline).
 - **From a stated answer** (`design-questionnaire.md`) — direct user input.
 - **From a Design-Glanza default** (`design-samples/`, or a plain
   `ui-engine/*` default with no more specific input available) — always the

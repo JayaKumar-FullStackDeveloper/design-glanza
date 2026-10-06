@@ -49,14 +49,16 @@ links missing but the requirement is still active/in-progress), or `orphaned`
 `BR-NNN` (`business-logic.md`), `EDGE-NNN` (`edge-case-engine.md`),
 `DEP-NNN` (`dependency-analysis.md`), `RF-NNN` (`design-research/
 research-to-design.md`), `SCENARIO-NNN` (`ux-scenario-testing/
-scenario-model.md`), and `ADR-NNN` (`product-memory/adr-schema.md`) are
-not links in this chain — they are *governing facts* a requirement, flow,
-screen, or design-direction field cites (via a requirement's Business
-Rule/Validation/Dependency fields, a `FLOW-NNN`/`SCREEN-NNN`/`ui/
+scenario-model.md`), `ADR-NNN` (`product-memory/adr-schema.md`), and
+`ASSET-NNN` (`ui-engine/visual-asset-generation.md`) are not links in
+this chain — they are *governing facts* a requirement, flow, screen, or
+design-direction field cites (via a requirement's Business Rule/
+Validation/Dependency fields, a `FLOW-NNN`/`SCREEN-NNN`/`ui/
 design-direction.md` citation for `RF-NNN`, `ux/scenarios.md`/`ux/
-ux-coverage-matrix.md` for `SCENARIO-NNN`, or any artifact's `Related`
-field for `ADR-NNN`), not artifacts produced downstream of it. Keep them
-out of the trace record above; overloading the chain with every
+ux-coverage-matrix.md` for `SCENARIO-NNN`, any artifact's `Related`
+field for `ADR-NNN`, or a screen/component's own `serves` citation back
+to it for `ASSET-NNN`), not artifacts produced downstream of it. Keep
+them out of the trace record above; overloading the chain with every
 cross-reference makes orphan detection unreliable.
 
 **`ADR-NNN` specifically:** a persisted decision record (Rule 26) is the

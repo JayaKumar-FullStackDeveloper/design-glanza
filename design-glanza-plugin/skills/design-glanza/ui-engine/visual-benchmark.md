@@ -58,7 +58,66 @@ docstrings), this comparison runs against real evidence, not prose:
    `design-samples/` entries informed the direction instead), run this
    against the closest-matching sample and record which one; where
    Custom Design truly has no visual reference at all, this step is
-   marked not-applicable, not silently skipped without a reason.
+   marked not-applicable, not silently skipped without a reason. **Level A
+   — visual reference comparison, Figma case:** where `figma-context.json`
+   (`design-reference-engine/figma-reference.md`) names a matching
+   exported frame for this screen's role (`screens[].role`), that export
+   is the Reference asset fed to this script — same script, same
+   mechanism as any other supplied reference image, nothing new to wire
+   up. **Composition-intent interpretation (added v1.0.32, made
+   mandatory-not-advisory in v1.0.33):** a low `layout_similarity` from
+   this script is not automatically a gap — a genuinely new screen's
+   composition can legitimately differ from its closest-matching
+   reference frame's (a dense data list vs. a near-empty panel, say). But
+   a real benchmark run (the PerkyPet root-cause audit) found this had
+   been misread as "low score, therefore automatically fine" — a missing
+   section can itself produce a low-but-not-floor-crossing score, which
+   is indistinguishable from a legitimate new composition by this number
+   alone. So: whenever `layout_similarity` sits above the hard floor but
+   well below a near-identical score, `compare-reference-visual.py`'s
+   advisory `Note:`-prefixed flag (never counted toward
+   `meaningful_mismatch`) is a **required trigger**, not an optional
+   prompt, for the following sequence before the gap can be closed either
+   way:
+   ```
+   Low layout_similarity (Note flagged)
+           ↓
+   Open the reference image and the generated screenshot side by side
+   (not just read the number)
+           ↓
+   Run ui-audit-framework.md's Category A/G structure/component check
+   against figma-context.json's composedFrom/recurrence entries
+           ↓
+   Determine: legitimate new composition (record why) vs. missing
+   fidelity (log the specific Missing pattern gap)
+   ```
+   Never record "Note: expected, this is a new screen" as the finding
+   itself — that sentence is only valid *after* the side-by-side
+   comparison above actually ran, and the comparison's outcome (not the
+   Note alone) is what gets recorded.
+3b. **Level B — Figma design-system conformance (new, only where a Figma
+    Design Context exists).** Independently of Level A's image-similarity
+    check above, compare the Generated UI's *measured* values — from
+    step 2's rendered manifest — directly against `figma-context.json`'s
+    `tokens.*` ground truth (spacing, color, radius, sizing, typography):
+    a rendered spacing/color/radius/sizing/typography value that
+    measurably disagrees with the Figma-sourced token value it was
+    supposed to use is logged as a **Figma-spec deviation** gap (below) —
+    distinct from Level A, which only checks overall image similarity,
+    and distinct from the existing **Rendered-layout defect** gap, which
+    only checks the screen's own internal self-consistency against
+    itself, never against an external ground truth. Not applicable when
+    no Figma Design Context exists for this product. **Level B PASS never
+    implies overall visual-fidelity PASS (stated explicitly, added
+    v1.0.33):** Level B only measures whether token *values* it can see
+    trace correctly and were rendered — a screen can pass Level B
+    completely while a whole Figma-derived section or recurring component
+    is absent, because Level B has no concept of composition or component
+    presence at all. A Level B PASS only ever certifies the token-value
+    half of fidelity; the composition/component half is this file's A-K
+    audit and step 1's structural comparison above, and both are required
+    — a Level B PASS is never, by itself, evidence that this file's
+    structure/component checks were satisfied.
 4. **Reconcile with Step 1's qualitative audit.** Render-and-measure
    evidence does not replace `ui-audit-framework.md`'s A-K audit or this
    file's existing gap classification — it is additional, objective
@@ -86,11 +145,11 @@ knows what kind of fix is needed:
 
 | Gap type | What it means |
 |---|---|
-| **Missing pattern** | Design Direction specified something (a component, a state, an interaction) that the Generated UI simply doesn't have |
+| **Missing pattern** | Design Direction specified something (a component, a state, an interaction) that the Generated UI simply doesn't have — including, where a Figma Design Context exists, a `screens[].composedFrom`-named region or a `components[].recurrence`-named component absent with no recorded reason (`ui-engine/ui-audit-framework.md` Category A/G, added v1.0.33) |
 | **Incorrect hierarchy** | The relative emphasis in the Generated UI doesn't match what Design Direction (or the reference) established |
 | **Excessive decoration** | The Generated UI added visual elements Design Direction never called for — most often traceable to `craft-critique.md`'s anti-cliché catalog |
 | **Weak spacing** | Density or the padding/gap relationship departs from what was specified |
-| **Poor density** | The comfortable/compact/dense register doesn't match Design Direction's stated preference or the domain's actual need |
+| **Poor density** | The comfortable/compact/dense register doesn't match Design Direction's stated preference or the domain's actual need — including, where a Figma Design Context exists, a recorded density note (`figma-reference.md`'s Density extraction, added v1.0.33) the Generated UI's actual content-to-whitespace ratio measurably departs from |
 | **Inconsistent components** | The same UI need was solved two different ways across screens, or a component departs from the governed inventory |
 | **Wrong interaction pattern** | A pattern was used (e.g. a modal where Design Direction called for a drawer) that contradicts the recorded decision |
 | **Weak accessibility** | A structural or perceptual accessibility rule was specified but not actually honored in the build |
@@ -99,6 +158,7 @@ knows what kind of fix is needed:
 | **Data inconsistency** | `scripts/validate-data-consistency.py` (below, Cross-Artifact Data Realism) found a declared relationship between two displayed numbers that doesn't actually hold — a KPI disagreeing with its own chart's latest point, a supporting metric contradicting the KPIs it's computed from, a labeled peak that isn't the series' real maximum, a table total disagreeing with the KPI it restates. Distinct from the Chart pipeline's existing Data Realism step (a value's own plausibility in isolation) — this is two-or-more displayed values disagreeing with each other. |
 | **Rendered-layout defect** | `scripts/validate-rendered-layout.py` (above, Render-and-measure evidence) found a real, measured overflow, misalignment, inconsistent spacing/sizing, or overlap in the actually-rendered screen — carries the specific measured number (e.g. "scrollWidth 405 vs clientWidth 80") rather than a qualitative description. Distinct from `ui-audit-framework.md`'s Alignment/Spacing/Sizing/Overflow categories (those are the qualitative audit pass); this gap type is that same defect class, but with rendering evidence behind it where rendering was available. |
 | **Reference mismatch** | `scripts/compare-reference-visual.py` reported `meaningful_mismatch: true` against the stated reference with no recorded, deliberate design-direction reason for the departure — a generated screen whose color/tonal register or layout/density rhythm drifted from what the reference established, not merely "didn't copy it pixel-for-pixel" (a reference is design language, not a pixel target; see `design-samples/*/README.md`). |
+| **Figma-spec deviation** | Level B (above): a rendered spacing/color/radius/sizing/typography value measurably disagrees with `figma-context.json`'s ground-truth token value for that same need — distinct from **Rendered-layout defect** (internal self-consistency only) and from **Reference mismatch** (overall image similarity only). Only applies when a Figma Design Context exists for this product; otherwise this row is simply inapplicable, the same way the Chart pipeline is inapplicable to a chart-free screen. |
 
 A gap is recorded even when it's minor — the point of this file is to make
 "looks fine to me" checkable against something concrete, not to filter
@@ -194,7 +254,16 @@ RECHECK → FINALIZE
    compare-against-reference) — its findings are logged as **Rendered-
    layout defect** and **Reference mismatch** gaps (above) alongside
    whatever this qualitative audit itself found, not as a separate pass
-   run some other time.
+   run some other time. **Optional independent second opinion (GC-3,
+   `ui-engine/gemini-capability.md`):** where this screen's result
+   genuinely warrants extra scrutiny (passed every mechanical check but
+   still reads uncertain against `craft-critique.md`'s anti-cliché
+   catalog, or an explicit user request) — never as a default extra pass
+   on every screen — an independent Gemini multimodal read against this
+   same A-K checklist may surface something the single-model critique
+   missed; a disagreement is logged as a finding to resolve, not
+   silently reconciled, and its absence/unavailability changes nothing
+   about this step's own mandatory status.
 2. **If gaps were found:** fix every P0 and un-waived P1 first (P2/P3 may
    ride along where cheap, per the Priority classification table above),
    then re-run validation for the specific category/pipeline step(s) the

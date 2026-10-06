@@ -7,7 +7,118 @@ everywhere, it belongs here.
 
 ## Skill identity & version
 - **Name:** design-glanza
-- **Version:** 1.0.33 — **Figma visual-fidelity upgrade**, from a
+- **Version:** 1.0.35 — **Optional Gemini capability**, integrating
+  Google's Gemini API as a shared, optional, cross-lifecycle capability
+  — never a mandatory dependency, never a separate pipeline. **0 new
+  phases/actions/gates/agents/tool grants** — the existing 12 phases,
+  41-row pipeline table, 26 rules, 21 gates, and `SKILL.md`'s
+  `allowed-tools` are all unchanged in count/order/surface (re-confirmed
+  by direct re-parse after implementation and again after a live,
+  real-key end-to-end test). 1 new reference file,
+  `ui-engine/gemini-capability.md` — the single source of truth for
+  availability detection (`GEMINI_API_KEY`, checked at the point of use,
+  never cached), the 5-state decision rubric (Not applicable / Already
+  satisfied / Unavailable / Required / Useful), the current official
+  Google GenAI SDK (`google-genai`, superseding the deprecated
+  `google-generativeai`) with a stdlib-`urllib` REST fallback, the
+  execution-boundary rule (Gemini calls happen inside Implement/
+  Preview & Run/Audit's existing broader boundary, the same one
+  Playwright/axe-core/image-processing already use — no new Bash/MCP
+  grant on `SKILL.md` itself), a full security section (never log/
+  hardcode/commit/transmit the key; never embed it in generated
+  frontend code), and 4 cataloged capability instances (GC-1 real image
+  generation, reusing and formalizing v1.0.34's existing native+API
+  dual-path rather than duplicating it; GC-2 optional multimodal
+  reference-image analysis, narrowing — never silently upgrading —
+  confidence tags; GC-3 an optional independent visual/QA second
+  opinion against the *same* existing critique checklist, invoked
+  selectively, never as a default extra pass; GC-4 an optional content/
+  localization second-pass, suggestions only, reviewed against existing
+  content rules before acceptance). 4 existing files given a short,
+  cited cross-reference to the new file (no mechanics duplicated):
+  `ui-engine/visual-asset-generation.md` (names Gemini as the
+  default/primary API-path model family), `design-reference-engine/
+  reference-analysis.md` (GC-2), `ui-engine/visual-benchmark.md` (GC-3,
+  inside the existing mandatory refinement step 1), `ux-engine/
+  localization.md` (GC-4). `SKILL.md` gained one progressive-disclosure
+  row and one clarifying sentence in its existing Minimal-tool-surface
+  bullet (no grant change). The 41-row table itself needed **zero
+  edits** this version — every attach point already lived inside a
+  file that row already cited from v1.0.34, the cleanest possible
+  integration shape for a capability layered onto an already-stable
+  pipeline. Partially validated live with a real (user-supplied, since
+  rotated) `GEMINI_API_KEY`: model discovery via a live `ListModels`
+  call succeeded (confirmed real image-capable model ids), and a
+  real `generateContent` image request was attempted but blocked by
+  Claude Code's own permission classifier before completing — not yet
+  confirmed end to end; `grep`-confirmed the key value was never
+  written to any file on disk at any point. See the implementation
+  report for the full disclosed-limitation detail.
+- **Previously, 1.0.34** — **External catalog skill integration**, from a
+  deliberate, skeptical audit of a 52-skill external Claude Code skill
+  catalog against this skill's actual file tree — integrating only the
+  18 capabilities that measurably improve UX/UI generation, frontend
+  implementation, imagery, SEO, testing, documentation, or visual QA and
+  were not already natively covered, against explicit user exclusions
+  (Shopify/WordPress/Stripe/GWS/ElevenLabs/MCP-builder/parcel-tracking/
+  react-native and all 4 business-English/resume/proposal/award/
+  strategy-document/social-media writing skills). **0 new phases/
+  actions/gates/agents** — the existing 12 phases, 41-row pipeline
+  table, 26 rules, 21 gates are unchanged in count and order
+  (re-confirmed by direct re-parse); every integration attaches as
+  additional technique inside an existing action row's Master-technique
+  citation, never a new row. 4 new reference files
+  (`ui-engine/frontend-implementation.md` — Tailwind v4/shadcn/React 19/
+  Vitest technique; `ui-engine/asset-pipeline.md` — favicon/icon-set/
+  image-processing technique; `ui-engine/visual-asset-generation.md` —
+  a shared, cross-lifecycle native+API dual-path imagery-generation
+  capability, invoked only where an action contextually needs real
+  imagery, always comparing both candidates against BRD/Figma/design-
+  direction/tokens/accessibility/product-consistency/gate-context rather
+  than selecting on aesthetics alone, with full lineage/provenance/
+  reuse/QA-deviation tracking under a new `ASSET-NNN` sideways reference
+  — the same extensibility pattern `RF-NNN`/`SCENARIO-NNN`/`ADR-NNN`
+  already used, no new rule or gate; `workflows/project-documentation.md`
+  — developer-doc and end-user-guide generation, pure artifact reuse).
+  9 existing files given a targeted, cited addition: `ui-engine/
+  color-system.md` (the hex->HSL ramp-generation formula the file
+  previously mandated without stating), `design-reference-engine/
+  reference-analysis.md` (a local-file/live-code extraction method,
+  no browser tool needed), `ux-engine/onboarding-design.md` (concrete
+  component patterns per already-chosen onboarding pattern),
+  `product-types/landing-page.md` (a concrete section library and a
+  generalized meta-tag/JSON-LD/sitemap technique), `workflows/
+  build-product.md` and `audit-product.md` (cross-references to the new
+  files), `workflows/preview-run.md` (an automated axe-core scan,
+  pragmatic performance budget, and breakpoint-transition sweep folded
+  into the existing render-and-measure step, still gate B14/B9, no new
+  gate), `workflows/execute-product-builder.md` (Master-technique cells
+  for Order 15/29/34/36/39 cite the new files; Order/#/Phase/Artifact
+  columns and the 41-row count untouched), and `config/quality-gates.md`
+  (B14 and B9 text name the new rendered evidence, same gates). 2 script
+  changes: `scripts/capture-render.py` gained `--sweep` (8-breakpoint
+  capture + best-effort transition detection), `--axe` (axe-core
+  injection), and `--vitals` (LCP/CLS + single-sample INP
+  approximation), each degrading to a disclosed field/Note rather than a
+  crash when unavailable; `scripts/validate-rendered-layout.py` gained
+  `check_accessibility()`/`check_performance_budget()` interpreting
+  those new captured fields, wired into the existing aggregator — both
+  scripts re-verified with a synthetic manifest fixture (clean pass, a
+  mixed Blocker/Major finding set, and a degraded-capability Note, all
+  confirmed firing correctly) before this entry was written.
+  Deliberately **not** integrated despite being in the catalog: a UX
+  audit/extract/compare trio (needs live-browser crawling of an
+  *external* app — blocked by this skill's own restricted tool surface,
+  and `design-research/*` already covers the research intent more
+  rigorously), `design-review` (duplicates the existing
+  `ui-audit-framework.md`/`visual-benchmark.md`/`craft-critique.md`
+  trio), a roadmap/phased-delivery skill (conflicts with this skill's
+  no-destructive-automation-by-default posture and would duplicate the
+  41-action pipeline itself), and git/release-workflow skills (no
+  VCS/release phase exists in the 41 actions to attach to). Full
+  per-skill INTEGRATE/SKIP rationale recorded in the implementation
+  report for this version.
+- **Previously, 1.0.33** — **Figma visual-fidelity upgrade**, from a
   root-cause audit of the real PerkyPet product: Level A/Level B both
   reported PASS while the generated screens visibly dropped whole
   Figma-derived sections (a 3-step explainer, a hero region), components

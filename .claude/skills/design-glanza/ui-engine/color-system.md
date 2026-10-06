@@ -19,6 +19,32 @@ justified choice and a reflex.
 From that one brand/primary hue, generate a **9–10 step ramp** (lightest to
 darkest) at consistent lightness intervals, rather than picking individual
 shades ad hoc. Generate the same ramp structure for:
+
+**Generation method, not picked ad hoc per shade:** convert the brand hex
+to HSL, hold hue constant, and vary lightness (and, for the lightest
+steps, saturation) across fixed stops —
+
+| Step | Lightness | Saturation multiplier | Typical use |
+|---|---|---|---|
+| 50 | 97% | ×0.80 | Subtlest backgrounds |
+| 100 | 94% | ×0.80 | Hover-state backgrounds |
+| 200 | 87% | ×0.85 | Borders, dividers |
+| 300 | 75% | ×0.90 | Disabled-state fills |
+| 400 | 62% | ×0.95 | Placeholder text |
+| 500 | 48% | ×1.00 | Brand-color baseline |
+| 600 | 40% | ×1.00 | Primary actions (light theme) |
+| 700 | 33% | ×1.00 | Hover-on-primary |
+| 800 | 27% | ×1.00 | Active-state |
+| 900 | 20% | ×1.00 | Text-on-light-background |
+| 950 | 10% | ×1.00 | Darkest accents |
+
+Reducing saturation at the lightest steps (50-300) keeps them from
+reading as overly vibrant pastels; steps 500+ keep full saturation so the
+brand color stays recognizable through the darker half of the ramp. This
+is a starting formula, not a rigid override of the Contrast compliance
+rule below — every resulting pairing still owes that rule's actual
+measured ratio, not an assumption that following the table produces a
+passing ratio automatically.
 - **Primary** — the brand color, used for primary actions and key emphasis.
 - **Neutral/gray** — a separate 9–10 step ramp used for backgrounds, borders,
   and text; enterprise UI leans on neutrals far more than on brand color, so

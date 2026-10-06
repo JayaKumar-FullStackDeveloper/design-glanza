@@ -38,6 +38,19 @@ Setup's actions were inserted):
 3. **Per unit** (screen or component): confirm its spec is gate-passed,
    build it into `output/`, then run `scripts/validate-screens.py` /
    `validate-states.py` against it before moving to the next unit.
+   Where the product's detected stack matches one of
+   `ui-engine/frontend-implementation.md`'s sections (Tailwind v4,
+   shadcn/ui, React 19, Vitest), that file's concrete technique applies
+   here — skipped entirely for a different stack. Favicon/app-icon
+   generation, image optimization, and custom SVG icon sets (when
+   warranted) follow `ui-engine/asset-pipeline.md`; real photographic/
+   illustrative imagery a unit's spec calls for follows
+   `ui-engine/visual-asset-generation.md`'s native+API dual-path
+   capability — invoked only when this specific unit actually needs it,
+   never speculatively. Developer documentation
+   (ARCHITECTURE/API/DATABASE_SCHEMA, where applicable) follows
+   `workflows/project-documentation.md`, generated once Implement has
+   produced enough real source to document, not before.
 4. **Escalate spec gaps** — if implementation surfaces something the spec
    didn't cover, route back to the owning file/agent (per
    `methodology/design-thinking.md`'s routing table) rather than inventing

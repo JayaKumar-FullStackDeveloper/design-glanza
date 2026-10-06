@@ -46,6 +46,20 @@ This is what prevents the specific failure mode Rule 24 exists to catch:
 inventing a bespoke "data grid" component from scratch when Table already
 covers the need, just because the registry wasn't consulted.
 
+## Matching a Figma component (where a Figma Design Context exists)
+Where `figma-context.json` (`design-reference-engine/figma-reference.md`)
+is present, step 1 above (check the master registry first) runs against
+each `components.components[]` entry too: a Figma component is matched
+against the ~29 registry entries by name/purpose before anything is
+accepted as new, citing the match as `matchedRegistryEntry`
+(`figma-context.schema.json`). Rule 24 is unchanged by this — the same
+"logged, never silent" treatment already applies to a Figma component with
+no genuine registry match, exactly as it already applies to any other new
+component. A Figma variant maps onto the matched entry's own Variants
+field (point 4, `registry-schema.md`) where the shape fits; a variant with
+no registry equivalent is logged the same way an undocumented raw token
+value is (`design-tokens/token-audit.md`), never silently dropped.
+
 ## Preventing unnecessary duplication
 Two distinct duplication risks, both routed through
 `agents/design-system-expert.md`'s existing drift review (`component-
@@ -107,6 +121,41 @@ significant per `product-memory/auto-recording.md` — it gets a persisted
 than independently re-discovering the same gap and possibly resolving it
 differently (exactly the contradiction `product-memory/
 contradiction-prevention.md` exists to catch).
+
+**Concretely, for a "no registry match" call** (added v1.0.32, closing a
+gap a real benchmark run found — the mechanism above was stated but never
+shown with an actual record): write one `ADR-NNN` per
+`product-memory/adr-schema.md`'s record shape, filled this way for this
+specific decision type —
+
+```
+ID: ADR-NNN
+Context: <what this component needs to do, and for which screen/flow>
+Problem: Neither component-registry/* (~29 entries + composition-
+  patterns.md organisms) nor this product's own ui/components.md
+  inventory has an entry whose Purpose matches this need.
+Decision: A new, product-specific component is justified: <component
+  name>, specified in ui/components.md (never written back into
+  component-registry/*, per Rule 15).
+Reason: <why the closest registry entries don't fit — name the entries
+  actually checked and what specifically didn't match their Purpose>
+Alternatives considered: <each registry entry/composition pattern
+  actually checked and rejected, one line each>
+Impact: <what depends on this component existing — which screens reuse
+  it, so a later pass finds this ADR instead of re-deciding>
+Status: accepted
+Related: COMPONENT-NNN [, SCREEN-NNN, REQ-NNN]
+Recorded: <pass/date, agent: design-system-expert>
+```
+
+For a Figma-sourced component specifically
+(`figma-context.json.components.components[].matchedRegistryEntry: null`
+— `design-reference-engine/figma-reference.md`), the Reason field also
+states which Figma component this traces to by name, so the decision
+reads as "this Figma component has no Design-Glanza registry equivalent,"
+not an unexplained new invention — the same citation discipline
+`figma-context-consumption.md` already requires everywhere else a Figma
+source informs a decision.
 
 ## Preserving existing architecture
 No new lifecycle phase, no new agent, no new action row in

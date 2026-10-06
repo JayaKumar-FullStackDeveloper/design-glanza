@@ -48,11 +48,21 @@ order:
    its own artifact, not folded away.
 1. **Detect references** — scan `products/<slug>/BRD/*` for any of the 13
    recognized reference forms (`design-reference-engine/
-   reference-analysis.md`).
+   reference-analysis.md`). **If a Figma reference is detected** (a file/
+   link, or an already-present `BRD/figma/` folder), branch to
+   `design-reference-engine/figma-reference.md`'s mandatory tool-invocation
+   procedure before continuing to step 2 — this is the one point in the
+   whole lifecycle where a Figma Skill/tool call happens.
 2. **Analyze references, if present** — extract visual/interaction/
    design-system/component/layout/typography/color/spacing/radius-
    elevation/navigation/responsive patterns, each confidence-tagged, tagged
-   as design direction and never as a business requirement.
+   as design direction and never as a business requirement. For a Figma
+   reference, this means `figma-reference.md`'s technique (structured
+   extraction into `figma-context.json` wherever the file's structure is
+   actually inspectable, falling back to the generic image-only technique
+   below with the fallback explicitly recorded) rather than — or alongside,
+   if only a flat export exists — `reference-analysis.md`'s generic
+   technique for every other reference form.
 3. **Run the design questionnaire** — the 9-category question set
    (`design-reference-engine/design-questionnaire.md`), asked directly
    where a user is present and no reference/guideline already answers a
@@ -71,7 +81,13 @@ order:
    `templates/design-direction.md` requires, filled per
    `design-reference-engine/design-direction.md`'s synthesis discipline,
    citing step 0's Critical/High `RF-NNN` findings in the Design principles
-   field.
+   field. Where a `figma-context.json` exists from step 2,
+   `design-reference-engine/figma-context-consumption.md`'s precedence
+   rule is applied here — Figma-sourced value preferred and cited where a
+   genuine match exists, Design-Glanza standard used (kept consistent with
+   the extracted Figma language) where none does — so the direction
+   document already reflects that resolution before any screen or token is
+   built against it.
 6. **Present the Design Direction Summary and gate on approval** — a
    concise summary (not the full document), asking *"Does this design
    direction match your expectations?"* A requested change loops back to

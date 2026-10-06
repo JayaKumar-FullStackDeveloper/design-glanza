@@ -86,6 +86,15 @@ exactly as it always has.
   confirmed the screen clean at that point (the baseline is only ever
   captured from a screen that has already passed **B15**, never from an
   unreviewed draft).
+- **Figma provenance (where applicable)** — where this screen's Design
+  Direction cited a `figma-context.json` entry
+  (`design-reference-engine/figma-context-consumption.md`), the baseline
+  references that same entry, so a later Iterate pass re-diffing against
+  this baseline can also re-check Figma-spec conformance
+  (`ui-engine/visual-benchmark.md`'s Level B), not only its own prior
+  render. Folds into this file's existing Design Direction summary field
+  above — not a new field category, not a 10th `diff-detection.md`
+  category.
 
 ## What it deliberately does not capture
 - Raw pixel values, images, or rendered screenshots — not this system's

@@ -203,7 +203,12 @@ Each gate below states: what it measures, the pass criterion, and what checks it
   only an agent's visual read of the markup; where it isn't installed,
   the agent-review check below still applies in full and the gap is
   disclosed (`scripts/validate-product.py` emits a Note saying so),
-  never silently treated as passed.
+  never silently treated as passed. `capture-render.py --sweep`'s
+  additional breakpoint-transition evidence (where it has been run) is
+  further supporting measurement for the same requirement — it locates
+  *where* a transition actually happens and flags one that doesn't
+  degrade cleanly, but it extends this gate's existing evidence, it is
+  not itself a separate pass criterion.
 - **Checked by:** `agents/ui-designer.md` review, jointly with
   `agents/accessibility-expert.md` for any become-alternative-component
   decision producing an interrupting overlay — the same joint-ownership
@@ -304,7 +309,15 @@ Each gate below states: what it measures, the pass criterion, and what checks it
   passed. This is a deliberately separate validator (not merged into
   `validate-generated-artifact.py`) so the fast, dependency-free
   structural check always runs, and the rendering-dependent check runs
-  wherever its one extra dependency is available.
+  wherever its one extra dependency is available. **Also part of this
+  same rendered checkpoint:** wherever Playwright is available,
+  `capture-render.py`'s injected axe-core scan returns 0 Critical/Serious
+  violations and the captured Core Web Vitals (LCP/CLS/INP) stay inside
+  the pragmatic budget (LCP ≤ 4.0s, CLS ≤ 0.25, INP ≤ 500ms) — both
+  folded into `validate-rendered-layout.py`'s existing Blocker/Major
+  finding set, not a second gate; their absence (Playwright unavailable)
+  never fails this gate, same as every other rendering-dependent check
+  here.
 - **Checked by:** the executing session, per `workflows/preview-run.md` —
   no dedicated reasoning agent, the same posture B12/Implement already
   has; the structural-validation step is deterministic
@@ -330,7 +343,18 @@ Each gate below states: what it measures, the pass criterion, and what checks it
   typography, inconsistent card heights, uneven grids, accidental
   whitespace, overlapping elements, clipped content, broken responsive
   layouts) — a screen with one of these still present fails this gate even
-  if every category was nominally "checked." The Final Visual QA step's
+  if every category was nominally "checked." **Where a Figma Design
+  Context exists (added v1.0.33):** the Structure and Component steps of
+  that pipeline additionally require `ui-audit-framework.md` Category A/G's
+  `composedFrom`/`recurrence` check (every Figma-derived region/component
+  this screen's composition requires is present, or its absence is an
+  explicit recorded reason) — a screen missing one with no recorded reason
+  fails this gate the same as any other item on the "not accepted" list,
+  regardless of whether this same gate's rendered-evidence angle 11
+  (Figma-spec conformance / Level B, below) passed — a Level B pass checks
+  token *values* only and is never by itself evidence this structural
+  check was satisfied (`visual-benchmark.md`'s Level B section). The
+  Final Visual QA step's
   closing question ("does this look intentionally designed for this
   product, or could it have been generated for any unrelated SaaS
   product?") must also be answered and recorded — a `generic` verdict is
@@ -390,7 +414,7 @@ Each gate below states: what it measures, the pass criterion, and what checks it
   run found 100%-scored screens with real, measurable UI defects that a
   source-code-only read had missed. Wherever Playwright is installed in
   the current environment, this gate's audit-and-refinement cycle
-  additionally covers these 10 angles, each backed by a real render, not
+  additionally covers these 11 angles, each backed by a real render, not
   an agent's reading of the markup:
   1. **Rendered layout** — the screen's actual DOM geometry after
      rendering (`scripts/capture-render.py`'s manifest), not its source
@@ -429,12 +453,25 @@ Each gate below states: what it measures, the pass criterion, and what checks it
       optional rendered baseline (below), so a later pass can diff
       against *this* pass's real rendered evidence, not only its
       structural baseline.
+  11. **Figma-spec conformance** (new, requires rendering AND a Figma
+      Design Context — only where both hold) —
+      `scripts/validate-rendered-layout.py`'s measured spacing/color/
+      radius/sizing/typography values compared against
+      `figma-context.json`'s ground-truth token values
+      (`ui-engine/visual-benchmark.md`'s Level B), feeding the
+      **Figma-spec deviation** gap type. Not applicable, not simply
+      absent, when no Figma Design Context exists for this product even
+      if rendering is available — the same stated-inapplicability
+      treatment the Chart pipeline already gets for a chart-free screen.
 
-  Wherever rendering isn't available, these 10 angles are disclosed as
+  Wherever rendering isn't available, all 11 angles are disclosed as
   not run (the single Note `scripts/validate-product.py` emits) and the
   gate still requires everything else above in full — an unavailable
   optional capability never lowers this gate's bar, and its absence is
-  never silently treated as these 10 angles having passed.
+  never silently treated as these angles having passed. Angle 11 carries
+  one additional applicability condition on top of rendering availability
+  (a Figma Design Context must also exist) — the other 10 have no such
+  second condition.
 - **Checked by:** `agents/ui-designer.md` and
   `agents/design-system-expert.md`, per `ui-engine/visual-benchmark.md`'s
   mandatory-cycle procedure — no new dedicated agent; Cross-Artifact Data

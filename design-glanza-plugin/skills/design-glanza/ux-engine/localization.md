@@ -74,6 +74,15 @@ way a non-Latin script is — if the source material's actual locale/audience
 scope is single-locale and Latin-script, none of the above changes anything
 and this file has nothing to apply.
 
+**Optional Gemini content second-pass (GC-4, `ui-engine/
+gemini-capability.md`):** when this file applies and the copy volume/
+complexity for a specific locale makes it worthwhile, a Gemini text-model
+pass may suggest naturalness refinements to drafted interface copy for
+that locale — suggestions only, reviewed against `ux-writing.md`'s
+existing content rules before acceptance, never auto-applied. Skipped
+(unavailable, or this file doesn't apply) falls back to Design-Glanza's
+own existing content-authoring process, unchanged.
+
 ## Explicitly not here
 - Non-Latin script line-height/word-break/tracking rules →
   `ui-engine/typography.md`'s Non-Latin script typography section.

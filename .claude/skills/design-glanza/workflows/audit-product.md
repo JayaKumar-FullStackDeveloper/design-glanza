@@ -43,7 +43,14 @@ Design Research and Visual Benchmark & Audit Cycle actions, and originally
    baseline-updates.md` record is a defect, routed per that file's
    `regression-integration.md` table.
 6. Fold in Design System Expert's drift findings and Accessibility Expert's
-   conformance notes (re-consulted, not re-run).
+   conformance notes (re-consulted, not re-run) — for a React/Tailwind/
+   shadcn stack, Design System Expert's drift review additionally checks
+   `ui-engine/frontend-implementation.md`'s React 19 performance/
+   composition checklist against the actual built code (waterfalls,
+   boolean-prop explosion, re-render discipline), not just visual
+   drift. Where `workflows/project-documentation.md` produced developer
+   docs, check them for staleness against the current `output/*` the
+   same pass already inspects, rather than as a separate step.
 7. Score against `evals/evaluation-rubric.md`'s dimensions.
 8. Aggregate everything into `product-builder/qa/qa-report.md` and
    `product-builder/qa/traceability.md`, using

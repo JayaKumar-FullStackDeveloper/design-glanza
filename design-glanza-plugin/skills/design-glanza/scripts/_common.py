@@ -43,52 +43,12 @@ for _stream in (sys.stdout, sys.stderr):
         pass  # a redirected/non-standard stream without reconfigure() — leave it alone
 
 # ---------------------------------------------------------------------------
-# Path resolution — supports two deployment modes, since this skill can be
-# either project-local (`<root>/.claude/skills/design-glanza/`) or a
-# distributable plugin (`<plugin-root>/skills/design-glanza/`, installed
-# wherever Claude Code's plugin system puts it — a cache dir, a cloned
-# marketplace repo, anywhere unrelated to the host project). Walking a fixed
-# number of parent directories from `__file__` only works for the first
-# mode; for a plugin, the install path has no relationship to the host
-# project the user is actually working in, so PROJECT_ROOT falls back to an
-# explicit override or the current working directory instead.
+# Path resolution — independent of current working directory.
 # ---------------------------------------------------------------------------
 
 SCRIPT_DIR = Path(__file__).resolve().parent          # .../design-glanza/scripts
 SKILL_ROOT = SCRIPT_DIR.parent                         # .../design-glanza
-
-
-def _resolve_project_root(skill_root: Path) -> Path:
-    # Project-local layout is <root>/.claude/skills/design-glanza — that's
-    # two levels up from skill_root (skills/, then .claude/), not one.
-    claude_dir = skill_root.parent.parent
-    if (
-        claude_dir.name == ".claude"
-        and claude_dir.parent.is_dir()
-        and claude_dir.parent != Path.home()
-    ):
-        # Project-local layout: the project root is unambiguous, walk
-        # straight to it. The home-directory exclusion matters because the
-        # user's global `~/.claude/skills/<name>/` ("skills-dir" install,
-        # `claude plugin init`'s own convention for a personal plugin) has
-        # this exact same shape — but there, the directory containing
-        # `.claude` is the user's home, not a project; that install has no
-        # more fixed relationship to whatever project the user is actually
-        # working in than a marketplace-installed plugin does, so it must
-        # fall through to the override/cwd path below, not treat home as
-        # the project root.
-        return claude_dir.parent
-    # Plugin (or any other) layout: no fixed relationship to the host
-    # project. Prefer an explicit override; otherwise assume Claude Code
-    # invoked this script with cwd already set to the project being worked
-    # on, which is the only reliable signal available at that point.
-    override = os.environ.get("DESIGN_GLANZA_PROJECT_ROOT")
-    if override:
-        return Path(override).resolve()
-    return Path.cwd()
-
-
-PROJECT_ROOT = _resolve_project_root(SKILL_ROOT)       # host project root — see _resolve_project_root
+PROJECT_ROOT = SCRIPT_DIR.parents[3]                   # this skill's own repo root — never the output location
 DEFAULT_WORKSPACE_ROOT = Path.home() / "Design-Glanza-Workspace"
 _workspace_override = os.environ.get("DESIGN_GLANZA_WORKSPACE_ROOT", "").strip()
 WORKSPACE_ROOT = Path(_workspace_override).resolve() if _workspace_override else DEFAULT_WORKSPACE_ROOT.resolve()

@@ -24,6 +24,50 @@ setup, followed by progressive teaching for everything else) — the table
 above is chosen per-need, not as one mutually-exclusive decision for the
 whole onboarding.
 
+## Concrete component patterns per chosen pattern
+Once a pattern (above) is chosen, implementation uses whichever of these
+concrete component shapes fits — specified against
+`ui-engine/component-system.md`'s 8-point framework like any other
+component, not a special case exempt from it:
+- **Empty state** (pairs with Progressive/contextual) — an icon or small
+  illustration (never a bare blank container), a one-sentence title
+  naming the feature, a one-sentence description of why it matters, and
+  a single primary action ("Add your first client," not a generic
+  "Get started"). The single highest-impact onboarding artifact — a
+  product with no other onboarding content still needs every list/table/
+  collection screen to pass this, since a populated-looking empty table
+  with column headers and nothing else is the most common onboarding
+  defect.
+- **Welcome banner** (pairs with Sample/seeded data or a light
+  Progressive rollout) — a dismissable card on the first-reached screen
+  naming 2-4 concrete first steps as a short ordered list, not a wall of
+  marketing copy; dismissal is permanent (never reappears once closed,
+  per the Skippability rule below).
+- **Getting-started checklist** (pairs with Wizard, for a genuinely
+  multi-step required setup) — a persistent card tracking N-of-M
+  complete, each step a real, checkable product action (not a vanity
+  step) — reused directly by the activation-event rule below rather than
+  defined twice.
+- **Feature tour** (pairs with the Product tour row above) — capped at 5
+  steps; each step anchors to one real existing element, states what it
+  is and why it matters in one sentence, and is fully skippable from
+  step 1. A tour exceeding 5 steps is a sign the underlying screen's own
+  findability failed and needs fixing first, not a longer tour.
+- **Contextual hint** — a small, dismissable inline note introducing one
+  non-obvious feature (a keyboard shortcut, an advanced filter) the
+  first time its context appears; dismissal persists per-hint, never
+  reshown once dismissed.
+- **Seeded/sample data** (pairs with the Sample/seeded data row above) —
+  realistic, clearly-labeled sample records (never a literal "Test
+  Client"/"Lorem Ipsum") with an explicit, single-action way to clear
+  them, demonstrating what good data in this product actually looks
+  like rather than an obviously-fake placeholder.
+
+Every pattern above still owes `component-system.md`'s full 8-point
+framework (purpose, anatomy, variants, states, behavior, content rules,
+accessibility, responsive behavior) — none of these are exempt
+first-run-only shortcuts.
+
 ## Skippability
 Every onboarding step beyond an inherently-required one (the Wizard row's
 own justification test) must be skippable, and skipping must not block

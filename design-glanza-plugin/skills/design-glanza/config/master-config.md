@@ -7,7 +7,292 @@ everywhere, it belongs here.
 
 ## Skill identity & version
 - **Name:** design-glanza
-- **Version:** 1.0.29 — a **render-engine correctness pass** (0 new files,
+- **Version:** 1.0.35 — **Optional Gemini capability**, integrating
+  Google's Gemini API as a shared, optional, cross-lifecycle capability
+  — never a mandatory dependency, never a separate pipeline. **0 new
+  phases/actions/gates/agents/tool grants** — the existing 12 phases,
+  41-row pipeline table, 26 rules, 21 gates, and `SKILL.md`'s
+  `allowed-tools` are all unchanged in count/order/surface (re-confirmed
+  by direct re-parse after implementation and again after a live,
+  real-key end-to-end test). 1 new reference file,
+  `ui-engine/gemini-capability.md` — the single source of truth for
+  availability detection (`GEMINI_API_KEY`, checked at the point of use,
+  never cached), the 5-state decision rubric (Not applicable / Already
+  satisfied / Unavailable / Required / Useful), the current official
+  Google GenAI SDK (`google-genai`, superseding the deprecated
+  `google-generativeai`) with a stdlib-`urllib` REST fallback, the
+  execution-boundary rule (Gemini calls happen inside Implement/
+  Preview & Run/Audit's existing broader boundary, the same one
+  Playwright/axe-core/image-processing already use — no new Bash/MCP
+  grant on `SKILL.md` itself), a full security section (never log/
+  hardcode/commit/transmit the key; never embed it in generated
+  frontend code), and 4 cataloged capability instances (GC-1 real image
+  generation, reusing and formalizing v1.0.34's existing native+API
+  dual-path rather than duplicating it; GC-2 optional multimodal
+  reference-image analysis, narrowing — never silently upgrading —
+  confidence tags; GC-3 an optional independent visual/QA second
+  opinion against the *same* existing critique checklist, invoked
+  selectively, never as a default extra pass; GC-4 an optional content/
+  localization second-pass, suggestions only, reviewed against existing
+  content rules before acceptance). 4 existing files given a short,
+  cited cross-reference to the new file (no mechanics duplicated):
+  `ui-engine/visual-asset-generation.md` (names Gemini as the
+  default/primary API-path model family), `design-reference-engine/
+  reference-analysis.md` (GC-2), `ui-engine/visual-benchmark.md` (GC-3,
+  inside the existing mandatory refinement step 1), `ux-engine/
+  localization.md` (GC-4). `SKILL.md` gained one progressive-disclosure
+  row and one clarifying sentence in its existing Minimal-tool-surface
+  bullet (no grant change). The 41-row table itself needed **zero
+  edits** this version — every attach point already lived inside a
+  file that row already cited from v1.0.34, the cleanest possible
+  integration shape for a capability layered onto an already-stable
+  pipeline. Partially validated live with a real (user-supplied, since
+  rotated) `GEMINI_API_KEY`: model discovery via a live `ListModels`
+  call succeeded (confirmed real image-capable model ids), and a
+  real `generateContent` image request was attempted but blocked by
+  Claude Code's own permission classifier before completing — not yet
+  confirmed end to end; `grep`-confirmed the key value was never
+  written to any file on disk at any point. See the implementation
+  report for the full disclosed-limitation detail.
+- **Previously, 1.0.34** — **External catalog skill integration**, from a
+  deliberate, skeptical audit of a 52-skill external Claude Code skill
+  catalog against this skill's actual file tree — integrating only the
+  18 capabilities that measurably improve UX/UI generation, frontend
+  implementation, imagery, SEO, testing, documentation, or visual QA and
+  were not already natively covered, against explicit user exclusions
+  (Shopify/WordPress/Stripe/GWS/ElevenLabs/MCP-builder/parcel-tracking/
+  react-native and all 4 business-English/resume/proposal/award/
+  strategy-document/social-media writing skills). **0 new phases/
+  actions/gates/agents** — the existing 12 phases, 41-row pipeline
+  table, 26 rules, 21 gates are unchanged in count and order
+  (re-confirmed by direct re-parse); every integration attaches as
+  additional technique inside an existing action row's Master-technique
+  citation, never a new row. 4 new reference files
+  (`ui-engine/frontend-implementation.md` — Tailwind v4/shadcn/React 19/
+  Vitest technique; `ui-engine/asset-pipeline.md` — favicon/icon-set/
+  image-processing technique; `ui-engine/visual-asset-generation.md` —
+  a shared, cross-lifecycle native+API dual-path imagery-generation
+  capability, invoked only where an action contextually needs real
+  imagery, always comparing both candidates against BRD/Figma/design-
+  direction/tokens/accessibility/product-consistency/gate-context rather
+  than selecting on aesthetics alone, with full lineage/provenance/
+  reuse/QA-deviation tracking under a new `ASSET-NNN` sideways reference
+  — the same extensibility pattern `RF-NNN`/`SCENARIO-NNN`/`ADR-NNN`
+  already used, no new rule or gate; `workflows/project-documentation.md`
+  — developer-doc and end-user-guide generation, pure artifact reuse).
+  9 existing files given a targeted, cited addition: `ui-engine/
+  color-system.md` (the hex->HSL ramp-generation formula the file
+  previously mandated without stating), `design-reference-engine/
+  reference-analysis.md` (a local-file/live-code extraction method,
+  no browser tool needed), `ux-engine/onboarding-design.md` (concrete
+  component patterns per already-chosen onboarding pattern),
+  `product-types/landing-page.md` (a concrete section library and a
+  generalized meta-tag/JSON-LD/sitemap technique), `workflows/
+  build-product.md` and `audit-product.md` (cross-references to the new
+  files), `workflows/preview-run.md` (an automated axe-core scan,
+  pragmatic performance budget, and breakpoint-transition sweep folded
+  into the existing render-and-measure step, still gate B14/B9, no new
+  gate), `workflows/execute-product-builder.md` (Master-technique cells
+  for Order 15/29/34/36/39 cite the new files; Order/#/Phase/Artifact
+  columns and the 41-row count untouched), and `config/quality-gates.md`
+  (B14 and B9 text name the new rendered evidence, same gates). 2 script
+  changes: `scripts/capture-render.py` gained `--sweep` (8-breakpoint
+  capture + best-effort transition detection), `--axe` (axe-core
+  injection), and `--vitals` (LCP/CLS + single-sample INP
+  approximation), each degrading to a disclosed field/Note rather than a
+  crash when unavailable; `scripts/validate-rendered-layout.py` gained
+  `check_accessibility()`/`check_performance_budget()` interpreting
+  those new captured fields, wired into the existing aggregator — both
+  scripts re-verified with a synthetic manifest fixture (clean pass, a
+  mixed Blocker/Major finding set, and a degraded-capability Note, all
+  confirmed firing correctly) before this entry was written.
+  Deliberately **not** integrated despite being in the catalog: a UX
+  audit/extract/compare trio (needs live-browser crawling of an
+  *external* app — blocked by this skill's own restricted tool surface,
+  and `design-research/*` already covers the research intent more
+  rigorously), `design-review` (duplicates the existing
+  `ui-audit-framework.md`/`visual-benchmark.md`/`craft-critique.md`
+  trio), a roadmap/phased-delivery skill (conflicts with this skill's
+  no-destructive-automation-by-default posture and would duplicate the
+  41-action pipeline itself), and git/release-workflow skills (no
+  VCS/release phase exists in the 41 actions to attach to). Full
+  per-skill INTEGRATE/SKIP rationale recorded in the implementation
+  report for this version.
+- **Previously, 1.0.33** — **Figma visual-fidelity upgrade**, from a
+  root-cause audit of the real PerkyPet product: Level A/Level B both
+  reported PASS while the generated screens visibly dropped whole
+  Figma-derived sections (a 3-step explainer, a hero region), components
+  (badge icons on one state variant), and visual-asset fidelity (a pet
+  illustration reduced to a gradient, flat icons replaced with emoji) —
+  because Level B only ever checked token *values* and Level A's coarse
+  histogram can't distinguish "legitimately new composition" from "a
+  section is missing." **0 new phases/agents/gates/pipeline rows** — the
+  existing 41-row table, 26 rules, 21 gates are unchanged in count and
+  order (re-confirmed by direct re-parse); 2 new schema fields
+  (`screens[].composedFrom`, `components[].recurrence`, both optional,
+  backward compatible), and 6 existing files strengthened:
+  `figma-reference.md` (a new Structural and compositional extraction
+  section — structure/recurrence/visual-asset detail/micro-elements/
+  density/responsive, closing the exact extraction gap that let a real
+  progress-bar marker go uncaptured despite being visible in the raw
+  Figma metadata the whole time); `figma-context-consumption.md` (a
+  strengthened visual-asset fidelity DO/DON'T list — "a close equivalent"
+  now explicitly cannot mean omission, emoji, or a generic gradient — plus
+  a new pre-generation checklist and a mandatory completion-verification
+  step, both routed through the *existing* B15 cycle, no new review step
+  or agent); `ui-engine/ui-audit-framework.md` (Category A and Category G
+  now explicitly check `composedFrom`/`recurrence` structural completeness
+  where a Figma context exists); `ui-engine/visual-benchmark.md` (the
+  v1.0.32 composition-intent Note is now a *mandatory* trigger for a
+  real side-by-side + structural re-check, never a self-resolving
+  explanation; an explicit statement that a Level B PASS never implies
+  structural/compositional fidelity PASS); `config/quality-gates.md`
+  (B15's pass criterion now names the same structural check explicitly,
+  still inside the existing gate, no B22). The PerkyPet product's own
+  affected screens were regenerated (not hand-patched) through this
+  strengthened pipeline and re-verified against the real Figma file —
+  see the implementation report for the full before/after evidence and
+  release verdict.
+- **Previously, 1.0.32** — **fixes for the 5 improvements a real 3-case
+  Figma benchmark identified**, plus 3 further real bugs this same pass
+  found while actually testing each fix against live data (the identical
+  "exercise it for real, fix what's found" pattern as every version since
+  v1.0.28). 2 new files
+  (`scripts/validate-figma-conformance.py`,
+  `component-registry/composition-patterns.md`'s new Inline Control Row
+  entry is additive content, not a new file), 7 existing files given a
+  targeted addition: `scripts/{capture-render,compare-reference-visual}.py`,
+  `design-tokens/token-schema.md`, `ui-engine/visual-benchmark.md`,
+  `component-registry/registry-integration.md`. The 5 fixes:
+  **(1) Automated Level B.** New `scripts/validate-figma-conformance.py`
+  — deterministic traceability (does a token citing a Figma source
+  actually trace to a real `figma-context.json` entry?) and realization
+  (was that value ever actually rendered?) checks, replacing what was
+  previously a manual, agent-by-hand comparison every single time.
+  **(2) Composition-intent interpretation.** `compare-reference-
+  visual.py` gained a `COMPOSITION_INTENT_ADVISORY_FLOOR` — a
+  non-blocking `Note:` flag when `layout_similarity` sits above the hard
+  floor but well below a near-identical score, pointing at
+  `visual-benchmark.md`'s existing Direction-vs-Generated principle
+  instead of leaving a legitimately-different-composition score
+  unexplained.
+  **(3) Inline Control Row pattern.** `component-registry/
+  composition-patterns.md` gained a fifth named organism — a fixed
+  `become-stack` responsive default for any row of peer inline controls
+  — after the same responsive defect (inline controls not stacking)
+  recurred independently across unrelated screens in the benchmark.
+  **(4) Concrete new-component ADR example.** `component-registry/
+  registry-integration.md`'s existing "record a registry-first decision"
+  rule now includes an actual filled `ADR-NNN` shape for the specific
+  "no registry match" case, closing a gap where the mechanism was stated
+  but never shown instantiated.
+  **(5) Figma-token traceability.** Folded into the same new script as
+  (1) — one mechanism, two related checks, matching how
+  `validate-tokens.py` already bundles multiple related checks in one
+  file.
+  **3 further bugs found and fixed while testing the above against real
+  data, not hypothetically:** `scripts/capture-render.py` never captured
+  `borderColor`, `padding`, or `gap` at all (added, alongside the v1.0.30
+  `backgroundColor`/`color`/`borderRadius`/`fontFamily`/`fontSize`
+  fields) — without them, a border-color or spacing token could never be
+  verified as rendered, not a corner case but true for every single such
+  token, every time; the citation-detection regex's first draft matched
+  any bare mention of the word "Figma" anywhere in a token's
+  `description`, producing both a false positive (a description
+  explaining that NO Figma source existed still contains the word) and
+  a would-be false negative (a citation phrased as "aliased to Figma X"
+  doesn't start with the word) — fixed by specifying a precise,
+  documented citation marker (`design-tokens/token-schema.md`:
+  `"Figma source: <path>"`, matched literally, not inferred); a
+  CSS-quoted font-family value ('"Inter", sans-serif') didn't match its
+  unquoted citation source ('Inter, sans-serif') — fixed with a
+  quote-stripping normalizer applied consistently on both comparison
+  paths (one of the two paths was missed on the first pass and caught by
+  actually re-running the check against real data, not by code review
+  alone). **0 new lifecycle phases, 0 new gates, 0 new rule numbers, 0
+  new agents, 0 new Product Builders, 0 rows added/removed/reordered in
+  `execute-product-builder.md`'s 41-row table** (re-confirmed by direct
+  inspection: still 41 rows, 21 gates, 26 rules).
+- **Previously, 1.0.31** — a **strict implementation-validation pass** over
+  v1.0.30's Figma capability, exercised for the first time against a real
+  (synthetic test) product end to end — same pattern as v1.0.28→v1.0.29.
+  Found and fixed **one real gap**: `scripts/capture-render.py`'s
+  per-element capture recorded only geometry (position/size/overflow) —
+  `ui-engine/visual-benchmark.md`'s Level B (Figma-spec conformance) had
+  nothing to measure color/radius/typography against. Fixed by adding 5
+  computed-style fields (`backgroundColor`, `color`, `borderRadius`,
+  `fontFamily`, `fontSize`) to the same per-element object the script
+  already builds — no new script, no new capture pass, same
+  `getComputedStyle()` call already being made. Verified against a real
+  test product (`figma-validation-demo`): Level A (`compare-reference-
+  visual.py`) returned `color_similarity: 0.977`, `layout_similarity:
+  0.987`, `meaningful_mismatch: false`; Level B's measured
+  `backgroundColor: rgb(26, 115, 232)` / `borderRadius: 8px` matched the
+  test fixture's Figma-sourced tokens (`#1a73e8` / `8px`) exactly.
+  `scripts/validate-product.py`'s own full run on that same product also
+  caught a genuine, unrelated mobile-breakpoint horizontal-overflow
+  Blocker in the newly generated screen — fixed (table wrapped in a
+  `become-scrollable` adaptation, `ui-engine/responsive-system.md`) and
+  re-rendered per Rule 20's "a fix is only verified after re-rendering"
+  rule, confirmed resolved (20 findings → 18, the 2 overflow Blockers
+  gone, remaining findings are pre-existing scaffold-incompleteness in
+  the deliberately minimal test fixture, unrelated to Figma integration).
+  0 new files, 0 new gates, 0 new rules, 0 new phases — one existing
+  script's capture scope widened to match what its own consumer
+  (`visual-benchmark.md`) already documented needing.
+- **Previously, 1.0.30** — **existing Figma designs as a high-fidelity
+  design reference/input**, added alongside — never in place of —
+  sample images, written guidelines, and Design-Glanza's own default
+  standards. 4 new files (`design-reference-engine/{figma-reference,
+  figma-context-consumption}.md`,
+  `design-reference-engine/figma-context.schema.json`,
+  `scripts/validate-figma-context.py`), 1 new worked use case
+  (`use-cases/figma-reference-product.md`), 17 existing files given a
+  small, targeted addition (never a rewrite): `SKILL.md` (one scoped
+  `allowed-tools` exception for read-only Figma inspection, two
+  progressive-disclosure/Do-not additions), `config/{operating-rules,
+  quality-gates}.md`, `product-intelligence/brd-analysis.md`,
+  `design-reference-engine/{reference-analysis,reference-selection,
+  design-direction}.md`, `workflows/{design-setup,
+  execute-product-builder}.md`, `agents/design-setup-specialist.md`,
+  `ui-engine/{design-system,visual-benchmark}.md`,
+  `design-tokens/token-schema.md`,
+  `component-registry/registry-integration.md`,
+  `templates/design-direction.md`, `visual-regression/baseline-model.md`.
+  **0 new lifecycle phases, 0 new gates (B15 gained an 11th
+  rendered-evidence angle and the gap-type table gained one new row —
+  "Figma-spec conformance"/"Figma-spec deviation" — inside the existing
+  B15/B20, never a new gate number), 0 new rule numbers (Rule 18's prose
+  gained one sentence), 0 new generation agents, 0 new Product Builders,
+  0 rows added/removed/reordered in `execute-product-builder.md`'s
+  41-row table** (confirmed by direct inspection before and after: still
+  41 rows, Order 1-41 unchanged — only rows 15, 17, 18's Master-technique
+  cells gained a citation). The governing design: a Figma reference whose
+  structure is actually inspectable is the strongest instance of the
+  existing Reference-Driven mode (`reference-selection.md`), never a 5th
+  mode; its extraction (`figma-reference.md`, using the `figma-use`/
+  `figma-design-to-code` skills' `use_figma`/`get_design_context` tools,
+  always read-only, with an explicit, recorded fallback to the existing
+  image-only technique when structural inspection is unavailable) feeds
+  one new precedence contract
+  (`figma-context-consumption.md`: prefer a genuine Figma-matched token/
+  component/pattern, else the existing Design-Glanza default kept
+  consistent with the extracted Figma language) that resolves entirely
+  inside the existing Design Setup phase, before `ui/design-direction.md`
+  is written — every row from Prototype onward consumes an
+  already-enriched artifact and needed no Figma-specific branch of its
+  own. BRD remains the sole source of WHAT (IA/flows/screen purpose);
+  Figma is only ever a source of HOW. Two new deterministic checks:
+  `scripts/validate-figma-context.py` (schema-shaped structural
+  validation of `figma-context.json`, genuinely optional — degrades to a
+  single disclosed Note when no Figma reference exists for a product,
+  verified to have zero coupling into `validate-product.py`'s
+  aggregation) and `ui-engine/visual-benchmark.md`'s new Level B
+  (rendered values vs. `figma-context.json`'s ground-truth tokens,
+  logged as a **Figma-spec deviation** gap, same Blocker/Major/Minor/Note
+  handling as every other finding, same FIX→RECHECK loop). No existing
+  validator, gate, or script was weakened to make room for this.
+- **Previously, 1.0.29** — a **render-engine correctness pass** (0 new files,
   3 existing files fixed: `scripts/capture-render.py`, `scripts/
   validate-rendered-layout.py`, `scripts/_common.py`), found and fixed
   while actually using 1.0.28's new rendering capability to validate a

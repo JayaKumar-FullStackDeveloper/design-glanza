@@ -6,6 +6,17 @@
 .DS_Store
 Thumbs.db
 
+# Local secrets (e.g. GEMINI_API_KEY / OPENAI_API_KEY for
+# ui-engine/visual-asset-generation.md's API path) — never committed.
+# The recommended way to set these is a user-level environment variable
+# (never a file in this repo at all); this is defense-in-depth only, in
+# case one ever ends up here by accident.
+.env
+.env.*
+*.env
+secrets.*
+*.key
+
 # Generated product output must never live in this repo — see
 # scripts/_common.py's WORKSPACE_ROOT / PRODUCTS_DIR and
 # config/operating-rules.md Rule 15. Defense-in-depth only; the real

@@ -55,6 +55,23 @@ HTML/CSS source):
    deliberately not flagging intentional layering (a badge positioned
    over a card's corner, an avatar overlapping a banner) that's leaf-
    wrapper overlap rather than text-on-text collision.
+6. Accessibility (added this version) — interprets `capture-render.py`'s
+   captured `axe_violations` field, where present: a `critical` axe
+   violation is a Blocker finding, `serious` is Major, `moderate`/`minor`
+   are Minor — the deterministic counterpart to
+   `ux-engine/accessibility.md`'s structural rules, not a replacement for
+   them. A manifest with no `axe_violations` field (the capture ran with
+   `--no-axe`, or axe-core injection itself failed) emits nothing here —
+   silently skipped is correct, since a missing *capability* and a clean
+   *result* must never be reported identically; a captured injection
+   failure is surfaced as its own Note finding instead.
+7. Performance budget (added this version) — interprets the captured
+   `web_vitals` field against a pragmatic budget (LCP ≤ 4.0s, CLS ≤ 0.25,
+   INP ≤ 500ms — well above "broken," well below a marketing-page-strict
+   Core Web Vitals target) as Major findings. INP here is a single-
+   sample, best-effort approximation (`capture-render.py`'s own
+   docstring) — a missing value (no interactive element found) is
+   skipped, never treated as a failure.
 
 Thresholds are deliberately conservative (favor missing a borderline
 case over flagging an intentional design choice) — see each constant's
@@ -93,6 +110,25 @@ SIZING_TOLERANCE_PX = 6
 OVERLAP_MIN_AREA_PX = 16  # ignore sub-4x4px intersections (anti-aliasing noise)
 
 SCROLLABLE_OVERFLOW_VALUES = {"auto", "scroll"}
+
+# axe-core's own impact vocabulary -> this script's shared severity
+# vocabulary. "critical"/"serious" are the two ux-audit hard-gates on;
+# kept as Blocker/Major here too so this validator's own exit code
+# already reflects that without a separate gate check.
+AXE_IMPACT_TO_SEVERITY = {
+    "critical": "Blocker",
+    "serious": "Major",
+    "moderate": "Minor",
+    "minor": "Minor",
+}
+
+# Pragmatic performance budget (see ux-audit's performance-budget
+# technique): well above "broken," well below a marketing-page-strict
+# Core Web Vitals target, since this runs against ordinary app screens,
+# not just landing pages.
+LCP_BUDGET_MS = 4000.0
+CLS_BUDGET = 0.25
+INP_BUDGET_MS = 500.0
 
 
 def _loc(manifest: dict, el: dict) -> str:
@@ -267,11 +303,79 @@ def check_overlap(manifest: dict) -> list[Finding]:
     return findings
 
 
+def check_accessibility(manifest: dict) -> list[Finding]:
+    """Interprets capture-render.py's captured axe_violations field - this
+    script never launches axe-core itself, consistent with the pure-logic/
+    zero-rendering split this whole file already follows."""
+    findings = []
+    axe = manifest.get("axe_violations")
+    if axe is None:
+        return findings  # axe wasn't run against this manifest - not a finding, a missing capability
+    if isinstance(axe, dict) and "error" in axe:
+        findings.append(Finding(
+            severity="Note",
+            message=f"axe-core accessibility scan unavailable: {axe['error']}",
+            file=f"{manifest['viewport_name']}/{manifest['theme']}",
+            check="rendered-accessibility",
+        ))
+        return findings
+    for v in axe:
+        severity = AXE_IMPACT_TO_SEVERITY.get(v.get("impact"), "Minor")
+        findings.append(Finding(
+            severity=severity,
+            message=f"axe-core {v.get('impact')} violation: {v.get('help')} ({v.get('nodes', 0)} node(s))",
+            file=f"{manifest['viewport_name']}/{manifest['theme']} :: {v.get('id')}",
+            check="rendered-accessibility",
+        ))
+    return findings
+
+
+def check_performance_budget(manifest: dict) -> list[Finding]:
+    """Interprets capture-render.py's captured web_vitals field against
+    the pragmatic LCP/CLS/INP budget above. Caller is expected to invoke
+    this against the representative route(s) a performance budget
+    actually applies to (ux-audit's own "once, on a representative
+    route" posture) - this function itself doesn't select which manifest
+    that is, it only judges whichever one it's given."""
+    findings = []
+    vitals = manifest.get("web_vitals")
+    if not vitals:
+        return findings  # vitals weren't captured against this manifest
+    loc = f"{manifest['viewport_name']}/{manifest['theme']}"
+    lcp = vitals.get("lcp_ms")
+    if lcp is not None and lcp > LCP_BUDGET_MS:
+        findings.append(Finding(
+            severity="Major",
+            message=f"LCP {lcp:.0f}ms exceeds the {LCP_BUDGET_MS:.0f}ms pragmatic budget",
+            file=loc, check="rendered-performance-budget",
+        ))
+    cls = vitals.get("cls")
+    if cls is not None and cls > CLS_BUDGET:
+        findings.append(Finding(
+            severity="Major",
+            message=f"CLS {cls:.3f} exceeds the {CLS_BUDGET:.2f} pragmatic budget",
+            file=loc, check="rendered-performance-budget",
+        ))
+    inp = vitals.get("inp_ms")
+    if inp is not None and inp > INP_BUDGET_MS:
+        findings.append(Finding(
+            severity="Major",
+            message=(
+                f"INP ~{inp:.0f}ms (single-sample approximation) exceeds the "
+                f"{INP_BUDGET_MS:.0f}ms pragmatic budget"
+            ),
+            file=loc, check="rendered-performance-budget",
+        ))
+    return findings
+
+
 def validate_manifest(manifest: dict) -> list[Finding]:
     findings = []
     findings.extend(check_overflow(manifest))
     findings.extend(check_alignment_spacing_sizing(manifest))
     findings.extend(check_overlap(manifest))
+    findings.extend(check_accessibility(manifest))
+    findings.extend(check_performance_budget(manifest))
     return findings
 
 
@@ -279,6 +383,18 @@ def validate(manifest_paths: list[Path]) -> list[Finding]:
     findings = []
     for mp in manifest_paths:
         manifest = json.loads(mp.read_text(encoding="utf-8"))
+        if "elements" not in manifest:
+            # Not a per-viewport render manifest - e.g. capture-render.py
+            # --sweep's own sweep-summary.json living in the same
+            # directory glob scans land on. Disclosed and skipped, never
+            # a crash, matching this file's existing posture toward any
+            # other missing/unavailable capability.
+            findings.append(Finding(
+                severity="Note",
+                message="skipped: not a per-viewport render manifest (no 'elements' field - likely a sweep-summary.json or other non-manifest JSON in this directory)",
+                file=str(mp), check="rendered-layout-input",
+            ))
+            continue
         findings.extend(validate_manifest(manifest))
     return findings
 

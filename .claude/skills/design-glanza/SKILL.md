@@ -45,7 +45,14 @@ builders — and it stays domain-agnostic while doing it.
   `figma-design-to-code` skills and their `use_figma`/`get_design_context`
   tools, used only inside Design Setup, only when a Figma reference is
   detected, read-only — see `design-reference-engine/figma-reference.md`.
-  No other network/MCP tool is granted.
+  No other network/MCP tool is granted to Design-Glanza's own
+  self-invocation. The optional Gemini capability (v1.0.35,
+  `ui-engine/gemini-capability.md`) adds no tool grant here either — like
+  the Playwright render-QA scripts and `asset-pipeline.md`'s image
+  tooling already in use, it executes only inside Implement/Preview &
+  Run/Audit's separate, broader execution boundary
+  (`workflows/build-product.md`'s "whatever capability is actually
+  invoking this workflow"), never through this restricted surface.
 - **No destructive automation by default.** Before any irreversible or
   large-scale action — regenerating/overwriting an existing Product Builder
   outside `--update`, running Implement across many screens/files at once,
@@ -127,6 +134,11 @@ only when you're actually at that step.
 | Self-critiquing a finished screen/page's visual composition | `ui-engine/craft-critique.md` |
 | Auditing/benchmarking a generated screen against its reference and design direction | `ui-engine/{ui-audit-framework,visual-benchmark}.md`, `templates/visual-gap-analysis.md` |
 | Translating general UI-quality principles into an actionable check | `ui-engine/ui-design-principles.md` |
+| Applying a stack-specific implementation technique (Tailwind v4, shadcn/ui, React 19, Vitest) during Implement | `ui-engine/frontend-implementation.md` |
+| Generating a favicon/app-icon package, processing/optimizing an image, or building a custom SVG icon set | `ui-engine/asset-pipeline.md` |
+| Generating real photographic/illustrative imagery (native + API dual-path, only when actually needed) | `ui-engine/visual-asset-generation.md` |
+| Deciding whether an optional Gemini call (image generation, multimodal reference analysis, an independent visual/QA second opinion, or a content/localization second-pass) is actually warranted right now | `ui-engine/gemini-capability.md` |
+| Generating developer docs (ARCHITECTURE/API/DATABASE_SCHEMA) or an end-user guide from already-produced artifacts | `workflows/project-documentation.md` |
 | Generating or updating a Product Builder | `scripts/create-product-builder.py`, `workflows/create-product.md` |
 | Running the product-builder's own action sequence | `workflows/execute-product-builder.md` |
 | Building, testing, auditing | `workflows/{build-product,audit-product}.md`, `methodology/test.md`, `scripts/validate-*.py` |

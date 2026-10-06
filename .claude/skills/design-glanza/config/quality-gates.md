@@ -203,7 +203,12 @@ Each gate below states: what it measures, the pass criterion, and what checks it
   only an agent's visual read of the markup; where it isn't installed,
   the agent-review check below still applies in full and the gap is
   disclosed (`scripts/validate-product.py` emits a Note saying so),
-  never silently treated as passed.
+  never silently treated as passed. `capture-render.py --sweep`'s
+  additional breakpoint-transition evidence (where it has been run) is
+  further supporting measurement for the same requirement — it locates
+  *where* a transition actually happens and flags one that doesn't
+  degrade cleanly, but it extends this gate's existing evidence, it is
+  not itself a separate pass criterion.
 - **Checked by:** `agents/ui-designer.md` review, jointly with
   `agents/accessibility-expert.md` for any become-alternative-component
   decision producing an interrupting overlay — the same joint-ownership
@@ -304,7 +309,15 @@ Each gate below states: what it measures, the pass criterion, and what checks it
   passed. This is a deliberately separate validator (not merged into
   `validate-generated-artifact.py`) so the fast, dependency-free
   structural check always runs, and the rendering-dependent check runs
-  wherever its one extra dependency is available.
+  wherever its one extra dependency is available. **Also part of this
+  same rendered checkpoint:** wherever Playwright is available,
+  `capture-render.py`'s injected axe-core scan returns 0 Critical/Serious
+  violations and the captured Core Web Vitals (LCP/CLS/INP) stay inside
+  the pragmatic budget (LCP ≤ 4.0s, CLS ≤ 0.25, INP ≤ 500ms) — both
+  folded into `validate-rendered-layout.py`'s existing Blocker/Major
+  finding set, not a second gate; their absence (Playwright unavailable)
+  never fails this gate, same as every other rendering-dependent check
+  here.
 - **Checked by:** the executing session, per `workflows/preview-run.md` —
   no dedicated reasoning agent, the same posture B12/Implement already
   has; the structural-validation step is deterministic

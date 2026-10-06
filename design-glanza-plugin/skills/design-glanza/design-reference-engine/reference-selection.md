@@ -19,7 +19,11 @@ blindly copy individual screens. Extract the underlying design language
 (`reference-analysis.md`'s technique) and adapt it to this product's own
 requirements — a reference informs the *language*, this product's actual
 IA/flows/content still come from `ux-engine/*`, not from the reference's
-own structure.
+own structure. A Figma reference whose structure is actually inspectable
+(`figma-reference.md`) is the strongest instance of this mode — Explicit
+rather than Inferred confidence — never a separate 5th mode; it still
+yields entirely to `ux-engine/*` for IA/flows/content, exactly as any other
+Reference-Driven input does.
 
 ### 2. Guideline-Driven
 **When:** the user provided brand/design guidelines (written rules, brand

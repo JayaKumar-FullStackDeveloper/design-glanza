@@ -1,6 +1,6 @@
 ---
 name: design-glanza
-description: Master product-design and Product Builder factory (POC — explicit invocation only, entry point /design-glanza:design-glanza when plugin-installed, or /design-glanza when project-local). Given a product requirement, BRD/PRD/SOW, user stories, acceptance criteria, an existing product (screenshots, a live app, or its codebase), or a plain-language product idea, generates a product-specific Product Builder skill that designs, architects, builds, previews, tests, audits, and iterates that product — across SaaS, enterprise (ERP/CRM/admin panels), consumer, healthcare, e-commerce, HRMS, fintech, logistics, marketplace, landing pages/marketing sites, and arbitrary/custom domains. This is a deliberate, heavyweight, multi-phase workflow, run only when the user explicitly invokes /design-glanza or unambiguously asks to run the Design-Glanza product-building process end to end — never merely because a conversation mentions UI, UX, SaaS, or design in passing, and never for an isolated code fix or a single small change.
+description: Master product-design and Product Builder factory (POC — explicit invocation only, entry point /design-glanza). Given a product requirement, BRD/PRD/SOW, user stories, acceptance criteria, an existing product (screenshots, a live app, or its codebase), or a plain-language product idea, generates a product-specific Product Builder skill that designs, architects, builds, previews, tests, audits, and iterates that product — across SaaS, enterprise (ERP/CRM/admin panels), consumer, healthcare, e-commerce, HRMS, fintech, logistics, marketplace, landing pages/marketing sites, and arbitrary/custom domains. This is a deliberate, heavyweight, multi-phase workflow, run only when the user explicitly invokes /design-glanza or unambiguously asks to run the Design-Glanza product-building process end to end — never merely because a conversation mentions UI, UX, SaaS, or design in passing, and never for an isolated code fix or a single small change.
 allowed-tools:
   - Read
   - Write
@@ -13,6 +13,15 @@ allowed-tools:
   - Bash(python3 */scripts/validate-*.py *)
   - Bash(python */scripts/generate-report.py *)
   - Bash(python3 */scripts/generate-report.py *)
+  # One narrowly scoped exception (v1.0.30): read-only Figma inspection,
+  # used only inside Design Setup, only when a Figma reference is
+  # detected (design-reference-engine/figma-reference.md). Never a
+  # general-purpose grant — no other network/MCP tool is added here, and
+  # this one is never used to create/edit/mutate a Figma node.
+  - Skill(figma-use)
+  - Skill(figma-design-to-code)
+  - use_figma
+  - get_design_context
 ---
 
 # Design-Glanza
@@ -24,17 +33,26 @@ builders — and it stays domain-agnostic while doing it.
 
 - **Explicit invocation only.** `disable-model-invocation: true` means Claude
   never auto-loads this skill from a passing mention of UI, UX, SaaS, or
-  design — the entry point is the user typing **`/design-glanza:design-glanza`**
-  (when installed as a plugin) or **`/design-glanza`** (when this skill is
-  project-local, under `.claude/skills/`), or unambiguously asking to run
-  the Design-Glanza process by name. If a
+  design — the entry point is the user typing **`/design-glanza`**, or
+  unambiguously asking to run the Design-Glanza process by name. If a
   request only loosely touches product/design topics, do the requested work
   directly rather than pulling in this whole lifecycle.
 - **Minimal tool surface.** Only `Read`/`Write`/`Edit`/`Glob`/`Grep` and a
   narrowly scoped `Bash` limited to this skill's own
   `scripts/{create-product-builder,validate-*,generate-report}.py` — no
-  general shell access, no network tools, nothing beyond what the pipeline
-  itself needs.
+  general shell access, nothing beyond what the pipeline itself needs. One
+  deliberate, narrowly scoped exception (v1.0.30): the `figma-use`/
+  `figma-design-to-code` skills and their `use_figma`/`get_design_context`
+  tools, used only inside Design Setup, only when a Figma reference is
+  detected, read-only — see `design-reference-engine/figma-reference.md`.
+  No other network/MCP tool is granted to Design-Glanza's own
+  self-invocation. The optional Gemini capability (v1.0.35,
+  `ui-engine/gemini-capability.md`) adds no tool grant here either — like
+  the Playwright render-QA scripts and `asset-pipeline.md`'s image
+  tooling already in use, it executes only inside Implement/Preview &
+  Run/Audit's separate, broader execution boundary
+  (`workflows/build-product.md`'s "whatever capability is actually
+  invoking this workflow"), never through this restricted surface.
 - **No destructive automation by default.** Before any irreversible or
   large-scale action — regenerating/overwriting an existing Product Builder
   outside `--update`, running Implement across many screens/files at once,
@@ -101,7 +119,7 @@ only when you're actually at that step.
 | Deriving requirements, rules, roles, dependencies, edge cases | `product-intelligence/{requirement-engine,business-logic,user-roles,dependency-analysis,edge-case-engine}.md` |
 | Empathize / Define / Ideate reasoning | `methodology/{empathize,define,ideate}.md` |
 | Running the full Design Research Engine — evidence, insight, competitor/pattern analysis that must actively shape UX/UI decisions, not just document them | `design-research/*` (entry point cited from Design Setup's Step 0: `design-reference-engine/design-research.md`) |
-| Establishing/confirming the visual and interaction direction before any screen exists | `design-reference-engine/*`, `design-samples/`, `workflows/design-setup.md` |
+| Establishing/confirming the visual and interaction direction before any screen exists | `design-reference-engine/*` — including `figma-reference.md` (extraction) and `figma-context-consumption.md` (the precedence rule once extracted) for a Figma reference specifically — `design-samples/`, `workflows/design-setup.md` |
 | Structuring flows, IA, navigation, states | `ux-engine/*` |
 | Deriving scenarios from flows, checking for missing screens/transitions/actions/validations/feedback, auditing navigation continuity across a scenario's real screen sequence, building the UX Coverage Matrix | `ux-scenario-testing/*` |
 | Launching and verifying the built output locally, after Implement | `workflows/preview-run.md`, `templates/preview-report.md` |
@@ -116,6 +134,11 @@ only when you're actually at that step.
 | Self-critiquing a finished screen/page's visual composition | `ui-engine/craft-critique.md` |
 | Auditing/benchmarking a generated screen against its reference and design direction | `ui-engine/{ui-audit-framework,visual-benchmark}.md`, `templates/visual-gap-analysis.md` |
 | Translating general UI-quality principles into an actionable check | `ui-engine/ui-design-principles.md` |
+| Applying a stack-specific implementation technique (Tailwind v4, shadcn/ui, React 19, Vitest) during Implement | `ui-engine/frontend-implementation.md` |
+| Generating a favicon/app-icon package, processing/optimizing an image, or building a custom SVG icon set | `ui-engine/asset-pipeline.md` |
+| Generating real photographic/illustrative imagery (native + API dual-path, only when actually needed) | `ui-engine/visual-asset-generation.md` |
+| Deciding whether an optional Gemini call (image generation, multimodal reference analysis, an independent visual/QA second opinion, or a content/localization second-pass) is actually warranted right now | `ui-engine/gemini-capability.md` |
+| Generating developer docs (ARCHITECTURE/API/DATABASE_SCHEMA) or an end-user guide from already-produced artifacts | `workflows/project-documentation.md` |
 | Generating or updating a Product Builder | `scripts/create-product-builder.py`, `workflows/create-product.md` |
 | Running the product-builder's own action sequence | `workflows/execute-product-builder.md` |
 | Building, testing, auditing | `workflows/{build-product,audit-product}.md`, `methodology/test.md`, `scripts/validate-*.py` |
@@ -204,8 +227,13 @@ citing every Critical/High research finding's design principle —
 confirmed with the user where one is available, never assumed from
 generic defaults when real direction exists, and never fabricated from
 nothing when it doesn't (Rule 18). Screens and tokens are never built
-before this exists. Owner: `agents/design-setup-specialist.md`. Detail:
-`design-research/*`, `design-reference-engine/*`, `design-samples/`,
+before this exists. A Figma reference whose structure is actually
+inspectable (added v1.0.30, `design-reference-engine/figma-reference.md`)
+is the highest-fidelity Reference-Driven instance — Explicit rather than
+Inferred confidence, never a 5th mode — read via the Figma Skill's
+read-only inspection tools, never by image inference alone where
+structural data is available. Owner: `agents/design-setup-specialist.md`.
+Detail: `design-research/*`, `design-reference-engine/*`, `design-samples/`,
 `workflows/design-setup.md`.
 
 ## How Design-Glanza designs the product
@@ -390,6 +418,11 @@ silently. Gate: **B21**. Detail: `product-memory/*`.
 - Do not let Prototype's UI pass begin before Design Setup's approved
   `ui/design-direction.md` exists (8) — never generate UI from generic
   assumption when the user has provided real design direction (Rule 18).
+- Do not treat an exact Figma reference as a literal clone target just
+  because its data is precise and easy to copy 1:1 — extract the
+  underlying design language and generate a new screen, never reproduce
+  an existing Figma frame (8, Rule 18, `design-reference-engine/
+  figma-context-consumption.md`'s non-negotiable output rule).
 - Do not declare Implement complete, or proceed to Test, before the built
   output has actually been launched locally and previewed (13) — a build
   that "should work" is not the same as one that was run (Rule 19).

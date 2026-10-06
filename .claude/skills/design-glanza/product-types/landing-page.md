@@ -105,7 +105,66 @@ condition is essentially never met by this product type's shallow IA).
   the one section actually carrying the page's job, even when every value used
   is technically "on-scale."
 
+### Section library
+A concrete starting vocabulary for point 6's layout selection — named
+sections to compose from, not a fixed template every page must use in
+full:
+- **Nav** — sticky, logo/name plus anchor links to this page's own
+  sections, a CTA button right-aligned; collapses to a mobile menu per
+  `navigation-system.md`'s pattern, never a persistent sidebar (point 5).
+- **Hero** — the headline states the value proposition, not the business
+  name; a supporting one-to-two-sentence subheadline; the primary CTA;
+  text-left/image-right on desktop, centered on mobile, per the
+  weight-tiered spacing rule below.
+- **Features/services** — 3-6 items in a responsive grid (1 col mobile →
+  2-3 cols desktop), each an icon/illustration plus heading plus short
+  description; headings follow the section's own heading-hierarchy rule
+  (h2 for the section, h3 per item — never skipping a level).
+- **Social proof** — testimonial cards (quote, name, role/company) or a
+  client/partner logo bar; every testimonial is real content (point 6's
+  content-realism bar), never a fabricated quote.
+- **Pricing** (only where the product actually has priced tiers) — 2-3
+  tier cards, one visually distinguished as recommended, a feature list
+  and CTA per tier.
+- **FAQ** — an accordion pattern (native `<details>`/`<summary>` needs no
+  script); carries `FAQPage` structured data (Technical requirements,
+  below) since it is both content and SEO signal.
+- **Footer** — business identity, contact info, social links, legal
+  links, a copyright line.
+
+Not every page uses every section (point 6 already states layout is
+condition-gated, not a default) — a narrow, high-intent single-action
+page may be Nav + Hero + one CTA, nothing else.
+
 ## 7. Common operational concerns
+### Technical requirements (meta, structured data, sitemap)
+Generalizes any SEO-focused external technique into this pack's own
+requirements, regardless of business vertical (a local service business,
+a SaaS product, a marketplace):
+- **`<head>` tags**: a title (50-60 chars, `Primary offer | Brand`
+  pattern), a meta description (150-160 chars stating the offer,
+  benefit, and CTA), a canonical URL, Open Graph and Twitter Card tags
+  (using `ui-engine/asset-pipeline.md`'s generated OG card as the
+  image), and the favicon package (`asset-pipeline.md`).
+- **Structured data (JSON-LD)**: an `Organization`/`LocalBusiness`-family
+  schema (a more specific subtype — `Plumber`, `Restaurant`,
+  `ProfessionalService`, etc. — when the domain-standard pack identifies
+  one) with `name`/`description`/`url`/`telephone`/`address` at minimum;
+  a `Service` schema per service/offer section when distinct services
+  are listed; an `FAQPage` schema whenever a FAQ section exists — every
+  block includes `@context` and, for cross-referencing entities, a
+  stable `@id`.
+- **`robots.txt`** (allow all, cite the sitemap) and **`sitemap.xml`**
+  (one `<url>` per page/anchor-section that's independently linkable,
+  priority weighted homepage-highest).
+- **Validation**: structured data is checked against schema.org's
+  validation rules before this is considered complete — a missing
+  `@context`, an incorrectly-formatted phone number, or an empty
+  required array (e.g. `areaServed` present but empty) is a defect, not
+  a cosmetic gap.
+- This is additive to, never a replacement for, the accessibility and
+  performance requirements point 11 already states in full.
+
 Page load performance directly affects conversion (a slow first paint loses
 visitors before the message is even read) — treat this as a stated
 non-functional requirement for this product type by default, not an

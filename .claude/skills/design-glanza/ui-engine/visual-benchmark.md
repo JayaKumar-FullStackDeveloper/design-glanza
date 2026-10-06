@@ -254,7 +254,16 @@ RECHECK → FINALIZE
    compare-against-reference) — its findings are logged as **Rendered-
    layout defect** and **Reference mismatch** gaps (above) alongside
    whatever this qualitative audit itself found, not as a separate pass
-   run some other time.
+   run some other time. **Optional independent second opinion (GC-3,
+   `ui-engine/gemini-capability.md`):** where this screen's result
+   genuinely warrants extra scrutiny (passed every mechanical check but
+   still reads uncertain against `craft-critique.md`'s anti-cliché
+   catalog, or an explicit user request) — never as a default extra pass
+   on every screen — an independent Gemini multimodal read against this
+   same A-K checklist may surface something the single-model critique
+   missed; a disagreement is logged as a finding to resolve, not
+   silently reconciled, and its absence/unavailability changes nothing
+   about this step's own mandatory status.
 2. **If gaps were found:** fix every P0 and un-waived P1 first (P2/P3 may
    ride along where cheap, per the Priority classification table above),
    then re-run validation for the specific category/pipeline step(s) the
