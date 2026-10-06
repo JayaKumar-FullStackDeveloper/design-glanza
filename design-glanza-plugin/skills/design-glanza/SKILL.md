@@ -135,7 +135,8 @@ only when you're actually at that step.
 | Auditing/benchmarking a generated screen against its reference and design direction | `ui-engine/{ui-audit-framework,visual-benchmark}.md`, `templates/visual-gap-analysis.md` |
 | Translating general UI-quality principles into an actionable check | `ui-engine/ui-design-principles.md` |
 | Applying a stack-specific implementation technique (Tailwind v4, shadcn/ui, React 19, Vitest) during Implement | `ui-engine/frontend-implementation.md` |
-| Generating a favicon/app-icon package, processing/optimizing an image, or building a custom SVG icon set | `ui-engine/asset-pipeline.md` |
+| Picking an icon for a screen/component (check before generating anything) | `icon-packages/README.md` (Lucide + Heroicons, 2454 bundled icons) |
+| Generating a favicon/app-icon package, processing/optimizing an image, or building a custom SVG icon set (only once the bundled `icon-packages/` has no fitting icon) | `ui-engine/asset-pipeline.md` |
 | Generating real photographic/illustrative imagery (native + API dual-path, only when actually needed) | `ui-engine/visual-asset-generation.md` |
 | Deciding whether an optional Gemini call (image generation, multimodal reference analysis, an independent visual/QA second opinion, or a content/localization second-pass) is actually warranted right now | `ui-engine/gemini-capability.md` |
 | Generating developer docs (ARCHITECTURE/API/DATABASE_SCHEMA) or an end-user guide from already-produced artifacts | `workflows/project-documentation.md` |

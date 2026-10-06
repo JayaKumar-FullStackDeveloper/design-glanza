@@ -52,12 +52,27 @@ photo, a generated illustration from `visual-asset-generation.md`):
   an unoptimized multi-megabyte hero image is a defect this pipeline
   exists to prevent, not a separate finding to fix later.
 
+## Bundled icon packages — check first
+Before reaching for a product's own stack library or building anything
+custom, check `icon-packages/` (sibling to this file) — Design-Glanza ships
+two complete, permissively-licensed sets directly: **Lucide** (2130 line
+icons, the default) and **Heroicons** (324 icons × outline/solid/mini
+variants, for a filled-icon register or an outline/solid state pair). See
+`icon-packages/README.md` for the full picking guide, each package's
+`index.json` for a fast name lookup, and `icon-packages/preview.html` for
+visual browsing. Both already use `currentColor` exclusively — no
+post-processing needed to satisfy `component-system.md`'s color-inheritance
+rule. This is the first thing to check, not an afterthought beside the
+product's own stack library — most icon needs across every domain
+Design-Glanza covers are already in one of these two sets.
+
 ## Custom SVG icon sets
 Reached only when `component-system.md`'s Iconography section's own
-inventory has no fitting icon **and** no icon library (Lucide, Heroicons,
-etc. — whichever the product's stack already uses) covers the need either
-— a custom set is a deliberate, consistency-engineered deliverable, not a
-default. When warranted:
+inventory has no fitting icon, the bundled `icon-packages/` (above) has
+no fitting icon either, **and** no icon library the product's stack
+already uses (beyond the two bundled here) covers the need — a custom set
+is a deliberate, consistency-engineered deliverable, not a default. When
+warranted:
 - **One shared style spec, enforced on every icon**: identical `viewBox`,
   identical root `stroke-width`/`stroke-linecap`/`stroke-linejoin` across
   the whole set (pick one of Clean/Sharp/Soft/Minimal/Bold per the

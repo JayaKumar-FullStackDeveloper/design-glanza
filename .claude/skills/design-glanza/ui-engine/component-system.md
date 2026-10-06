@@ -154,6 +154,12 @@ at the component level.
 ## Iconography
 Icons are a component type in their own right, with the same rigor as any
 other atom:
+- **Source:** check `icon-packages/` first (Lucide, 2130 line icons,
+  the default; Heroicons, 324 icons × outline/solid/mini, for a filled
+  register or an outline/solid state pair — see `icon-packages/README.md`
+  for the picking guide) before the product's own stack library, and
+  before `asset-pipeline.md`'s "Custom SVG icon sets" section, which is
+  the fallback, never the default.
 - **Size:** from `design-system.md`'s icon size scale — never an arbitrary
   pixel value.
 - **Stroke/fill convention:** pick one style (e.g. 1.5–2px outline stroke) and
